@@ -9,7 +9,7 @@
    暹罗外卖，一个基于微服务架构的前后端分离外卖(餐饮点餐)系统
 </p>
 <p align="center">
-<a target="_blank" href="https://gitee.com/siam1026/siam-cloud">
+<a target="_blank" href="https://github.com/siam1026/siam-cloud">
     	<img src="https://img.shields.io/hexpm/l/plug.svg" ></img>
 		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg" ></img>
         <img src="https://img.shields.io/badge/nodejs-14.x-green" ></img>
@@ -22,11 +22,11 @@
 
 
 
-[项目介绍](#项目介绍) | [站点演示](#站点演示) | [项目特点](#项目特点) | [技术架构](#技术选型) | [项目目录](#项目目录) | [项目文档](#项目文档)  | [快速开始](#快速开始) | [项目截图](#微信小程序截图) | [更新记录](https://gitee.com/siam1026/siam-cloud/releases)
+[项目介绍](#项目介绍) | [站点演示](#站点演示) | [项目特点](#项目特点) | [技术架构](#技术选型) | [项目目录](#项目目录) | [项目文档](#项目文档)  | [快速开始](#快速开始) | [项目截图](#微信小程序截图) | [更新记录](https://github.com/siam1026/siam-cloud/releases)
 
 ##  前言
 
-[**暹罗**](https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗_加群.jpg)  **微信公众号【[暹罗siam](https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号.jpg)】**，未来将会在公众号上持续性的输出很多原创小知识以及学习资源，欢迎各位小伙伴关注我，和我一起共同学习，同时我也希望各位小伙伴能够给**暹罗外卖**项目多多 **Star** 支持，您的**点赞**就是我维护的动力！
+[**暹罗**](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗_加群.jpg)  **微信公众号【[暹罗siam](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号.jpg)】**，未来将会在公众号上持续性的输出很多原创小知识以及学习资源，欢迎各位小伙伴关注我，和我一起共同学习，同时我也希望各位小伙伴能够给**暹罗外卖**项目多多 **Star** 支持，您的**点赞**就是我维护的动力！
 
 <p align=center>
     <img src="./doc/images/wechat/公众号.jpg" width="500" />
@@ -36,11 +36,11 @@
 
 【提问前】可以先 [百度](https://www.baidu.com/) 或者 [Google](https://www.google.com/) 进行解决，有的问题通过**搜索引擎**很快就能得到解决
 
-【提问前】可以首先看看 [issue](https://gitee.com/siam1026/siam-cloud/issues) 或者  [FAQ文档](待实现)，可能你的问题别人也遇到过
+【提问前】可以首先看看 [issue](https://github.com/siam1026/siam-cloud/issues) 或者  [FAQ文档](待实现)，可能你的问题别人也遇到过
 
 【提问前】可以提前阅读 [如何向开源社区提问题](待实现)
 
-【提问】推荐使用 [Gitee issue](https://gitee.com/siam1026/siam-cloud/issues) 进行提问，因为issue解决后能够保留解决记录，帮助其它小伙伴避坑。其次可以使用 <a href="##关注&交流">QQ群 </a>  或者 <a href="##前言">微信群 </a> 进行提问。群里提问注意提问的时间，把遇到**问题的详细过程都描述清楚**，最好**配上图文信息**，这样能有利于更高效的解决问题。
+【提问】推荐使用 [Gitee issue](https://github.com/siam1026/siam-cloud/issues) 进行提问，因为issue解决后能够保留解决记录，帮助其它小伙伴避坑。其次可以使用 <a href="##关注&交流">QQ群 </a>  或者 <a href="##前言">微信群 </a> 进行提问。群里提问注意提问的时间，把遇到**问题的详细过程都描述清楚**，最好**配上图文信息**，这样能有利于更高效的解决问题。
 
 ## 项目介绍
 
@@ -68,7 +68,7 @@
 >
 > 【演示调度后台】：https://spa.show.siamit.cn/admin
 >
-> 【演示账号】：[点击获取](https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号_演示账号.png)
+> 【演示账号】：[点击获取](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号_演示账号.png)
 >
 > 【小程序】暹罗外卖的移动端版本，可以扫码体验。参考 [暹罗外卖小程序部署](http://siam1026.gitee.io/siam_blog_doc) 文档
 
@@ -94,7 +94,7 @@
 >
 > 【演示调度后台】：https://spa.show.siamit.cn/admin
 >
-> 【演示账号】：[点击获取](https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号_演示账号.png)
+> 【演示账号】：[点击获取](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号_演示账号.png)
 >
 > 【小程序】暹罗外卖的移动端版本，可以扫码体验。参考 [暹罗外卖小程序部署](http://siam1026.gitee.io/siam_blog_doc) 文档
 
@@ -102,7 +102,7 @@
 | :------------------------------------------------------: |
 | <img src="./doc/images/wechat/微信小程序.jpg" width="200" /> |
 
-目前，暹罗外卖社区版源码暂未开源，可通过 [赞助暹罗](https://www.siamit.cn/version) 的方式获取源码授权，详情可添加暹罗微信了解：[kelubo210](https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗.jpg) (备注：暹罗外卖社区)
+目前，暹罗外卖社区版源码暂未开源，可通过 [赞助暹罗](https://www.siamit.cn/version) 的方式获取源码授权，详情可添加暹罗微信了解：[kelubo210](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗.jpg) (备注：暹罗外卖社区)
 
 ## 项目中初始用户和密码
 
@@ -137,7 +137,7 @@
 
 目前项目托管在 **Gitee** 和 **Github** 平台上中，欢迎大家 **Star** 和 **Fork** 支持~
 
-- Gitee地址：https://gitee.com/siam1026/siam-cloud
+- Gitee地址：https://github.com/siam1026/siam-cloud
 - Github地址：https://github.com/siam1026/siam-cloud
 
 ## 项目目录
@@ -273,7 +273,7 @@
 
 |                   微信群【备注：加群】                   |
 | :------------------------------------------------------: |
-| <img src="https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗.jpg" width="200" /> |
+| <img src="https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗.jpg" width="200" /> |
 
 ## 未来计划
 
