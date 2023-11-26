@@ -1,0 +1,141 @@
+#端口配置
+server:
+  port: 9601
+  #修改tomcat对get请求的参数限制大小(默认为8K)
+  max-http-header-size: 204800
+
+spring:
+  #redis单例模式
+  redis:
+    host: 127.0.0.1
+    password: siam1026@163.com
+    port: 6379
+    jedis:
+      pool:
+        # 连接池中的最大空闲连接个数
+        max-idle: 8
+        # 连接池中的最小空闲连接个数
+        min-idle: 0
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+    # 连接超时时间（毫秒）
+    timeout: 600000ms
+
+  #服务别名，注册到注册中心上的名字
+  application:
+    name: zuul-siam
+
+  #允许bean重复定义/允许bean覆盖
+  main:
+    allow-bean-definition-overriding: true
+
+  #邮件相关配置
+  mail:
+    host: smtp.126.com
+    password: siam1026@163.com
+    username: siam1026@163.com
+    properties:
+      mail:
+        smtp:
+          #非必要参数
+          auth: true
+          port: 465
+          ssl.enable: true
+          starttls.enable: true
+          #必要参数
+          timeout: 25000
+          socketFactory.class: javax.net.ssl.SSLSocketFactory
+          socketFactory.port: 465
+
+#eureka配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9600/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    #配置使用ip地址来注册(默认是主机名称)
+    prefer-ip-address: true
+    #心跳检测暂时不配置
+
+###配置网关信息
+zuul:
+  routes:
+    ###定义转发服务规则
+    api-user:
+      ###服务别名
+      serviceId: user-siam
+      ###公开路径，暴露给用户访问的路径
+      path: /api-user/**
+
+    ###定义转发服务规则
+    api-goods:
+      ###服务别名
+      serviceId: goods-siam
+      ###公开路径，暴露给用户访问的路径
+      path: /api-goods/**
+
+    ###定义转发服务规则
+    api-order:
+      ###服务别名
+      serviceId: order-siam
+      ###公开路径，暴露给用户访问的路径
+      path: /api-order/**
+
+  ###配置Zuul超时时间
+  host:
+    ###HTTP连接超时
+    connect-timeout-millis: 15000
+    ###Socket连接超时
+    socket-timeout-millis: 60000
+
+  #允许向下传递请求头信息 -- 敏感头信息Authorization,Cookie,Set-Cookie默认是不转发的
+  sensitive-headers:
+
+#设置feign客户端超时时间
+ribbon:
+  #请求处理的超时时间
+  ReadTimeout: 120000
+  #请求连接的超时时间
+  ConnectTimeout: 30000
+
+#springboot admin相关配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" #'prometheus,health'
+        exclude: "shutdown"
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: ALWAYS
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 1ms
+        descriptions: true
+    tags:
+      # 为指标设置一个Tag，这里设置为应用名，Tag是Prometheus提供的一种能力，从而实现更加灵活的筛选
+      application: ${spring.application.name}
+  # 禁止Actuator监控以下组件连接
+  health:
+    rabbit:
+      enabled: false
+    mongo:
+      enabled: false
+    elasticsearch:
+      enabled: false
+
+#日志配置
+logging:
+  file:
+    name: ./logs/${spring.application.name}/log_info.log
+path:
+  log: ./logs/${spring.application.name}/

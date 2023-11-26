@@ -1,0 +1,64 @@
+#端口配置
+server:
+  port: 9600
+
+##配置Eureka信息
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    #配置使用ip地址来注册(默认是主机名称)
+    prefer-ip-address: true
+    instance-id: ${eureka.instance.hostname}:${server.port}
+
+  client:
+    #注册中心访问地址
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    #是否将自身作为生产者注册进来，集群时开启，默认已开启
+    register-with-eureka: false
+    #检索服务信息，集群时开启，默认已开启
+    fetch-registry: false
+  server:
+    #自我保护机制开关【在开发时可以关闭，保证不可用服务及时删除，隔2秒检测一下】
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 2000
+
+spring:
+  #服务别名，注册到注册中心上的名字
+  application:
+    name: eureka
+  #springboot admin相关配置
+  boot:
+    admin:
+      client:
+        #连接监控服务端的地址，也就是actuator的服务端的运行ip 端口
+        url: http://127.0.0.1:9605
+        username: admin
+        password: admin
+        instance:
+          prefer-ip: true
+
+#springboot admin相关配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+  # 禁止Actuator监控以下组件连接
+  health:
+    rabbit:
+      enabled: false
+    mongo:
+      enabled: false
+    elasticsearch:
+      enabled: false
+
+#日志配置
+logging:
+  file:
+    name: ./logs/${spring.application.name}/log_info.log
+path:
+  log: ./logs/${spring.application.name}/
