@@ -26,7 +26,7 @@
 
 ##  前言
 
-[**暹罗**](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗_加群.jpg)  **微信公众号【[暹罗siam](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号.jpg)】**，未来将会在公众号上持续性的输出很多原创小知识以及学习资源，欢迎各位小伙伴关注我，和我一起共同学习，同时我也希望各位小伙伴能够给**暹罗外卖**项目多多 **Star** 支持，您的**点赞**就是我维护的动力！
+[**暹罗**](https://gitee.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗_加群.jpg)  **微信公众号【[暹罗siam](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号.jpg)】**，未来将会在公众号上持续性的输出很多原创小知识以及学习资源，欢迎各位小伙伴关注我，和我一起共同学习，同时我也希望各位小伙伴能够给**暹罗外卖**项目多多 **Star** 支持，您的**点赞**就是我维护的动力！
 
 <p align=center>
     <img src="./doc/images/wechat/公众号.jpg" width="500" />
