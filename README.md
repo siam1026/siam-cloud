@@ -273,9 +273,9 @@
 
 为了方便小伙伴们沟通交流，我创建了**微信群**（备注：**加群**），目前项目还存在很多不足之处，欢迎各位老哥进群进行技术交流，为了防止广告进入，希望加群的时候能添加备注，谢谢~
 
-|                   微信群【备注：加群】                   |
-| :------------------------------------------------------: |
-| <img src="https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗.jpg" width="200" /> |
+|                   微信群【备注：加群】                   | QQ群（备注：`暹罗外卖`）                       |
+| :------------------------------------------------------: | :------------------------------------------------------: |
+| <img src="https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/添加暹罗.jpg" width="200" /> | <img src="https://github.com/siam1026/siam-cloud/raw/master/doc/images/qq/qqGroup2.jpg" width="200" /> |
 
 ## 未来计划
 
