@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.PictureUploadRecord;
 import com.siam.package_goods.model.example.PictureUploadRecordExample;
 import org.apache.ibatis.annotations.Param;
@@ -9,14 +10,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface PictureUploadRecordMapper {
+public interface PictureUploadRecordMapper extends BaseMapper<PictureUploadRecord> {
     int countByExample(PictureUploadRecordExample example);
 
     int deleteByExample(PictureUploadRecordExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(PictureUploadRecord record);
 
     int insertSelective(PictureUploadRecord record);
 

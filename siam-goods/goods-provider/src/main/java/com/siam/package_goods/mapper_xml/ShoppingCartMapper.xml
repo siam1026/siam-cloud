@@ -115,16 +115,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.ShoppingCart" >
-    insert into tb_shopping_cart (id, member_id, goods_id,
-      shop_id, spec_list, number,
-      is_goods_exists, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER},
-      #{shopId,jdbcType=INTEGER}, #{specList,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER},
-      #{isGoodsExists,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.ShoppingCart" useGeneratedKeys="true" keyProperty="id">
     insert into tb_shopping_cart
     <trim prefix="(" suffix=")" suffixOverrides="," >

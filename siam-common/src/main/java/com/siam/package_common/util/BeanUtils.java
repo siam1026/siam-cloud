@@ -1,9 +1,15 @@
 package com.siam.package_common.util;
 
+import com.alipay.api.domain.Coupon;
+import com.alipay.api.domain.Person;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.cglib.beans.BeanMap;
 
+import java.beans.PropertyDescriptor;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

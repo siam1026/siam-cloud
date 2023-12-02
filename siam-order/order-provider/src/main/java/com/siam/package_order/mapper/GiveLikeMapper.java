@@ -14,8 +14,6 @@ public interface GiveLikeMapper extends BaseMapper<GiveLike> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(GiveLike record);
-
     int insertSelective(GiveLike record);
 
     List<GiveLike> selectByExample(GiveLikeExample example);

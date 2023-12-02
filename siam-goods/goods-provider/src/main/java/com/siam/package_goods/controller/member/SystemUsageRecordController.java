@@ -4,6 +4,10 @@ import com.siam.package_goods.service.SystemUsageRecordService;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_goods.entity.SystemUsageRecord;
+import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.entity.Member;
+import com.siam.package_user.entity.MemberToken;
+import com.siam.package_user.util.TokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -27,20 +31,21 @@ public class SystemUsageRecordController {
     @Autowired
     private SystemUsageRecordService systemUsageRecordService;
 
-//    @Autowired
-//    private MemberTokenService memberTokenService;
+    @Autowired
+    private MemberSessionManager memberSessionManager;
 
     @ApiOperation(value = "新增系统使用记录")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) SystemUsageRecord systemUsageRecord, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
+
         String token = request.getHeader("token");
         //用户不一定处于登录状态，所以要做判断
         if(StringUtils.isNotBlank(token)){
-//            MemberToken memberToken = memberTokenService.getLoginMemberInfo(token);
-//            if(memberToken != null){
-//                systemUsageRecord.setMemberId(loginMember.getId());
-//            }
+            Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
+            if(loginMember != null){
+                systemUsageRecord.setMemberId(loginMember.getId());
+            }
         }
 
         systemUsageRecord.setCreateTime(new Date());

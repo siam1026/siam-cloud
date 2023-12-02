@@ -33,9 +33,6 @@ public class CouponsMemberRelationController {
 //    @Autowired
 //    private MemberService memberService;
 
-//    @Autowired
-//    private MemberTokenService memberTokenService;
-
     @Autowired
     private MemberSessionManager memberSessionManager;
 
@@ -90,7 +87,7 @@ public class CouponsMemberRelationController {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
         //查询当前登录用户持有的优惠券
-//        couponsMemberRelation.setMemberId(loginMember.getId());
+        couponsMemberRelation.setMemberId(loginMember.getId());
         Page<Map<String, Object>> page = couponsMemberRelationService.getListByPage(couponsMemberRelation.getPageNo(), couponsMemberRelation.getPageSize(), couponsMemberRelation);
 
         return BasicResult.success(page);
@@ -101,11 +98,11 @@ public class CouponsMemberRelationController {
     public BasicResult selectCounts( HttpServletRequest request){
         BasicData basicResult = new BasicData();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
-//        Integer memberId = loginMember.getId();
+        Integer memberId = loginMember.getId();
 
-//        Integer counts = couponsMemberRelationService.getCountsByMemberId(memberId);
+        Integer counts = couponsMemberRelationService.getCountsByMemberId(memberId);
 
-//        basicResult.setData(counts);
+        basicResult.setData(counts);
         basicResult.setSuccess(true);
         basicResult.setCode(BasicResultCode.SUCCESS);
         basicResult.setMessage("获取成功");

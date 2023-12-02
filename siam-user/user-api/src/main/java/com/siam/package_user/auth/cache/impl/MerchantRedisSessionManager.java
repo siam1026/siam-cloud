@@ -17,7 +17,8 @@ public class MerchantRedisSessionManager implements MerchantSessionManager {
 
     @Override
     public void createSession(String token, Merchant merchant) {
-        redisTemplate.opsForValue().set(SESSION_PREFIX + token, JsonUtils.toJson(merchant), 24 * 30, TimeUnit.HOURS);
+        //设置7天过期
+        redisTemplate.opsForValue().set(SESSION_PREFIX + token, JsonUtils.toJson(merchant), 7 * 24, TimeUnit.HOURS);
     }
 
     @Override

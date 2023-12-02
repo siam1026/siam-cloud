@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.ShoppingCart;
 import com.siam.package_goods.model.example.ShoppingCartExample;
 import org.apache.ibatis.annotations.*;
@@ -8,14 +9,12 @@ import java.util.Date;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface ShoppingCartMapper {
+public interface ShoppingCartMapper extends BaseMapper<ShoppingCart> {
     int countByExample(ShoppingCartExample example);
 
     int deleteByExample(ShoppingCartExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(ShoppingCart record);
 
     int insertSelective(ShoppingCart record);
 

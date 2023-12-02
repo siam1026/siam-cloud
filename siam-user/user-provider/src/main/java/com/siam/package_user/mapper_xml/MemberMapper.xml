@@ -197,42 +197,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.Member" >
-    insert into tb_member (id, username, mobile,
-      password, password_salt, nickname,
-      balance, login_count, invite_code,
-      head_img, roles, sex,
-      email, is_disabled, is_deleted,
-      open_id, is_bind_wx, points,
-      vip_status, vip_type, vip_start_time,
-      vip_end_time, type, vip_no,
-      is_new_people, is_remind_new_people, last_use_time,
-      last_use_address, register_way, wx_public_platform_open_id,
-      is_request_wx_notify, last_request_wx_notify_time,
-      invite_reward_amount, real_name, total_balance,
-      total_consume_balance, total_points, total_consume_points,
-      total_withdraw_invite_reward_amount, payment_password,
-      payment_password_salt, invite_suncode, unreceived_points,
-      unreceived_invite_reward_amount, create_time,
-      update_time, last_login_time)
-    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
-      #{password,jdbcType=VARCHAR}, #{passwordSalt,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR},
-      #{balance,jdbcType=DECIMAL}, #{loginCount,jdbcType=INTEGER}, #{inviteCode,jdbcType=VARCHAR},
-      #{headImg,jdbcType=VARCHAR}, #{roles,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},
-      #{email,jdbcType=VARCHAR}, #{isDisabled,jdbcType=BIT}, #{isDeleted,jdbcType=BIT},
-      #{openId,jdbcType=VARCHAR}, #{isBindWx,jdbcType=BIT}, #{points,jdbcType=DECIMAL},
-      #{vipStatus,jdbcType=INTEGER}, #{vipType,jdbcType=INTEGER}, #{vipStartTime,jdbcType=TIMESTAMP},
-      #{vipEndTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, #{vipNo,jdbcType=VARCHAR},
-      #{isNewPeople,jdbcType=BIT}, #{isRemindNewPeople,jdbcType=BIT}, #{lastUseTime,jdbcType=TIMESTAMP},
-      #{lastUseAddress,jdbcType=VARCHAR}, #{registerWay,jdbcType=INTEGER}, #{wxPublicPlatformOpenId,jdbcType=VARCHAR},
-      #{isRequestWxNotify,jdbcType=BIT}, #{lastRequestWxNotifyTime,jdbcType=TIMESTAMP},
-      #{inviteRewardAmount,jdbcType=DECIMAL}, #{realName,jdbcType=VARCHAR}, #{totalBalance,jdbcType=DECIMAL},
-      #{totalConsumeBalance,jdbcType=DECIMAL}, #{totalPoints,jdbcType=DECIMAL}, #{totalConsumePoints,jdbcType=DECIMAL},
-      #{totalWithdrawInviteRewardAmount,jdbcType=DECIMAL}, #{paymentPassword,jdbcType=VARCHAR},
-      #{paymentPasswordSalt,jdbcType=VARCHAR}, #{inviteSuncode,jdbcType=VARCHAR}, #{unreceivedPoints,jdbcType=DECIMAL},
-      #{unreceivedInviteRewardAmount,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP},
-      #{updateTime,jdbcType=TIMESTAMP}, #{lastLoginTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.Member" useGeneratedKeys="true" keyProperty="id">
     insert into tb_member
     <trim prefix="(" suffix=")" suffixOverrides="," >

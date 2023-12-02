@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.GoodsRawmaterialRelation;
 import com.siam.package_goods.model.example.GoodsRawmaterialRelationExample;
 import org.apache.ibatis.annotations.Delete;
@@ -10,14 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface GoodsRawmaterialRelationMapper {
+public interface GoodsRawmaterialRelationMapper extends BaseMapper<GoodsRawmaterialRelation> {
     int countByExample(GoodsRawmaterialRelationExample example);
 
     int deleteByExample(GoodsRawmaterialRelationExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(GoodsRawmaterialRelation record);
 
     int insertSelective(GoodsRawmaterialRelation record);
 

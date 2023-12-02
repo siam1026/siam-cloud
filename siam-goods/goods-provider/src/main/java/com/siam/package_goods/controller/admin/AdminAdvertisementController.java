@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_goods.entity.Advertisement;
 import com.siam.package_goods.model.param.AdvertisementParam;
@@ -36,6 +37,7 @@ public class AdminAdvertisementController {
     }
 
 
+    @AdminPermission
     @ApiOperation(value = "修改广告轮播图")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) AdvertisementParam param) {
@@ -43,7 +45,7 @@ public class AdminAdvertisementController {
         return BasicResult.success();
     }
 
-
+    @AdminPermission
     @ApiOperation(value = "删除广告轮播图")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) AdvertisementParam param) {

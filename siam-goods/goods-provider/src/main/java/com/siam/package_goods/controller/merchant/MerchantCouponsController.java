@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
@@ -44,9 +45,6 @@ public class MerchantCouponsController {
     @Autowired
     private CouponsShopRelationService couponsShopRelationService;
 
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
 //    @Autowired
 //    private MerchantService merchantService;
 
@@ -110,6 +108,7 @@ public class MerchantCouponsController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "修改优惠卷-TODO")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
@@ -138,6 +137,7 @@ public class MerchantCouponsController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "删除优惠卷")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),

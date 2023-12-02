@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
@@ -130,6 +131,7 @@ public class MerchantGoodsSpecificationOptionController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "修改商品规格选项")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "商品规格选项表主键id", required = true, paramType = "query", dataType = "int"),
@@ -201,6 +203,7 @@ public class MerchantGoodsSpecificationOptionController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "删除商品规格选项(含批量操作)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ids", value = "商品规格选项表主键id(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "string"),

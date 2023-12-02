@@ -93,16 +93,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.SmsLog" >
-    insert into tb_sms_log (id, member_id, mobile, 
-      type, create_time, ip, 
-      verify_code, description, states
-      )
-    values (#{id,jdbcType=BIGINT}, #{memberId,jdbcType=BIGINT}, #{mobile,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{ip,jdbcType=VARCHAR}, 
-      #{verifyCode,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{states,jdbcType=BIT}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.SmsLog" >
     insert into tb_sms_log
     <trim prefix="(" suffix=")" suffixOverrides="," >

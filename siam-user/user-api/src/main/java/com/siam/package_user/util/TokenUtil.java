@@ -31,7 +31,8 @@ public class TokenUtil {
      * @author 暹罗
      */
     public static String generateToken(Member member) {
-        long defaultTokenExpireSec = 3 * 60 * 60L;
+        //设置7天过期
+        long defaultTokenExpireSec = 7 * 24 * 60 * 60L;
         DateTime expirationDate = DateUtil.offsetMillisecond(new Date(), Convert.toInt(defaultTokenExpireSec) * 1000);
         String token = "";
         token = JWT.create().withAudience(member.getId().toString())
@@ -140,8 +141,8 @@ public class TokenUtil {
      * 获取系统地密钥过期时间（单位：秒）
      */
     public static Long getJwtSecretExpireSec() {
-        //设置3小时过期
-        Long defaultSecs = 3 * 60 * 60L;
+        //设置7天过期
+        Long defaultSecs = 7 * 24 * 60 * 60L;
         return defaultSecs;
     }
 }

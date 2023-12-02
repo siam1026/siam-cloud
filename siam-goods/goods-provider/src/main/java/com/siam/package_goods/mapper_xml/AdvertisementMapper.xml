@@ -115,16 +115,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.Advertisement" >
-    insert into tb_advertisement (id, image_name, image_path,
-      description, type, sort_number,
-      image_link_url, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{imageName,jdbcType=VARCHAR}, #{imagePath,jdbcType=VARCHAR},
-      #{description,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{sortNumber,jdbcType=INTEGER},
-      #{imageLinkUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.Advertisement" useGeneratedKeys="true" keyProperty="id">
     insert into tb_advertisement
     <trim prefix="(" suffix=")" suffixOverrides="," >

@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.Rawmaterial;
 import com.siam.package_goods.model.example.RawmaterialExample;
 import org.apache.ibatis.annotations.Param;
@@ -11,14 +12,12 @@ import java.math.BigDecimal;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface RawmaterialMapper {
+public interface RawmaterialMapper extends BaseMapper<Rawmaterial> {
     int countByExample(RawmaterialExample example);
 
     int deleteByExample(RawmaterialExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(Rawmaterial record);
 
     int insertSelective(Rawmaterial record);
 

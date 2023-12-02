@@ -25,9 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 @Transactional(rollbackFor = Exception.class)
 public class MerchantReplyController {
 
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
-
     @Autowired
     private ReplyService replyService;
 
@@ -45,7 +42,7 @@ public class MerchantReplyController {
 
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
         //设置回复商家id
-//        reply.setMerchantId(merchantToken.getMerchantId());
+        reply.setMerchantId(loginMerchant.getId());
         reply.setReplierType(Quantity.INT_2);
 
         //保存用户

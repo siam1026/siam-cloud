@@ -83,7 +83,7 @@ public class CouponsMemberRelationServiceImpl implements CouponsMemberRelationSe
     public Page<Map<String, Object>> getListByPage(int pageNo, int pageSize, CouponsMemberRelation couponsMemberRelation) {
         Page<Map<String, Object>> page = couponsMemberRelationMapper.getListByPage(new Page(pageNo, pageSize), couponsMemberRelation);
 
-        List<Map> result = new ArrayList();
+        List<Map<String, Object>> result = new ArrayList();
         for (Map  couponsMemberRelationMap : page.getRecords()) {
             Map map = new HashMap(2);
             map.put("couponsMemberRelationMap", couponsMemberRelationMap);
@@ -91,6 +91,9 @@ public class CouponsMemberRelationServiceImpl implements CouponsMemberRelationSe
             map.put("shopList",shopMapper.getListByCouponsId((Integer) couponsMemberRelationMap.get("couponsId")));
             result.add(map);
         }
+
+        page.setRecords(result);
+
         return page;
     }
 

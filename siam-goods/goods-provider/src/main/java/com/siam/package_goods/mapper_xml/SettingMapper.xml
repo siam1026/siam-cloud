@@ -187,46 +187,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.Setting" >
-    insert into tb_setting (id, purchase_reward_points, registration_reward_points,
-      new_member_coupons_id, default_shop_id, merchant_withdraw_fee,
-      start_delivery_price, delivery_starting_distance,
-      delivery_starting_price, delivery_kilometer_price,
-      delivery_distance_limit, order_system_extraction_ratio,
-      merchant_meal_preparation_time, member_withdraw_fee,
-      registration_reward_invite_reward_amount, member_withdraw_meet_amount,
-      member_withdraw_audit_threshold, customer_service_phone,
-      customer_service_wechat, customer_service_wechat_qrcode,
-      freight_insurance_paid_amount, invitee_consume_commission,
-      caseone_own_commission, casetwo_own_commission,
-      casetwo_first_level_inviter_commission, casethree_own_commission,
-      casethree_first_level_inviter_commission, casethree_second_level_inviter_commission,
-      points_mall_invitee_consume_commission, points_mall_caseone_own_commission,
-      points_mall_casetwo_own_commission, points_mall_casetwo_first_level_inviter_commission,
-      points_mall_casethree_own_commission, points_mall_casethree_first_level_inviter_commission,
-      points_mall_casethree_second_level_inviter_commission, invite_friends_activity_rule,
-      commission_rule, vip_rule, create_time,
-      update_time)
-    values (#{id,jdbcType=INTEGER}, #{purchaseRewardPoints,jdbcType=DECIMAL}, #{registrationRewardPoints,jdbcType=DECIMAL},
-      #{newMemberCouponsId,jdbcType=INTEGER}, #{defaultShopId,jdbcType=INTEGER}, #{merchantWithdrawFee,jdbcType=DECIMAL},
-      #{startDeliveryPrice,jdbcType=DECIMAL}, #{deliveryStartingDistance,jdbcType=DECIMAL},
-      #{deliveryStartingPrice,jdbcType=DECIMAL}, #{deliveryKilometerPrice,jdbcType=DECIMAL},
-      #{deliveryDistanceLimit,jdbcType=DECIMAL}, #{orderSystemExtractionRatio,jdbcType=DECIMAL},
-      #{merchantMealPreparationTime,jdbcType=DECIMAL}, #{memberWithdrawFee,jdbcType=DECIMAL},
-      #{registrationRewardInviteRewardAmount,jdbcType=DECIMAL}, #{memberWithdrawMeetAmount,jdbcType=DECIMAL},
-      #{memberWithdrawAuditThreshold,jdbcType=DECIMAL}, #{customerServicePhone,jdbcType=VARCHAR},
-      #{customerServiceWechat,jdbcType=VARCHAR}, #{customerServiceWechatQrcode,jdbcType=VARCHAR},
-      #{freightInsurancePaidAmount,jdbcType=DECIMAL}, #{inviteeConsumeCommission,jdbcType=DECIMAL},
-      #{caseoneOwnCommission,jdbcType=DECIMAL}, #{casetwoOwnCommission,jdbcType=DECIMAL},
-      #{casetwoFirstLevelInviterCommission,jdbcType=DECIMAL}, #{casethreeOwnCommission,jdbcType=DECIMAL},
-      #{casethreeFirstLevelInviterCommission,jdbcType=DECIMAL}, #{casethreeSecondLevelInviterCommission,jdbcType=DECIMAL},
-      #{pointsMallInviteeConsumeCommission,jdbcType=DECIMAL}, #{pointsMallCaseoneOwnCommission,jdbcType=DECIMAL},
-      #{pointsMallCasetwoOwnCommission,jdbcType=DECIMAL}, #{pointsMallCasetwoFirstLevelInviterCommission,jdbcType=DECIMAL},
-      #{pointsMallCasethreeOwnCommission,jdbcType=DECIMAL}, #{pointsMallCasethreeFirstLevelInviterCommission,jdbcType=DECIMAL},
-      #{pointsMallCasethreeSecondLevelInviterCommission,jdbcType=DECIMAL}, #{inviteFriendsActivityRule,jdbcType=VARCHAR},
-      #{commissionRule,jdbcType=VARCHAR}, #{vipRule,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
-      #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.Setting" useGeneratedKeys="true" keyProperty="id">
     insert into tb_setting
     <trim prefix="(" suffix=")" suffixOverrides="," >

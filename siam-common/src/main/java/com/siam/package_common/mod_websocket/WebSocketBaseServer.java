@@ -88,7 +88,8 @@ public class WebSocketBaseServer {
     public void AppointSending(String name, String message) throws IOException {
         if (webSocketSet.get(name) == null){
             log.error("[WebSocket] " + name + "客户端未连接，消息发送失败");
-            throw new RuntimeException();
+            return;
+            /*throw new RuntimeException();*/
         }
         webSocketSet.get(name).session.getBasicRemote().sendText(message);
     }

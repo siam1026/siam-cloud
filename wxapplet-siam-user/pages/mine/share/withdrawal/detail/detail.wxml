@@ -1,0 +1,18 @@
+
+<view class="swiper-items">
+  <view class='integral-items' wx:for="{{list}}" wx:key="index">
+    <view class="integral-item">
+      <view class="integral-item-name">
+        <text>{{item.coinTypeText}}</text>
+      </view>
+      <view class="integral-item-time">
+        <text>{{item.createTime}}</text>
+      </view>
+    </view>
+    <view class="integral-item-number {{item.operateType==1?'theme-color':'color-integral'}}">
+      {{item.operateType==1?"+":"-"}}{{item.withdrawAmount}}
+    </view>
+  </view>
+  <is-show-tip isShow="{{list.length<=0}}" top="45"
+    bottom="0" text="{{list.length<=0}}" tipText="暂无提现记录" button="{{button}}"></is-show-tip>
+</view>

@@ -3,7 +3,11 @@ package com.siam.package_order.controller.member;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
+import com.siam.package_common.exception.StoneCustomerException;
+import com.siam.package_order.entity.DeliveryAddress;
+import com.siam.package_order.model.param.CommonParam;
 import com.siam.package_order.service.CommonService;
+import com.siam.package_order.service.DeliveryAddressService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -11,9 +15,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 
 @Slf4j
 @RestController
@@ -25,8 +34,8 @@ public class CommonController {
     @Autowired
     private CommonService commonService;
 
-//    @Autowired
-//    private DeliveryAddressService deliveryAddressService;
+    @Autowired
+    private DeliveryAddressService deliveryAddressService;
 
 //    @Autowired
 //    private SettingFeignClient settingFeignClient;
@@ -39,23 +48,19 @@ public class CommonController {
             @ApiImplicitParam(name = "deliveryAddressId", value = "收货地址id", required = false, paramType = "query", dataType = "int")
     })
     @PostMapping(value = "/selectDeliveryFee")
-    public BasicResult selectDeliveryFee(int deliveryAddressId, Integer shopId){
+    public BasicResult selectDeliveryFee(@RequestBody @Validated(value = {}) CommonParam param) {
         BasicData basicResult = new BasicData();
 
-//        DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(deliveryAddressId);
-//        if(dbDeliveryAddress == null){
-//            throw new StoneCustomerException("该收货地址不存在");
-//        }
+        DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(param.getDeliveryAddressId());
+        if(dbDeliveryAddress == null){
+            throw new StoneCustomerException("该收货地址不存在");
+        }
 
         //拼接省、市、区、街道
         /*String addressA = dbDeliveryAddress.getProvince() + dbDeliveryAddress.getCity() + dbDeliveryAddress.getArea() + dbDeliveryAddress.getStreet();*/
-//        BigDecimal deliveryFee = commonService.selectDeliveryFee(dbDeliveryAddress.getLongitude(), dbDeliveryAddress.getLatitude(), shopId);
+        BigDecimal deliveryFee = commonService.selectDeliveryFee(dbDeliveryAddress.getLongitude(), dbDeliveryAddress.getLatitude(), param.getShopId());
 
-//        basicResult.setData(deliveryFee);
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("查询成功");
-        return basicResult;
+        return BasicResult.success(deliveryFee);
     }
 
     /*@ApiOperation(value = "查询是否有门店可以配送")

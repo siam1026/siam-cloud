@@ -21,7 +21,7 @@ public interface MemberTradeRecordFeignClient {
     MemberTradeRecord selectByPrimaryKey(@RequestParam("id") Integer id);
 
     @RequestMapping(value = "/insertSelective")
-    void insertSelective(@RequestBody MemberTradeRecord memberTradeRecord);
+    int insertSelective(@RequestBody MemberTradeRecord memberTradeRecord);
 
     @RequestMapping(value = "/selectByOutTradeNo")
     MemberTradeRecord selectByOutTradeNo(@RequestParam("outTradeNo") String outTradeNo);

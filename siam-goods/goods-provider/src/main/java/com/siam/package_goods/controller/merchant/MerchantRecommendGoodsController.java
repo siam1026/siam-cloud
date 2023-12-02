@@ -34,9 +34,6 @@ public class MerchantRecommendGoodsController {
 
 //    @Autowired
 //    private MerchantService merchantService;
-//
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
 
     @Autowired
     private MerchantSessionManager merchantSessionManager;

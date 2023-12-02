@@ -14,8 +14,6 @@ public interface MemberInviteRelationMapper extends BaseMapper<MemberInviteRelat
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MemberInviteRelation record);
-
     int insertSelective(MemberInviteRelation record);
 
     List<MemberInviteRelation> selectByExample(MemberInviteRelationExample example);

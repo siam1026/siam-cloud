@@ -27,11 +27,9 @@ import java.util.Date;
 @Transactional(rollbackFor = Exception.class)
 @Api(tags = "收货地址模块相关接口", description = "DeliveryAddressController")
 public class DeliveryAddressController {
+
     @Autowired
     private DeliveryAddressService deliveryAddressService;
-
-//    @Autowired
-//    private MemberTokenService memberTokenService;
 
     @Autowired
     private MemberSessionManager memberSessionManager;
@@ -54,7 +52,7 @@ public class DeliveryAddressController {
         BasicData basicResult = new BasicData();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
-//        deliveryAddress.setMemberId(loginMember.getId());
+        deliveryAddress.setMemberId(loginMember.getId());
         Page page = deliveryAddressService.getListByPage(deliveryAddress.getPageNo(), deliveryAddress.getPageSize(), deliveryAddress);
 
         // 对手机号码做加密处理 (从这种list中修改数据时，我体会到了按址传递和按值传递的意义所在)
@@ -91,7 +89,7 @@ public class DeliveryAddressController {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
         // 添加DeliveryAddress数据
-//        deliveryAddress.setMemberId(loginMember.getId());
+        deliveryAddress.setMemberId(loginMember.getId());
         deliveryAddress.setCreateTime(new Date());
         deliveryAddress.setUpdateTime(new Date());
         deliveryAddressService.insertSelective(deliveryAddress);
@@ -134,12 +132,12 @@ public class DeliveryAddressController {
             return basicResult;
         }
 
-//        if(!dbDeliveryAddress.getMemberId().equals(loginMember.getId())){
-//            basicResult.setSuccess(false);
-//            basicResult.setCode(BasicResultCode.ERR);
-//            basicResult.setMessage("该收货地址不是你的，不允许修改");
-//            return basicResult;
-//        }
+        if(!dbDeliveryAddress.getMemberId().equals(loginMember.getId())){
+            basicResult.setSuccess(false);
+            basicResult.setCode(BasicResultCode.ERR);
+            basicResult.setMessage("该收货地址不是你的，不允许修改");
+            return basicResult;
+        }
 
         // 更新DeliveryAddress数据
         deliveryAddress.setUpdateTime(new Date());
@@ -174,12 +172,12 @@ public class DeliveryAddressController {
             return basicResult;
         }
 
-//        if(!dbDeliveryAddress.getMemberId().equals(loginMember.getId())){
-//            basicResult.setSuccess(false);
-//            basicResult.setCode(BasicResultCode.ERR);
-//            basicResult.setMessage("该收货地址不是你的，不允许删除");
-//            return basicResult;
-//        }
+        if(!dbDeliveryAddress.getMemberId().equals(loginMember.getId())){
+            basicResult.setSuccess(false);
+            basicResult.setCode(BasicResultCode.ERR);
+            basicResult.setMessage("该收货地址不是你的，不允许删除");
+            return basicResult;
+        }
 
         //删除DeliveryAddress数据
         deliveryAddressService.deleteByPrimaryKey(param.getId());
@@ -208,12 +206,12 @@ public class DeliveryAddressController {
             return basicResult;
         }
 
-//        if(!dbDeliveryAddress.getMemberId().equals(loginMember.getId())){
-//            basicResult.setSuccess(false);
-//            basicResult.setCode(BasicResultCode.ERR);
-//            basicResult.setMessage("该收货地址不是你的，不允许修改");
-//            return basicResult;
-//        }
+        if(!dbDeliveryAddress.getMemberId().equals(loginMember.getId())){
+            basicResult.setSuccess(false);
+            basicResult.setCode(BasicResultCode.ERR);
+            basicResult.setMessage("该收货地址不是你的，不允许修改");
+            return basicResult;
+        }
 
         // 更新DeliveryAddress数据
         DeliveryAddress updateDeliveryAddress = new DeliveryAddress();

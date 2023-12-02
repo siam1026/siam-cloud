@@ -1,6 +1,6 @@
 #端口配置
 server:
-  port: 9602
+  port: 9200
 
 spring:
   #mysql
@@ -64,6 +64,15 @@ spring:
           timeout: 25000
           socketFactory.class: javax.net.ssl.SSLSocketFactory
           socketFactory.port: 465
+
+#阿里云配置
+aliyun:
+  #OSS存储
+  oss:
+    accessKeyId: LTAIMjh8ajqzM0XN
+    secret: d8kX5UnSgicDmx8RHBBsKuoztxMbOc
+    endpoint: http://oss-cn-hangzhou.aliyuncs.com
+    bucketName: siam-hangzhou
 
 wxlogin:
   appId: siam1026@163.com

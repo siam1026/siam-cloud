@@ -1,19 +1,18 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.ScheduledTaskLog;
 import com.siam.package_goods.model.example.ScheduledTaskLogExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface ScheduledTaskLogMapper {
+public interface ScheduledTaskLogMapper extends BaseMapper<ScheduledTaskLog> {
     int countByExample(ScheduledTaskLogExample example);
 
     int deleteByExample(ScheduledTaskLogExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(ScheduledTaskLog record);
 
     int insertSelective(ScheduledTaskLog record);
 

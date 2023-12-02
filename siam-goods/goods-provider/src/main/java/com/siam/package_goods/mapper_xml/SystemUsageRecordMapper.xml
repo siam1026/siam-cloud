@@ -110,14 +110,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.SystemUsageRecord" >
-    insert into tb_system_usage_record (id, member_id, shop_id,
-      type, ip, imei, create_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER},
-      #{type,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{imei,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.SystemUsageRecord" >
     insert into tb_system_usage_record
     <trim prefix="(" suffix=")" suffixOverrides="," >

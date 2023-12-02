@@ -351,12 +351,16 @@
 			},
 			addPointsUnit(row, column) { // 添加单位
 				return (row[column.property] || 0) + '个'
-			},			
+			},
+			handleSizeChange(val) {
+				this.searchMsg.pageSize = val;
+				this.getList();
+			},				
 			handleCurrentChange(val) {
 				this.searchMsg.pageNo = val;
 				this.getList();
 			},
-						getList(pageNoParam) { // 获取列表
+			getList(pageNoParam) { // 获取列表
 				if(pageNoParam){
 				this.searchMsg.pageNo = pageNoParam;
 				} // 获取商品基础数据设置列表

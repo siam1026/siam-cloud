@@ -1,5 +1,7 @@
 package com.siam.package_order.controller.member;
 
+import com.siam.package_common.constant.Quantity;
+import com.siam.package_order.model.example.GiveLikeExample;
 import com.siam.package_order.service.GiveLikeService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
@@ -23,9 +25,6 @@ import java.util.Date;
 @Transactional(rollbackFor = Exception.class)
 public class GiveLikeController {
 
-//    @Autowired
-//    private MemberTokenService memberTokenService;
-
     @Autowired
     private GiveLikeService giveLikeService;
 
@@ -43,7 +42,7 @@ public class GiveLikeController {
 
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
         //设置点赞用户id
-//        giveLike.setMemberId(loginMember.getId());
+        giveLike.setMemberId(loginMember.getId());
         giveLike.setCreateTime(new Date());
         //保存用户
         giveLikeService.insertSelective(giveLike);
@@ -65,15 +64,15 @@ public class GiveLikeController {
 
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
-//        if(giveLike.getType() == Quantity.INT_1){
-//            GiveLikeExample giveLikeExample = new GiveLikeExample();
-//            giveLikeExample.createCriteria().andMemberIdEqualTo(loginMember.getId()).andTypeEqualTo(giveLike.getType()).andAppraiseIdEqualTo(giveLike.getAppraiseId());
-//            giveLikeService.deleteByExample(giveLikeExample);
-//        }else if(giveLike.getType() == Quantity.INT_2){
-//            GiveLikeExample giveLikeExample = new GiveLikeExample();
-//            giveLikeExample.createCriteria().andMemberIdEqualTo(loginMember.getId()).andTypeEqualTo(giveLike.getType()).andReplyIdEqualTo(giveLike.getReplyId());
-//            giveLikeService.deleteByExample(giveLikeExample);
-//        }
+        if(giveLike.getType() == Quantity.INT_1){
+            GiveLikeExample giveLikeExample = new GiveLikeExample();
+            giveLikeExample.createCriteria().andMemberIdEqualTo(loginMember.getId()).andTypeEqualTo(giveLike.getType()).andAppraiseIdEqualTo(giveLike.getAppraiseId());
+            giveLikeService.deleteByExample(giveLikeExample);
+        }else if(giveLike.getType() == Quantity.INT_2){
+            GiveLikeExample giveLikeExample = new GiveLikeExample();
+            giveLikeExample.createCriteria().andMemberIdEqualTo(loginMember.getId()).andTypeEqualTo(giveLike.getType()).andReplyIdEqualTo(giveLike.getReplyId());
+            giveLikeService.deleteByExample(giveLikeExample);
+        }
 
         return BasicResult.success();
     }

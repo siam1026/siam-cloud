@@ -38,9 +38,6 @@ public class MerchantWithdrawRecordServiceImpl extends ServiceImpl<MerchantWithd
     private MerchantService merchantService;
 
     @Autowired
-    private MerchantTokenService merchantTokenService;
-
-    @Autowired
     private SettingFeignClient settingFeignClient;
 
     @Autowired
@@ -60,9 +57,6 @@ public class MerchantWithdrawRecordServiceImpl extends ServiceImpl<MerchantWithd
 
 //    @Autowired
 //    private MerchantService merchantService;
-//
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
 
 //    @Autowired
 //    private SettingFeignClient settingFeignClient;

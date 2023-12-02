@@ -108,14 +108,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.GoodsSpecification" >
-    insert into tb_goods_specification (id, goods_id, name,
-      sort_number, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-      #{sortNumber,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.GoodsSpecification" useGeneratedKeys="true" keyProperty="id">
     insert into tb_goods_specification
     <trim prefix="(" suffix=")" suffixOverrides="," >

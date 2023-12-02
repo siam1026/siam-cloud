@@ -26,10 +26,6 @@ import java.util.Map;
 @Transactional(rollbackFor = Exception.class)
 public class ReplyController {
 
-
-//    @Autowired
-//    private MemberTokenService memberTokenService;
-
     @Autowired
     private ReplyService replyService;
 
@@ -47,7 +43,7 @@ public class ReplyController {
 
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
         //设置回复用户id
-//        reply.setMemberId(loginMember.getId());
+        reply.setMemberId(loginMember.getId());
         //保存用户
         replyService.insertSelective(reply);
 
@@ -89,8 +85,8 @@ public class ReplyController {
 
         String token = request.getHeader("token");
         if(StringUtils.isNotBlank(token)){
-//            MemberToken memberToken = memberTokenService.getLoginMemberInfo(token);
-//            reply.setMemberId(loginMember.getId());
+            Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
+            reply.setMemberId(loginMember.getId());
         }
 
         Page<Map<String, Object>> page = replyService.getMapListByPage(reply.getPageNo(), reply.getPageSize(), reply);

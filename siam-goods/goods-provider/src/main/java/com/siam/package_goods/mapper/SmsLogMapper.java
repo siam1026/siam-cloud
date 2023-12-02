@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.SmsLog;
 import com.siam.package_goods.model.example.SmsLogExample;
 import org.apache.ibatis.annotations.Param;
@@ -8,14 +9,12 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface SmsLogMapper {
+public interface SmsLogMapper extends BaseMapper<SmsLog> {
     int countByExample(SmsLogExample example);
 
     int deleteByExample(SmsLogExample example);
 
     int deleteByPrimaryKey(Long id);
-
-    int insert(SmsLog record);
 
     int insertSelective(SmsLog record);
 

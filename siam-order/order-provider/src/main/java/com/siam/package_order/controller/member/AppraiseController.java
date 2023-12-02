@@ -33,9 +33,6 @@ import java.util.Map;
 @Transactional(rollbackFor = Exception.class)
 public class AppraiseController {
 
-//    @Autowired
-//    private MemberTokenService memberTokenService;
-
     @Autowired
     private AppraiseService appraiseService;
 
@@ -61,7 +58,7 @@ public class AppraiseController {
 
         Order dbOrder = orderService.selectByPrimaryKey(appraise.getOrderId());
         if(dbOrder == null) throw new StoneCustomerException("该订单不存在");
-//        if(!dbOrder.getMemberId().equals(loginMember.getId())) throw new StoneCustomerException("该订单不是你的，不允许评价");
+        if(!dbOrder.getMemberId().equals(loginMember.getId())) throw new StoneCustomerException("该订单不是你的，不允许评价");
 
         //如果订单已评价 或 订单已完成超过14天 或 订单非已完成状态，则不允许评价
         Appraise appraiseParam = new Appraise();
@@ -82,7 +79,7 @@ public class AppraiseController {
         }
 
         //设置评价用户id
-//        appraise.setMemberId(loginMember.getId());
+        appraise.setMemberId(loginMember.getId());
         //保存用户
         appraiseService.insertSelective(appraise);
 
@@ -124,8 +121,8 @@ public class AppraiseController {
 
         String token = request.getHeader("token");
         if(StringUtils.isNotBlank(token)){
-//            MemberToken memberToken = memberTokenService.getLoginMemberInfo(token);
-//            appraise.setMemberId(loginMember.getId());
+            Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
+            appraise.setMemberId(loginMember.getId());
         }
 
         Page<Map<String, Object>> page = appraiseService.getMapListByPage(appraise.getPageNo(), appraise.getPageSize(), appraise);

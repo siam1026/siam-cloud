@@ -51,6 +51,9 @@ const couponsList = () => import( './pages/promotionManage/couponsList.vue')
 const shopInfo = () => import( './pages/shopManage/shopInfo.vue')
 const shopInfoImportant = () => import( './pages/shopManage/shopInfoImportant.vue')
 const shopChangeRecord = () => import( './pages/shopManage/shopChangeRecord.vue')
+const courierList = () => import( './pages/shopManage/internal/courierList.vue')
+const ticketPrinterList = () => import( './pages/shopManage/internal/ticketPrinterList.vue')
+const labelPrinterList = () => import( './pages/shopManage/internal/labelPrinterList.vue')
 
 //轮播图管理
 const advertisementList = () => import( './pages/shopDecoration/advertisementList.vue')
@@ -174,6 +177,17 @@ let routes = [
           { path: '/shopInfoImportant', component: shopInfoImportant, name: '门店重要信息' },
           { path: '/shopChangeRecord', component: shopChangeRecord, name: '门店信息变更记录' },          
           { path: '/advertisementList', component: advertisementList, name: '门店装修' },
+          { path: '/courierList', component: courierList, name: '骑手信息' },
+      ]
+    },
+    {
+      path: '/',
+      component: Home,
+      name: '打印机管理',
+      iconCls: 'el-icon-user',
+      children: [
+          { path: '/ticketPrinterList', component: ticketPrinterList, name: '小票打印机列表' },
+          { path: '/labelPrinterList', component: labelPrinterList, name: '标签打印机列表' },
       ]
     },
     {

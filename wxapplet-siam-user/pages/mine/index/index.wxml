@@ -1,0 +1,144 @@
+<view class="container">
+
+	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mypage_top.jpg?v={{appVersion}}" class="index-bg-class" mode="widthFix"></image>
+	<view class="userinfo" style="margin-top:{{statusBarHeight+30}}rpx;">
+		<block wx:if="{{!data}}">
+			<button bindtap="getUserProfile" plain="true" class="userinfo-button"
+				style="margin: 0;width: 100%;padding: inherit;">
+				<view class="notlogin">
+					<image class="userinfo-avatar" src="../../../assets/images/user-head.png" mode="cover"></image>
+					<!-- <text class="userinfo-nickname">{{userInfo.nickName}}</text> -->
+					请登录/注册
+				</view> 
+			</button>
+		</block>
+		<block wx:else>
+			<navigator url="../userinfo/userinfo" class="navigator-userinfo">
+				<view class="userinfo-view">
+					<image class="userinfo-avatar" src="{{data.headImg?data.headImg:'../../../assets/images/user-head.png'}}"
+						mode="cover"></image>
+					<view class="userinfo-nickname">
+						<view class="nickname-class">{{data.username}}</view>
+						<view class="vip-class">
+							<!-- <text class="{{data.type!=1?'is-vip-class':'not-vip-class'}}">{{data.typeVipText}}</text> -->
+							<!-- <text decode="true">&nbsp;&nbsp;</text> -->
+							<view class="vip-image-view">
+								<image wx:for="{{isVipImages}}" wx:key="index" src="{{item}}?v={{appVersion}}" mode="widthFix" class="is-vip-image"></image>
+							</view>
+						</view>
+						<view>
+							<text decode="true">NO:&nbsp;&nbsp;{{data.vipNo}}</text>
+						</view>
+					</view>
+				</view>
+				<text class="iconfont iconhtbArrowright02"></text>
+			</navigator>
+		</block>
+		<view wx:if="{{data}}">
+			<view class="mine-blocking-view">
+				<view class="mine-blocking">
+					<navigator class="mine-navigator" url="../share/reward/reward">
+						<view class="number-tip theme-color">{{data.inviteRewardAmount}}</view>
+						<view class="text-tip">佣金</view>
+					</navigator>
+					<text class="line-tip">|</text>
+					<navigator class="mine-navigator" url="../integral/integral">
+						<view class="number-tip theme-color">{{data.points}}</view>
+						<view class="text-tip">我的积分</view>
+					</navigator>
+					<text class="line-tip">|</text>
+					<navigator class="mine-navigator" url="../coupons/coupons">
+						<view class="number-tip theme-color">{{data.couponsNumber?data.couponsNumber:0}}</view>
+						<view class="text-tip">优惠券</view>
+					</navigator>
+					<text class="line-tip">|</text>
+					<navigator class="mine-navigator" url="../member/index/index">
+						<view class="number-tip theme-color">{{data.balance}}</view>
+						<view class="text-tip">会员中心</view>
+					</navigator>
+				</view>
+			</view>
+			<view class="my-order-box">
+				<view class="my-order-title my-order-all" bindtap="bindOrderInfo">
+					<view class="order-title">我的订单</view>
+					<view class="order-all">
+						<text>查看全部</text>
+						<text class="iconfont iconhtbArrowright02"></text>
+					</view>
+				</view>
+				<view class="swiper-content">
+					<view class="swiper-tab self-adaption">
+						<view class="swiper-tab-item" wx:for="{{tabList}}" wx:key="index" data-current="{{index}}"
+							bindtap="clickTab" hover-class='hover-click-class'>
+							<view class="swiper_table_item_view {{currentTab==item.modeId?'active_':''}}" data-current="{{index}}"
+								bindtap="clickTab">
+								{{item.modeName}}
+							</view>
+						</view>
+					</view>
+				</view>
+				<swiper current="{{currentTab}}" class="swiper-box" duration="300" bindchange="bindSlideChange"
+					style="height:78px;">
+					<swiper-item class="swiper-items">
+						<view class="mine-blocking">
+							<navigator class="order-navigator" wx:for="{{shopOrderTabList}}" wx:key="index"
+							url="../../order/index/index?currentTab={{currentTab}}&modeType={{item.modeType}}&currentOrderTab={{item.modeId}}">
+								<text class="iconfont {{item.icon}}"></text>
+								<view class="text-tip">{{item.modeName}}</view>
+							</navigator>
+						</view>
+					</swiper-item>
+					<swiper-item class="swiper-items">
+						<view class="mine-blocking">
+							<navigator class="order-navigator" wx:for="{{pointsOrderTabList}}" wx:key="index"
+							url="../../order/index/index?currentTab={{currentTab}}&modeType={{item.modeType}}&currentOrderTab={{item.modeId}}">
+								<text class="iconfont {{item.icon}}"></text>
+								<view class="text-tip">{{item.modeName}}</view>
+							</navigator>
+						</view>
+					</swiper-item>
+				</swiper>
+				<navigator class="navigator-class" url="../collect/index/index">
+					<view class="navigator-view">
+						<view>
+							我的收藏
+						</view>
+						<text class="iconfont iconhtbArrowright02"></text>
+					</view>
+				</navigator>
+			</view>
+			<view class="navigator-box">
+				<view class="navigator-radius">
+					<navigator class="navigator-class" url="../../address/index/index">
+						<view class="navigator-view">
+							<view>
+								收货地址
+							</view>
+							<text class="iconfont iconhtbArrowright02"></text>
+						</view>
+					</navigator>
+					<view class="view-line"></view>
+					<navigator class="navigator-class" url="../security/index/index">
+						<view class="navigator-view">
+							<view>
+								账号安全
+							</view>
+							<text class="iconfont iconhtbArrowright02"></text>
+						</view>
+					</navigator>
+					<!-- 分享 -->
+					<view class="view-line"></view>
+					<navigator class="navigator-class" url="../../mine/share/index/index?inviterId={{data.id}}">
+						<view class="invite-wrapper">
+							<image
+								src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/share-invite/share_mine.png?v={{timestamp}}"
+								mode="widthFix" class="invite-image"></image>
+						</view>
+					</navigator>
+				</view>
+
+			</view>
+		</view>
+	</view>
+
+</view>

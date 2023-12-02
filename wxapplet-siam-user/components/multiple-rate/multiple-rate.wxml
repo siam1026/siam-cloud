@@ -1,0 +1,6 @@
+<view class="multiple-rate">
+  <view>
+    <view wx:for="{{starArr}}" wx:key="index" bindtap="handleTap" data-index="{{index}}" class="{{item}}"></view>
+    <slot></slot>
+  </view>
+</view>

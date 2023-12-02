@@ -110,20 +110,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_order.entity.DeliveryAddress" >
-    insert into tb_delivery_address (id, member_id, realname,
-      phone, province, city,
-      area, street, is_default,
-      sex, house_number, longitude,
-      latitude, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{realname,jdbcType=VARCHAR},
-      #{phone,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
-      #{area,jdbcType=VARCHAR}, #{street,jdbcType=VARCHAR}, #{isDefault,jdbcType=INTEGER},
-      #{sex,jdbcType=INTEGER}, #{houseNumber,jdbcType=VARCHAR}, #{longitude,jdbcType=DECIMAL},
-      #{latitude,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_order.entity.DeliveryAddress" useGeneratedKeys="true" keyProperty="id">
     insert into tb_delivery_address
     <trim prefix="(" suffix=")" suffixOverrides="," >

@@ -1,0 +1,347 @@
+page {
+  background: #f5f5f5;
+  padding-bottom: 150rpx;
+}
+
+.current-tips{
+  padding: 20rpx;
+  font-size: 30rpx;
+  border-radius: 10rpx;
+  font-weight: bold;
+  color:  #d09650;
+}
+
+.top-detail {
+  margin: 20rpx;
+  background-color: white;
+  border-radius: 10rpx;
+}
+
+.top-shop-name {
+  font-size: 30rpx;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-mainImage {
+  width: 20%;
+  height: 140rpx;
+  border-radius: 10rpx;
+}
+
+.commdiy-lists {
+  padding: 20rpx;
+}
+
+.order-detail-list {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.order-detail {
+  width: 68%;
+  margin-left: 20rpx;
+  height: 140rpx;
+}
+
+.order-detail view{
+  height: 70rpx;
+  line-height: 70rpx;
+}
+
+.item-stepper {
+  display: flex;
+  justify-content: space-between;
+  /* margin-top: 40rpx; */
+}
+
+.order-goodsName-number{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-goodsName{
+  font-size: 28rpx;
+}
+
+.order-number{
+  font-size: 28rpx;
+}
+
+.order-specListAnalysis{
+  font-size: 24rpx;
+  color: #aeaeae;
+}
+
+checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 15rpx;
+}
+
+
+/*主容器*/
+.stepper {
+  margin-left: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+/*加号和减号*/
+
+.stepper text {
+  width: 45rpx;
+  height: 45rpx;
+  line-height: 45rpx;
+  font-size: 28rpx;
+}
+
+/*数值*/
+.stepper input {
+  width: 24px;
+}
+
+.order-delivery-fee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx 20rpx 20rpx;
+  font-size: 30rpx;
+}
+
+.right-gray {
+  width: 20rpx;
+  height: auto;
+  margin-left: 20rpx;
+}
+
+.refund-reason {
+  background-color: white;
+  margin: 0 20rpx;
+  padding-bottom: 20rpx;
+  border-radius: 10rpx;
+}
+
+.refund-reason-top {
+  padding: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 30rpx;
+}
+
+.refund-reason-top-right {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.not-select{
+  color: #aeaeae;
+}
+
+.textarea-uploader {
+  padding: 0 20rpx;
+}
+
+textarea {
+  width: 94%;
+  background: #f5f5f5;
+  padding: 20rpx;
+  height: 100px;
+  font-size: 30rpx;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  z-index: 0;
+}
+
+.textarea-placeholder {
+  font-size: 30rpx;
+}
+
+.uploader-images-view {
+  display: flex;
+  align-items: center;
+  margin-top: 0rpx;
+}
+
+.uploaderImages {
+  display: flex;
+  align-items: center;
+}
+
+.uploaderItems{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploader-imgs-item {
+  width: 100rpx;
+  height: 100rpx;
+  margin-right: 20rpx;
+  border-radius: 10rpx;
+}
+
+.uploader-close-img {
+  width: 30rpx;
+  height: 30rpx;
+  position: absolute;
+  margin-left: 6%;
+  margin-top: -10%;
+}
+
+.uploader-class-img {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.uploader-class {
+  background: white;
+  padding: 20rpx;
+  margin: 0 20rpx;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.choiceReason-radio-group {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.choiceReason-lable {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  font-size: 30rpx;
+}
+
+.choiceReason-border {
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.good-choice-btn {
+  width: 100%;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 15rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 自定义弹出框的最大高度为100%，并设置他的左右上交的border-ric为0 */
+.weui-show .weui-half-screen-dialog.extClassShoppingCart {
+  max-height: 100vh;
+  padding: 0 20rpx;
+  position: fixed;
+  bottom: 0;
+  /* padding-bottom: 12%; */
+}
+
+.weui-half-screen-dialog.extClassShoppingCart .weui-half-screen-dialog__ft {
+  padding: 20rpx 0;
+  position: sticky;
+  bottom: 0;
+}
+
+.weui-show .weui-half-screen-dialog.extClassShoppingCart .weui-half-screen-dialog__hd {
+  padding: 0 20rpx;
+}
+
+/* 选择商品规格弹窗 */
+.weui-show .weui-half-screen-dialog.extClassSpecifications {
+  z-index: 9999999;
+}
+
+/* 自定义弹窗样式 */
+.weui-show .weui-half-screen-dialog.extClassSpecifications {
+  padding: 0 20rpx;
+}
+
+.weui-half-screen-dialog.extClassSpecifications .weui-half-screen-dialog__ft {
+  padding: 20rpx 0 0 0;
+  position: sticky;
+  bottom: 0;
+}
+
+/* 自定义弹出框的最大高度为100%，并设置他的左右上交的border-ric为0 */
+.weui-show .weui-half-screen-dialog.extClassSpecifications {
+  max-height: 90vh;
+  /* border-radius: 0%; */
+}
+
+.weui-show .weui-half-screen-dialog.extClassSpecifications .weui-half-screen-dialog__hd {
+  padding: 0 20rpx;
+}
+
+.apply-refund{
+  position: fixed;
+  bottom: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.apply-refund-bottom{
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  line-height: 88rpx;
+  width: 100%;
+  margin-bottom: 20rpx;
+  /* padding: 20rpx 0; */
+  z-index: 999;
+}
+
+.refund-price{
+  background-color: #000000;
+  color: white;
+  width: 60%;
+  text-align: center;
+  border-radius: 50rpx 0 0 50rpx;
+}
+
+.refund-submit{
+  width: 30%;
+  text-align: center;
+  color: white;
+  border-radius: 0 50rpx 50rpx 0;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
+
+.iconshangchuantupian1{
+  font-size: 100rpx;
+  margin-left: 20rpx;
+}
+
+.refund-type{
+  font-size: 22rpx;
+}
+
+.wechat-code-view{
+  height: 100%;
+  text-align: center;
+}
+
+.customerServiceWechatQrcode{
+  width: 50vh;
+  height: 80%;
+}
+
+.customerServiceWechat{
+  font-size: 30rpx;
+}

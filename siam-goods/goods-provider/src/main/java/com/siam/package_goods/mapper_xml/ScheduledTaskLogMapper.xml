@@ -101,14 +101,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.ScheduledTaskLog" >
-    insert into tb_scheduled_task_log (id, scheduled_task_code, state, 
-      error, host_name, host_ip_address, 
-      create_time)
-    values (#{id,jdbcType=INTEGER}, #{scheduledTaskCode,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, 
-      #{error,jdbcType=VARCHAR}, #{hostName,jdbcType=VARCHAR}, #{hostIpAddress,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.ScheduledTaskLog" >
     insert into tb_scheduled_task_log
     <trim prefix="(" suffix=")" suffixOverrides="," >

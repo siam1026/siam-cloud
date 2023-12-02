@@ -18,8 +18,6 @@ public interface MerchantRecommendGoodsMapper extends BaseMapper<MerchantRecomme
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MerchantRecommendGoods record);
-
     int insertSelective(MerchantRecommendGoods record);
 
     List<MerchantRecommendGoods> selectByExample(MerchantRecommendGoodsExample example);

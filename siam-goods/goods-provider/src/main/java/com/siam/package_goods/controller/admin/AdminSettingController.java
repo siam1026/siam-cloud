@@ -1,5 +1,6 @@
 package com.siam.package_goods.controller.admin;
 
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
@@ -50,6 +51,7 @@ public class AdminSettingController {
         return basicResult;
     }
 
+    @AdminPermission
     @ApiOperation(value = "修改基础数据设置")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Setting setting){

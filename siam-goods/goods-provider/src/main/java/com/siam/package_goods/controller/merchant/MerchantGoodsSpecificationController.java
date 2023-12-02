@@ -1,9 +1,10 @@
 package com.siam.package_goods.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.MerchantPermission;
+import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
-import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_goods.entity.GoodsSpecification;
 import com.siam.package_goods.model.example.GoodsSpecificationExample;
 import com.siam.package_goods.service.GoodsSpecificationService;
@@ -47,7 +48,7 @@ public class MerchantGoodsSpecificationController {
         return BasicResult.success(page);
     }
 
-
+    @MerchantPermission
     @ApiOperation(value = "修改商品规格")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "商品规格表主键id", required = true, paramType = "query", dataType = "int"),

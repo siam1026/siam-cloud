@@ -16,8 +16,6 @@ public interface AdminTokenMapper extends BaseMapper<AdminToken> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(AdminToken record);
-
     int insertSelective(AdminToken record);
 
     List<AdminToken> selectByExample(AdminTokenExample example);

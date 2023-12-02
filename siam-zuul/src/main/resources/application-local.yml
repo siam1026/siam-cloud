@@ -1,6 +1,6 @@
 #端口配置
 server:
-  port: 9601
+  port: 8080
   #修改tomcat对get请求的参数限制大小(默认为8K)
   max-http-header-size: 204800
 

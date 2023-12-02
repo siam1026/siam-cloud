@@ -1,6 +1,7 @@
 package com.siam.package_order.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_order.service.AppraiseService;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_order.entity.Appraise;
@@ -26,6 +27,7 @@ public class AdminAppraiseController {
      * 撤销评价
      * @return
      */
+    @AdminPermission
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Appraise param) {
         appraiseService.deleteByPrimaryKey(param.getId());

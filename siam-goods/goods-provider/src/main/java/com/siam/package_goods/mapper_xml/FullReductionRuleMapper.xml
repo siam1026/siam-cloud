@@ -112,14 +112,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.FullReductionRule" >
-    insert into tb_full_reduction_rule (id, shop_id, name,
-      status, limited_price, reduced_price,
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-      #{status,jdbcType=INTEGER}, #{limitedPrice,jdbcType=DECIMAL}, #{reducedPrice,jdbcType=DECIMAL},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.FullReductionRule" useGeneratedKeys="true" keyProperty="id" >
     insert into tb_full_reduction_rule
     <trim prefix="(" suffix=")" suffixOverrides="," >

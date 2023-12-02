@@ -1,6 +1,7 @@
 package com.siam.package_goods.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +16,12 @@ import java.util.List;
 @ApiModel(value = "购物车表")
 public class ShoppingCart {
 
-    List<String> ids;
+    //加减操作
+    @TableField(select = false)
+    private Integer type;
+
+    @TableField(select = false)
+    private List<String> ids;
 
     @TableId(type = IdType.AUTO)
     private Integer id;

@@ -1,0 +1,146 @@
+page{
+  background: #f5f5f5;
+  padding-bottom: 20rpx;
+}
+
+.refund-process-top{
+  background-color: white;
+  margin: 20rpx;
+  border-radius: 15rpx;
+}
+
+.refund-process-title{
+  padding: 20rpx;
+  font-size: 30rpx;
+}
+
+.refund-process-details{
+  padding: 20rpx;
+}
+
+.refund-process-item{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.refund-process-item-margin{
+  margin-bottom: 20rpx;
+}
+
+.refund-process-item .seria-number{
+  border-radius: 50%;
+  width: 40rpx;
+  height: 40rpx;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.out-status{
+  background: #f5f5f5;
+}
+
+.refund-process-item .detail{
+  width: 90%;
+}
+
+.detail-top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.detail-status{
+  font-size: 30rpx;
+}
+
+.detail-out{
+  color: #888888;
+}
+
+.detail-time{
+  color: #888888;
+  font-size: 26rpx;
+}
+
+.detail-tip{
+  font-size: 28rpx;
+  color: #a4a4a4;
+}
+
+.order-detail-lists{
+  padding: 0 20rpx;
+}
+
+.order-detail-list{
+  border-bottom: 1rpx solid #f5f5f5;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.order-mainImage {
+  width: 20%;
+  height: 140rpx;
+  border-radius: 10rpx;
+}
+
+.order-detail{
+  width: 78%; 
+}
+
+.order-goods-name{
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-specListAnalysis{
+  margin-top: 30rpx;
+  font-size: 28rpx;
+  color: #767676;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-price{
+  font-size: 30rpx;
+  font-weight: bold;
+}
+
+.refund-process-column{
+  padding: 20rpx;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.column-one{
+  padding-top: 0;
+}
+
+.refund-process-column .title{
+  color: black;
+  font-size: 30rpx;
+}
+
+.refund-process-column .price{
+  font-weight: bold;
+}
+
+.refund-process-column-right{
+  display: flex;
+  align-items: center;
+}
+
+.refund-process-column-tip{
+  color: #767676;
+  font-size: 30rpx;
+}

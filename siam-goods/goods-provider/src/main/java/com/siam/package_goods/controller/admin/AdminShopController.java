@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
@@ -8,10 +9,14 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
+import com.siam.package_feign.mod_feign.user.MemberFeignClient;
+import com.siam.package_feign.mod_feign.user.MerchantFeignClient;
 import com.siam.package_goods.entity.Shop;
 import com.siam.package_goods.model.example.ShopExample;
 import com.siam.package_goods.model.param.ShopParam;
 import com.siam.package_goods.service.ShopService;
+import com.siam.package_user.entity.Member;
+import com.siam.package_user.entity.Merchant;
 import com.siam.package_user.model.example.MemberExample;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,11 +39,11 @@ public class AdminShopController {
     @Autowired
     private ShopService shopService;
 
-//    @Autowired
-//    private MerchantService merchantService;
+    @Autowired
+    private MerchantFeignClient merchantFeignClient;
 
-//    @Autowired
-//    private MemberService memberService;
+    @Autowired
+    private MemberFeignClient memberFeignClient;
 
     @ApiOperation(value = "门店信息列表")
     @PostMapping(value = "/list")
@@ -60,7 +66,7 @@ public class AdminShopController {
         return basicResult;
     }
 
-
+    @AdminPermission
     @ApiOperation(value = "修改门店信息")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Shop shop, String memberMobile) throws IOException {
@@ -72,22 +78,22 @@ public class AdminShopController {
         if(StringUtils.isNotBlank(memberMobile)){
             MemberExample memberExample = new MemberExample();
             memberExample.createCriteria().andMobileEqualTo(memberMobile);
-//            List<Member> memberList = memberService.selectByExample(memberExample);
-//            if(memberList==null || memberList.isEmpty()){
-//                throw new StoneCustomerException("绑定的小程序用户手机号不正确，请重新输入");
-//            }
+            List<Member> memberList = memberFeignClient.selectByExample(memberExample);
+            if(memberList==null || memberList.isEmpty()){
+                throw new StoneCustomerException("绑定的小程序用户手机号不正确，请重新输入");
+            }
 
             //修改商家绑定的小程序用户id
-//            Merchant dbMerchant = merchantService.selectByPrimaryKey(dbShop.getMerchantId());
-//            Merchant updateMerchant = new Merchant();
-//            updateMerchant.setId(dbMerchant.getId());
-////            updateMerchant.setMemberId(memberList.get(0).getId());
-//            merchantService.updateByPrimaryKeySelective(updateMerchant);
+            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            Merchant updateMerchant = new Merchant();
+            updateMerchant.setId(dbMerchant.getId());
+            updateMerchant.setMemberId(memberList.get(0).getId());
+            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
 
             //如果绑定的小程序用户的 微信公众号openid为空，则触发 openid查询操作
-//            if(StringUtils.isBlank(memberList.get(0).getWxPublicPlatformOpenId())){
-//                basicResult = memberService.querySingleWxPublicPlatformOpenId(memberList.get(0).getId());
-//            }
+            if(StringUtils.isBlank(memberList.get(0).getWxPublicPlatformOpenId())){
+                /*basicResult = memberFeignClient.querySingleWxPublicPlatformOpenId(memberList.get(0).getId());*/
+            }
         }
 
         //修改店铺起送价格
@@ -106,7 +112,7 @@ public class AdminShopController {
         return basicResult;
     }
 
-
+    @AdminPermission
     @ApiOperation(value = "删除门店信息")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Shop param){
@@ -158,7 +164,7 @@ public class AdminShopController {
 //            Merchant updateMerchant = new Merchant();
 //            updateMerchant.setAuditStatus(Quantity.INT_2);
 //            updateMerchant.setUpdateTime(new Date());
-//            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+//            merchantFeignClient.updateByExampleSelective(updateMerchant, merchantExample);
             //TODO-发消息通知用户
         }else if(shopParam.getStatus() == Quantity.INT_2){
             //审核不通过
@@ -175,7 +181,7 @@ public class AdminShopController {
 //            Merchant updateMerchant = new Merchant();
 //            updateMerchant.setAuditStatus(Quantity.INT_3);
 //            updateMerchant.setUpdateTime(new Date());
-//            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+//            merchantFeignClient.updateByExampleSelective(updateMerchant, merchantExample);
             //TODO-发消息通知用户
         }
 
@@ -214,7 +220,7 @@ public class AdminShopController {
 //            Merchant updateMerchant = new Merchant();
 //            updateMerchant.setAuditStatus(Quantity.INT_2);
 //            updateMerchant.setUpdateTime(new Date());
-//            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+//            merchantFeignClient.updateByExampleSelective(updateMerchant, merchantExample);
             //TODO-发消息通知用户
         }else if(shopParam.getStatus() == Quantity.INT_2){
             //审核不通过
@@ -231,7 +237,7 @@ public class AdminShopController {
 //            Merchant updateMerchant = new Merchant();
 //            updateMerchant.setAuditStatus(Quantity.INT_3);
 //            updateMerchant.setUpdateTime(new Date());
-//            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+//            merchantFeignClient.updateByExampleSelective(updateMerchant, merchantExample);
             //TODO-发消息通知用户
         }
 

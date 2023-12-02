@@ -1,5 +1,6 @@
 package com.siam.package_order.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_order.entity.TransactionLog;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @Description: 事务日志表
  */
 @Mapper
-public interface TransactionLogMapper {
+public interface TransactionLogMapper extends BaseMapper<TransactionLog> {
 
     /**
      * 插入事务日志

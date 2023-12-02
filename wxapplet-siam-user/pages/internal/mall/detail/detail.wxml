@@ -1,0 +1,151 @@
+<view>
+   <view class="wodejl-view" bindtap="bindShare">分享商品>></view>
+
+   <swiper indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" class="carousel-swiper"
+   interval="{{interval}}" duration="{{duration}}"
+      indicator-active-color="{{afterColor}}">
+      <block wx:for="{{carouselUrls}}" wx:key="index">
+         <swiper-item class="carousel-image">
+            <image src="{{item}}" class="carousel-image" mode='scaleToFill' bindtap="uploadImage" />
+         </swiper-item>
+      </block>
+   </swiper>
+   <view class="commdity-name-type-view">
+      <view class="display_flex_between">
+         <view class="flex_column commdity-name">
+            <text class="name out_of_range two_row">{{data.name}}</text>
+            <text decode="true" class="price">￥{{priceAfter}}<text class="score-money" decode="true">&nbsp;&nbsp;(可用积分等额兑换)</text></text>
+         </view>
+         <view class="flex_column collect-in">
+            <text class="iconfont iconshoucang1 {{isCollect?'is-collect':''}}"
+            bindtap="{{isCollect?'bindDeleteCollect':'bindInsertCollect'}}" data-goodsid="{{data.id}}"></text>
+            <text class="shoucang-text {{isCollect?'is-collect':'not-collect'}}">收藏</text>
+         </view>
+      </view>
+   </view>
+   <view class="commodity-detail-view">
+      <view class="guige-yunfei guige-view">
+         <text class="commodity-detail">{{specListString?'已选择':''}}规格</text>
+         <view class="specifications-line flex_end" bindtap="openSpecifications" data-type="car">
+            <view class="{{specListString?'guige-specListString theme-color':'goods-info-specListString'}}">{{specListString?specListString:'未选择商品规格'}}</view>
+            <text class="iconfont iconhtbArrowright02"></text>
+         </view>
+      </view>
+   </view>
+   <view class="commodity-detail-view">
+      <view class="guige-yunfei">
+         <text class="commodity-detail">月销</text>
+         <text class="goods-info-specListString guige-specListString" decode="true">{{data.latelyMonthlySales}}&nbsp;件</text>
+      </view>
+   </view>
+   <view class="commodity-detail-view">
+      <view class="guige-yunfei">
+         <text class="commodity-detail">运费</text>
+         <text class="goods-info-specListString guige-specListString">免运费</text>
+      </view>
+   </view>
+   
+   <view class="commodity-detail-view">
+      <view class="detail-title">
+         <view>商品详情</view>
+      </view>
+      <view class="commodity-detail">
+         <text>{{data.detail?data.detail:"暂无详情"}}</text>
+      </view>
+   </view>
+   <!-- <navigator class="navigator-class" url="../../mine/share/index/index?inviterId={{userInfo.id}}">
+   <view class="invite-wrapper">
+      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/share-invite/share_mine.png"
+         mode="aspectFill" class="invite-image"></image>
+   </view>
+</navigator> -->
+   <view class="commdity-image-list">
+      <image mode="widthFix" wx:for="{{detailImages}}" wx:key="index" src="{{item}}" class="detail-images"></image>
+   </view>
+   <text style="padding-bottom:100rpx;"></text>
+   <view class="shopping-cart-detail">
+      <mp-halfScreenDialog show="{{shoppingCartDialog}}" extClass="extClassShoppingCart">
+         <view slot="title">已选商品</view>
+         <view slot="desc">
+            <scroll-view style="height: 55vh;" scroll-y>
+               <view class="shoppingCart-item" wx:for="{{shoppingCartList}}" wx:key="key">
+                  <view class="goodsName-restructure-view">
+                     <view class="goodsName out_of_range one_row">{{item.goodsName}}</view>
+                     <view class="restructure out_of_range one_row">{{item.restructure}}</view>
+                  </view>
+                  <view class="goodsPrice-number-view">
+                     <view class="goodsPrice">￥{{item.price}}</view>
+                     <view class='stepper'>
+                        <text class='reduce-class' bindtap='bindMinus' data-cartId="{{item.id}}"
+                           data-number="{{item.number}}">－</text>
+                        <input disabled type='number' value='{{item.number}}' class='reduce-class'></input>
+                        <text bindtap='bindPlus' class="add-class" data-num="{{index}},{{item.number}}">＋</text>
+                     </view>
+                  </view>
+               </view>
+               <!-- <view class="goodsName-packingCharges">
+                  <text class="goodsName">包装费</text>
+                  <text class="goodsPrice">￥{{packingCharges}}</text>
+                  <text></text>
+               </view> -->
+            </scroll-view>
+         </view>
+      </mp-halfScreenDialog>
+      <mp-halfScreenDialog show="{{specificationsDialog}}" extClass="extClassSpecifications">
+         <view slot="title">选择规格</view>
+         <view slot="desc">
+            <view class="goods-info-view">
+               <image src="{{data.mainImage}}" mode="aspectFill" class="commodity-image"></image>
+               <view>
+                  <view class="goods-info-name out_of_range one_row">{{data.name}}</view>
+                  <view class="goods-info-specListString">已选：{{specListString}}</view>
+                  <view class="goods-info-price">￥{{priceAfter}}</view>
+               </view>
+            </view>
+            <scroll-view scroll-y style="height: 52vh;">
+               <view class="commdity-name-type-view">
+                  <!-- <view class="commdity-name">{{data.name}}</view> -->
+                  <view class="commdity-type-item" wx:for="{{specList}}" wx:key="index" wx:for-index='key'>
+                     <view class="commdity-type-name">{{key}}</view>
+                     <radio-group class="radio-group" bindchange="radioChange" data-firstIndex="{{key}}">
+                        <label wx:for="{{item}}" wx:key="index"
+                           class="group-label theme-border {{!item.stock?'disabled-group-label':''}} {{item.checked?'active theme-bg':'theme-color-border'}} out_of_range one_row">
+                           <radio value="{{index}}" checked="{{item.checked}}" disabled="{{!item.stock}}"
+                              class="radio" />
+                           {{item.name}}
+                        </label>
+                     </radio-group>
+                  </view>
+                  <is-show-tip isShow="{{specList==null}}" top="20"
+			bottom="20" text="{{specList==null}}" tipText="暂无规格"></is-show-tip>
+               </view>
+            </scroll-view>
+            <view slot="footer">
+               <view class="good-choice-btn theme-bg" bindtap="chooseSpecifications">我选好了</view>
+            </view>
+         </view>
+      </mp-halfScreenDialog>
+   </view>
+   <view class="shopping-detail-view">
+      <view class="top_tips">
+         <!-- <view>包装费：￥{{data.packingCharges}}</view> -->
+         <view wx:if="{{fullPriceReductionIsHidden}}">满减：{{fullReductionRuleName}}</view>
+      </view>
+      <view class="buy-shopping-cart-view">
+         <!-- <view class="cz-button">
+            <view class="immediate-purchase theme-bg" bindtap="goToPay" hover-class="hover-class-public">
+               立即购买(￥{{fullPriceReductionIsHidden?fullPriceReduction:(data.price)}})</view>
+            <view class="add-to-cart theme-color-border" hover-class="hover-class-public" bindtap="insertShoppingCart">
+               加入购物车
+            </view>
+         </view> -->
+         <view class="cz-button">
+            <view class="immediate-purchase theme-bg" bindtap="openSpecifications" data-type="pay" hover-class="hover-class-public">
+               立即购买(￥{{fullPriceReductionIsHidden?fullPriceReduction:(data.price)}})</view>
+            <view class="add-to-cart theme-color-border" hover-class="hover-class-public" bindtap="openSpecifications" data-type="car">
+               加入购物车
+            </view>
+         </view>
+      </view>
+   </view>
+</view>

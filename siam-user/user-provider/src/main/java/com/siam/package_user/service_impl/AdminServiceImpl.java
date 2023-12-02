@@ -56,9 +56,6 @@ public class AdminServiceImpl implements AdminService {
     private MemberService memberService;
 
     @Autowired
-    private MemberTokenService memberTokenService;
-
-    @Autowired
     private SmsLogFeignClient smsLogFeignClient;
 
     @Autowired

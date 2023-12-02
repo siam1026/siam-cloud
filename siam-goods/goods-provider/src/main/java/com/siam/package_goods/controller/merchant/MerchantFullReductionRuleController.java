@@ -2,6 +2,7 @@ package com.siam.package_goods.controller.merchant;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
@@ -32,9 +33,6 @@ public class MerchantFullReductionRuleController {
     private FullReductionRuleService fullReductionRuleService;
 
 //    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
-//    @Autowired
 //    private MerchantService merchantService;
 
     @Autowired
@@ -63,6 +61,7 @@ public class MerchantFullReductionRuleController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "修改满减规则")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
@@ -90,6 +89,7 @@ public class MerchantFullReductionRuleController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "删除满减规则")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
@@ -102,11 +102,11 @@ public class MerchantFullReductionRuleController {
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         FullReductionRule dbFullReductionRule = fullReductionRuleService.selectByPrimaryKey(param.getId());
-//        if (dbFullReductionRule == null){
-//            throw new StoneCustomerException("该满减规则不存在");
-//        } else if (dbMerchant.getShopId() != dbFullReductionRule.getShopId()){
-//            throw new StoneCustomerException("您没有权限操作该满减规则");
-//        }
+        if (dbFullReductionRule == null){
+            throw new StoneCustomerException("该满减规则不存在");
+        } else if (loginMerchant.getShopId() != dbFullReductionRule.getShopId()){
+            throw new StoneCustomerException("您没有权限操作该满减规则");
+        }
 
         fullReductionRuleService.deleteByPrimaryKey(param.getId());
 

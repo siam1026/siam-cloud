@@ -1,0 +1,46 @@
+<view class="page-content">
+  <view class="content-view">
+    <text class="content-title">订单号</text>
+    <text class="content-value">{{info.orderNo}}</text>
+  </view>
+  <view class="view-line"></view>
+  <view class="content-view">
+    <text class="content-title">商品说明</text>
+    <text class="content-value">{{info.denominationName}}</text>
+  </view>
+  <view class="view-line"></view>
+  <view class="content-view">
+    <text class="content-title">充值渠道</text>
+    <text class="content-value">{{info.channelText}}</text>
+  </view>
+  <view class="view-line"></view>
+  <view class="content-view">
+    <text class="content-title">支付状态</text>
+    <text class="content-value">{{info.statusText}}</text>
+  </view>
+  <view class="view-line"></view>
+  <view class="content-view">
+    <text class="content-title">支付金额</text>
+    <view>
+      <text class="strike_through" wx:if="{{info.denominationIsSale}}">￥{{info.denominationPrice}}</text>
+      <text decode="true" class="content-value">&nbsp;￥{{info.denominationIsSale?info.denominationSalePrice:info.denominationPrice}}</text>
+    </view>
+  </view>
+  <view class="view-line"></view>
+  <view class="content-view">
+    <text class="content-title">支付时间</text>
+    <text class="content-value">{{info.createTime}}</text>
+  </view>
+</view>
+
+<view class="page-content" wx:if="{{info.denominationIsGiveBalance||info.denominationIsGiveCoupons}}">
+  <view class="content-view" wx:if="{{info.denominationIsGiveBalance}}">
+    <text class="content-title">赠送余额</text>
+    <text class="content-value">{{info.denominationGiveBalance>0?info.denominationGiveBalance+'元':'无'}}</text>
+  </view>
+  <view class="view-line" wx:if="{{info.denominationIsGiveCoupons}}"></view>
+  <view class="content-view" wx:if="{{info.denominationIsGiveCoupons}}">
+    <text class="content-title">赠送优惠券</text>
+    <text class="content-value">{{info.denominationGiveCouponsDescription?info.denominationGiveCouponsDescription:'无'}}</text>
+  </view>
+</view>

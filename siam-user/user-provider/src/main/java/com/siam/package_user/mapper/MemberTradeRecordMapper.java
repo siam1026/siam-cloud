@@ -20,8 +20,6 @@ public interface MemberTradeRecordMapper extends BaseMapper<MemberTradeRecord> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MemberTradeRecord record);
-
     int insertSelective(MemberTradeRecord record);
 
     List<MemberTradeRecord> selectByExample(MemberTradeRecordExample example);

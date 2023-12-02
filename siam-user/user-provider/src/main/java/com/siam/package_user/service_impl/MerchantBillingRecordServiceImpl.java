@@ -27,9 +27,6 @@ public class MerchantBillingRecordServiceImpl implements MerchantBillingRecordSe
     private MerchantService merchantService;
 
     @Autowired
-    private MerchantTokenService merchantTokenService;
-
-    @Autowired
     private MerchantSessionManager merchantSessionManager;
 
     @Override

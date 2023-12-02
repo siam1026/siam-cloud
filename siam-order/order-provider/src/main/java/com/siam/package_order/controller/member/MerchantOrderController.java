@@ -66,9 +66,6 @@ public class MerchantOrderController {
     private AliyunSms aliyunSms;
 
 //    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
-//    @Autowired
 //    private MerchantFeignClient merchantFeignClient;
 
     @Autowired
@@ -280,11 +277,7 @@ public class MerchantOrderController {
             throw new StoneCustomerException("您没有权限操作该菜单");
         }
 
-        basicResult.setData(dbOrder);
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("查询成功");
-        return basicResult;
+        return BasicResult.success(dbOrder);
     }
 
     @ApiOperation(value = "批量修改订单的是否已打印状态为已打印")
@@ -393,11 +386,7 @@ public class MerchantOrderController {
         int deliveredNum = orderService.countByExample(example);
         dataMap.put("deliveredNum", deliveredNum);
 
-        basicResult.setData(dataMap);
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("查询成功");
-        return basicResult;
+        return BasicResult.success(dataMap);
     }
 
     @ApiOperation(value = "查询所有已付款未打印的订单")
@@ -440,11 +429,7 @@ public class MerchantOrderController {
             lock.unlock();
         }
 
-        basicResult.setData(orders);
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("查询成功");
-        return basicResult;
+        return BasicResult.success(orders);
     }
 
     @ApiOperation(value = "订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)")
@@ -461,11 +446,8 @@ public class MerchantOrderController {
 
         order.setShopId(loginMerchant.getShopId());
         Map count = orderService.countOrder(order);
-        basicResult.setData(count);
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("查询成功");
-        return basicResult;
+
+        return BasicResult.success(count);
     }
 
     @ApiOperation(value = "售后处理订单列表")
@@ -586,7 +568,7 @@ public class MerchantOrderController {
             orderRefundProcessService.insertSelective(orderRefundProcess);
 
             //发送服务通知
-//            wxNotifyService.sendOrderRefundSuccessMessage(orderMember.getOpenId(), dbOrder.getShopName(), dbOrder.getOrderNo(), dbOrder.getDescription(), dbOrderRefund.getRefundAmount(), new Date());
+            wxNotifyService.sendOrderRefundSuccessMessage(orderMember.getOpenId(), dbOrder.getShopName(), dbOrder.getOrderNo(), dbOrder.getDescription(), dbOrderRefund.getRefundAmount(), new Date());
             //退回下单奖励积分
             MemberBillingRecordExample example = new MemberBillingRecordExample();
             example.createCriteria().andTypeEqualTo(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS)
@@ -820,10 +802,6 @@ public class MerchantOrderController {
         resultMap.put("thisWeekSumActualPrice", thisWeekSumActualPrice);
         resultMap.put("lastWeekSumActualPrice", lastWeekSumActualPrice);
 
-        basicResult.setData(resultMap);
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("查询成功");
-        return basicResult;
+        return BasicResult.success(resultMap);
     }
 }

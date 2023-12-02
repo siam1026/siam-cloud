@@ -119,16 +119,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_order.entity.Reply" >
-    insert into tb_reply (id, member_id, merchant_id,
-      appraise_id, reply_id, reply_type,
-      replier_type, content, images_url,
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER},
-      #{appraiseId,jdbcType=INTEGER}, #{replyId,jdbcType=INTEGER}, #{replyType,jdbcType=INTEGER},
-      #{replierType,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{imagesUrl,jdbcType=VARCHAR},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_order.entity.Reply" useGeneratedKeys="true" keyProperty="id">
     insert into tb_reply
     <trim prefix="(" suffix=")" suffixOverrides="," >

@@ -136,22 +136,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_weixin_basic.config.WxPublicPlatformSubscribeUser" >
-    insert into tb_wx_public_platform_subscribe_user (id, subscribe, openid, 
-      nickname, sex, language, 
-      city, province, country, 
-      headimgurl, subscribe_time, remark, 
-      groupid, tagid_list, subscribe_scene, 
-      qr_scene, qr_scene_str, create_time, 
-      update_time)
-    values (#{id,jdbcType=INTEGER}, #{subscribe,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
-      #{nickname,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{language,jdbcType=VARCHAR}, 
-      #{city,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
-      #{headimgurl,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{groupid,jdbcType=VARCHAR}, #{tagidList,jdbcType=VARCHAR}, #{subscribeScene,jdbcType=VARCHAR}, 
-      #{qrScene,jdbcType=VARCHAR}, #{qrSceneStr,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_weixin_basic.config.WxPublicPlatformSubscribeUser" useGeneratedKeys="true" keyProperty="id">
     insert into tb_wx_public_platform_subscribe_user
     <trim prefix="(" suffix=")" suffixOverrides="," >

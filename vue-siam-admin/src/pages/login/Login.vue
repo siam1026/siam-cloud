@@ -110,17 +110,6 @@
         });
       },
       getUserInfo(token) {
-        // let vue = this
-        // vue.$http.post(vue, '/rest/common/db/userInfo', {},
-        //       (vue, data)=> {
-        //         let companyInfo = data
-        //         sessionStorage.setItem('companyInfo', JSON.stringify(companyInfo));
-        //         vue.$router.push({ path: '/main'});
-        //       },
-        //       (error, data)=> {
-               
-        // })
-
         let vue = this
         vue.$http.post(vue, '/api-user/rest/admin/getLoginAdminInfo', {"token" : token},
           (vue, data)=> {

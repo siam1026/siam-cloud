@@ -1,16 +1,17 @@
 package com.siam.package_goods.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_user.auth.cache.MerchantSessionManager;
+import com.siam.package_common.annoation.MerchantPermission;
+import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
-import com.siam.package_common.constant.BasicResultCode;
+import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_goods.entity.Menu;
-import com.siam.package_goods.service.MenuService;
-import com.siam.package_user.entity.Merchant;
 import com.siam.package_goods.model.example.MenuGoodsRelationExample;
 import com.siam.package_goods.service.MenuGoodsRelationService;
+import com.siam.package_goods.service.MenuService;
+import com.siam.package_user.auth.cache.MerchantSessionManager;
+import com.siam.package_user.entity.Merchant;
 import com.siam.package_user.util.TokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -36,9 +37,6 @@ public class MerchantMenuController {
     @Autowired
     private MenuGoodsRelationService menuGoodsRelationService;
 
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
 //    @Autowired
 //    private MerchantService merchantService;
 
@@ -94,7 +92,7 @@ public class MerchantMenuController {
         return basicResult;
     }
 
-
+    @MerchantPermission
     @ApiOperation(value = "菜单修改")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "菜单主键id", required = false, paramType = "query", dataType = "int"),
@@ -126,7 +124,7 @@ public class MerchantMenuController {
         return basicResult;
     }
 
-
+    @MerchantPermission
     @ApiOperation(value = "菜单删除")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "菜单主键id集合(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "String")

@@ -2,7 +2,9 @@ package com.siam.package_user;
 
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
+import com.siam.package_user.entity.MemberWithdrawRecord;
 import com.siam.package_user.service.MemberService;
+import com.siam.package_user.service.MemberWithdrawRecordService;
 import com.siam.package_user.util.TokenUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.math.BigDecimal;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -21,6 +25,9 @@ public class UserApplicationTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    MemberWithdrawRecordService memberWithdrawRecordService;
 
     @Test
     public void testGetMaxVipNo(){
@@ -50,5 +57,17 @@ public class UserApplicationTest {
 //        memberService.selectByExample(new MemberExample());
 
         System.out.println(TokenUtil.getToken());
+    }
+
+
+    @Test
+    public void testInsertMemberWithdrawRecord(){
+        MemberWithdrawRecord memberWithdrawRecord = new MemberWithdrawRecord();
+        memberWithdrawRecord.setMemberId(1);
+        memberWithdrawRecord.setOrderNo("1");
+        memberWithdrawRecord.setCoinType(1);
+        memberWithdrawRecord.setWithdrawAmount(BigDecimal.ZERO);
+        memberWithdrawRecord.setPlatformFee(BigDecimal.ZERO);
+        memberWithdrawRecordService.save(memberWithdrawRecord);
     }
 }

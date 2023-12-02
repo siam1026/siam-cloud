@@ -18,8 +18,6 @@ public interface DeliveryAddressMapper extends BaseMapper<DeliveryAddress> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(DeliveryAddress record);
-
     int insertSelective(DeliveryAddress record);
 
     List<DeliveryAddress> selectByExample(DeliveryAddressExample example);

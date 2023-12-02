@@ -17,7 +17,8 @@ public class AdminRedisSessionManager implements AdminSessionManager {
 
     @Override
     public void createSession(String token, Admin admin) {
-        redisTemplate.opsForValue().set(SESSION_PREFIX + token, JsonUtils.toJson(admin), 24 * 30, TimeUnit.HOURS);
+        //设置7天过期
+        redisTemplate.opsForValue().set(SESSION_PREFIX + token, JsonUtils.toJson(admin), 7 * 24, TimeUnit.HOURS);
     }
 
     @Override

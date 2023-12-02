@@ -1,0 +1,18 @@
+<view>
+	<view class="userinfo-view">
+		<image class="userinfo-avatar" src="{{userInfo.avatarUrl?userInfo.avatarUrl:'../../../assets/images/user-head.png'}}" mode="cover"></image>
+		<view class="userinfo-text">{{userInfo.username}}</view>
+		<view class="userinfo-text">欢迎回来</view>
+	</view>
+	<view class="button-view">
+		
+	<button class="getphonenumber" type="primary" bindgetphonenumber='getPhoneNumber' open-type='getPhoneNumber' style="font-size: 30rpx;">微信手机号码登录</button>
+	<!-- <button class="getphonenumber" type="primary" wx:else
+	bindtap="getUserProfile">获取用户信息</button> -->
+	<button class="verification-code theme-color-border" hover-class="hover-class-public" bindtap="verificationCodeTap" style="font-size: 30rpx;">手机号验证码登录</button>
+		<!-- <button class="getphonenumber" type="primary" wx:if="{{hasUserInfo}}" bindgetphonenumber='getPhoneNumber' open-type='getPhoneNumber'>微信一键登录</button> -->
+		<!-- <button class="getphonenumber" type="primary" wx:else
+    open-type='getUserInfo' bindgetuserinfo='onLoad'>微信一键登录</button>
+		<button class="verification-code theme-color-border" hover-class="hover-class-public" bindtap="verificationCodeTap">手机号验证码登录</button> -->
+	</view>
+</view>

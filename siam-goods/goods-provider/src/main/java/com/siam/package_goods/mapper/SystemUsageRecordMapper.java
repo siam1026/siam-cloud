@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.SystemUsageRecord;
 import com.siam.package_goods.model.example.SystemUsageRecordExample;
 import org.apache.ibatis.annotations.Param;
@@ -8,14 +9,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.Date;
 import java.util.List;
 
-public interface SystemUsageRecordMapper {
+public interface SystemUsageRecordMapper extends BaseMapper<SystemUsageRecord> {
     int countByExample(SystemUsageRecordExample example);
 
     int deleteByExample(SystemUsageRecordExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(SystemUsageRecord record);
 
     int insertSelective(SystemUsageRecord record);
 

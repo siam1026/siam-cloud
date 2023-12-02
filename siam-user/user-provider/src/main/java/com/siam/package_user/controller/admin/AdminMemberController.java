@@ -1,6 +1,7 @@
 package com.siam.package_user.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.model.param.MemberParam;
@@ -45,6 +46,7 @@ public class AdminMemberController {
         return BasicResult.success(page);
     }
 
+    @AdminPermission
     @ApiOperation(value = "修改用户信息")
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) MemberParam param) {

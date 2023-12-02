@@ -17,8 +17,6 @@ public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(OrderDetail record);
-
     int insertSelective(OrderDetail record);
 
     List<OrderDetail> selectByExample(OrderDetailExample example);

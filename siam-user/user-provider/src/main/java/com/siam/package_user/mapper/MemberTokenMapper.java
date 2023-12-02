@@ -16,8 +16,6 @@ public interface MemberTokenMapper extends BaseMapper<MemberToken> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MemberToken record);
-
     int insertSelective(MemberToken record);
 
     List<MemberToken> selectByExample(MemberTokenExample example);

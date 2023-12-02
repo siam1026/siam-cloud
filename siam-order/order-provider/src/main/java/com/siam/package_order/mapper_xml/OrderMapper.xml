@@ -233,56 +233,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_order.entity.Order" >
-    insert into tb_order (id, member_id, order_no,
-      goods_total_quantity, goods_total_price, packing_charges,
-      delivery_fee, actual_price, shopping_way,
-      delivery_address_id, contact_realname, contact_phone,
-      contact_province, contact_city, contact_area,
-      contact_street, contact_sex, remark,
-      description, status, trade_id,
-      order_logistics_id, is_invoice, invoice_id,
-      is_deleted, shop_id, shop_name,
-      shop_address, cancel_reason, payment_deadline,
-      is_printed, queue_no, full_reduction_rule_id,
-      full_reduction_rule_description, coupons_id,
-      coupons_description, coupons_member_relation_id,
-      is_change_to_delivery, change_to_delivery_out_trade_no,
-      change_to_delivery_trade_id, platform_extract_ratio,
-      platform_extract_price, platform_delivery_fee,
-      platform_income, merchant_delivery_fee, courier_income,
-      merchant_income, payment_success_time, order_completion_time,
-      paid_order_cancel_reason, limited_price, reduced_price,
-      coupons_discount_price, delivery_way, is_pay_to_merchant,
-      before_reduced_delivery_fee, payment_mode,
-      contact_house_number, contact_longitude, contact_latitude,
-      shop_logo_img, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR},
-      #{goodsTotalQuantity,jdbcType=INTEGER}, #{goodsTotalPrice,jdbcType=DECIMAL}, #{packingCharges,jdbcType=DECIMAL},
-      #{deliveryFee,jdbcType=DECIMAL}, #{actualPrice,jdbcType=DECIMAL}, #{shoppingWay,jdbcType=INTEGER},
-      #{deliveryAddressId,jdbcType=INTEGER}, #{contactRealname,jdbcType=VARCHAR}, #{contactPhone,jdbcType=VARCHAR},
-      #{contactProvince,jdbcType=VARCHAR}, #{contactCity,jdbcType=VARCHAR}, #{contactArea,jdbcType=VARCHAR},
-      #{contactStreet,jdbcType=VARCHAR}, #{contactSex,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
-      #{description,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{tradeId,jdbcType=INTEGER},
-      #{orderLogisticsId,jdbcType=INTEGER}, #{isInvoice,jdbcType=BIT}, #{invoiceId,jdbcType=INTEGER},
-      #{isDeleted,jdbcType=BIT}, #{shopId,jdbcType=INTEGER}, #{shopName,jdbcType=VARCHAR},
-      #{shopAddress,jdbcType=VARCHAR}, #{cancelReason,jdbcType=INTEGER}, #{paymentDeadline,jdbcType=TIMESTAMP},
-      #{isPrinted,jdbcType=BIT}, #{queueNo,jdbcType=INTEGER}, #{fullReductionRuleId,jdbcType=INTEGER},
-      #{fullReductionRuleDescription,jdbcType=VARCHAR}, #{couponsId,jdbcType=INTEGER},
-      #{couponsDescription,jdbcType=VARCHAR}, #{couponsMemberRelationId,jdbcType=INTEGER},
-      #{isChangeToDelivery,jdbcType=BIT}, #{changeToDeliveryOutTradeNo,jdbcType=VARCHAR},
-      #{changeToDeliveryTradeId,jdbcType=INTEGER}, #{platformExtractRatio,jdbcType=DECIMAL},
-      #{platformExtractPrice,jdbcType=DECIMAL}, #{platformDeliveryFee,jdbcType=DECIMAL},
-      #{platformIncome,jdbcType=DECIMAL}, #{merchantDeliveryFee,jdbcType=DECIMAL}, #{courierIncome,jdbcType=DECIMAL},
-      #{merchantIncome,jdbcType=DECIMAL}, #{paymentSuccessTime,jdbcType=TIMESTAMP}, #{orderCompletionTime,jdbcType=TIMESTAMP},
-      #{paidOrderCancelReason,jdbcType=INTEGER}, #{limitedPrice,jdbcType=DECIMAL}, #{reducedPrice,jdbcType=DECIMAL},
-      #{couponsDiscountPrice,jdbcType=DECIMAL}, #{deliveryWay,jdbcType=INTEGER}, #{isPayToMerchant,jdbcType=BIT},
-      #{beforeReducedDeliveryFee,jdbcType=DECIMAL}, #{paymentMode,jdbcType=INTEGER},
-      #{contactHouseNumber,jdbcType=VARCHAR}, #{contactLongitude,jdbcType=DECIMAL}, #{contactLatitude,jdbcType=DECIMAL},
-      #{shopLogoImg,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_order.entity.Order" useGeneratedKeys="true" keyProperty="id" >
     insert into tb_order
     <trim prefix="(" suffix=")" suffixOverrides="," >

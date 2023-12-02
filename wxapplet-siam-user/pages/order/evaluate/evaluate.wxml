@@ -1,0 +1,26 @@
+<view class="top-class">
+	<image src="{{shopInfo.shop.shopLogoImg}}" class="shopLogoImg-class" mode="aspectFill"></image>
+	<text class="shopInfo-name">{{shopInfo.shop.name}}</text>
+</view>
+<view class="business-evaluate-view">
+	<view class="business-evaluate-title">商家评价</view>
+	<multiple-rate rate="{{rate}}" disabled="{{disabled}}" bind:change="handleTap">
+	</multiple-rate>
+	<view class="textarea-view" wx:if="{{isChoiceRate}}">
+		<textarea bindinput="bindTextarea" placeholder="{{contentPlaceholder}}"></textarea>
+		<text class="textarea-tip">谢谢您的评价</text>
+	</view>
+</view> 
+<view class="uploader-class">
+  <text class="images-num">{{uploaderImages.length}}/3</text>
+	<view class="uploaderImages">
+		<view wx:for="{{uploaderImages}}" wx:key="index" wx:for-item="img" class="uploaderItems">
+			<image src="{{img}}" data-index="{{index}}" data-imgs="{{uploaderImages}}" bindtap="viewImage" class="uploader-imgs-item" mode="aspectFill"></image>
+			<text class="iconfont icon55 uploader-close-img" bindtap="closeImage" data-index="{{index}}"></text>
+			<!-- <image src="../../assets/common/close-gary.png" data-index="{{index}}" bindtap="closeImage" class="uploader-close-img" mode="aspectFill"></image> -->
+		</view>
+		<text class="iconfont iconshangchuantupian1" bindtap="uploadImage"></text>
+		<!-- <image src="../../assets/common/tupian.png" wx:if="{{uploaderImages.length<3}}" bindtap="uploadImage" class="uploader-class-img" mode="aspectFill"></image> -->
+	</view>
+</view>
+<view class="submit-evaluate theme-bg" bindtap="submitEvaluate">提交评价</view>

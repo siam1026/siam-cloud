@@ -21,8 +21,6 @@ public interface MemberMapper extends BaseMapper<Member> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Member record);
-
     int insertSelective(Member record);
 
     List<Member> selectByExample(MemberExample example);

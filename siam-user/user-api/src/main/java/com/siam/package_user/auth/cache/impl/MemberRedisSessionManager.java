@@ -17,8 +17,8 @@ public class MemberRedisSessionManager implements MemberSessionManager {
 
     @Override
     public void createSession(String token, Member member) {
-        //设置3小时过期
-        redisTemplate.opsForValue().set(SESSION_PREFIX + token, JsonUtils.toJson(member), 3, TimeUnit.HOURS);
+        //设置7天过期
+        redisTemplate.opsForValue().set(SESSION_PREFIX + token, JsonUtils.toJson(member), 7 * 24, TimeUnit.HOURS);
     }
 
     @Override

@@ -104,12 +104,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.MemberInviteRelation" >
-    insert into tb_member_invite_relation (id, member_id, inviter_id, 
-      create_time)
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{inviterId,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.MemberInviteRelation" useGeneratedKeys="true" keyProperty="id" >
     insert into tb_member_invite_relation
     <trim prefix="(" suffix=")" suffixOverrides="," >

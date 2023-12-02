@@ -1,6 +1,7 @@
 package com.siam.package_user.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
@@ -47,6 +48,7 @@ public class AdminMerchantWithdrawRecordController {
      * @return
      * @author 暹罗
      */
+    @AdminPermission
     @PostMapping(value = "/auditApplyWithdraw")
     public BasicResult auditApplyWithdraw(@RequestBody @Validated(value = {ValidGroupOfId.class, ValidGroupOfAudit.class}) MerchantWithdrawRecordParam param){
         merchantWithdrawRecordService.auditApplyWithdraw(param);

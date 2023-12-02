@@ -1,9 +1,12 @@
 package com.siam.package_goods.controller.member;
 
 import com.siam.package_common.constant.BasicResultCode;
+import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
+import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.service.AliyunSms;
 import com.siam.package_common.util.CommonUtils;
+import com.siam.package_common.util.RedisUtils;
 import com.siam.package_goods.entity.SmsLog;
 import com.siam.package_goods.service.SmsLogService;
 import io.swagger.annotations.Api;
@@ -32,6 +35,9 @@ public class SmsLogController {
     @Autowired
     private AliyunSms aliyunSms;
 
+    @Autowired
+    private RedisUtils redisUtils;
+
     @PostMapping(value = "/sendMobileCode")
     @ApiOperation(value = "发送手机验证码")
     @ApiImplicitParams({
@@ -47,6 +53,11 @@ public class SmsLogController {
             return basicResult;
         }
 
+        String smsSwitch = (String) redisUtils.get("smsSwitch");
+        if(smsSwitch != null && smsSwitch.equals("false")){
+            throw new StoneCustomerException("暂不支持获取验证码，请用临时验证码 123456 进行操作");
+        }
+
         // 发送短信验证码
         String mobileCode = aliyunSms.sendVerificationCodeMessage(smsLog.getMobile());
 
@@ -59,7 +70,7 @@ public class SmsLogController {
         insertSmsLog.setIp(CommonUtils.getServerIP());
         insertSmsLog.setVerifyCode(mobileCode);
         insertSmsLog.setDescription(null);
-//        insertSmsLog.setState(Quantity.INT_1);
+        /*insertSmsLog.setStates(Quantity.INT_1);*/
         smsLogService.insertSelective(insertSmsLog);
 
         basicResult.setSuccess(true);

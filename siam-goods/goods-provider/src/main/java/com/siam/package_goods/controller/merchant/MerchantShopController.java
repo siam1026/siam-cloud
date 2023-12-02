@@ -1,5 +1,6 @@
 package com.siam.package_goods.controller.merchant;
 
+import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_goods.entity.Setting;
 import com.siam.package_goods.service.SettingService;
 import com.siam.package_common.entity.BasicData;
@@ -42,9 +43,6 @@ public class MerchantShopController {
     @Autowired
     private ShopService shopService;
 
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
 //    @Autowired
 //    private MerchantService merchantService;
 
@@ -100,7 +98,7 @@ public class MerchantShopController {
         BasicData basicResult = new BasicData();
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
-        Shop shop = shopService.selectByMerchantId(loginMerchant.getId());
+        Shop shop = shopService.selectByPrimaryKey(loginMerchant.getShopId());
         if(shop == null){
             throw new StoneCustomerException("无法获取开店信息，请稍后重试");
         }
@@ -118,6 +116,7 @@ public class MerchantShopController {
      * @return
      * @author 暹罗
      */
+    @MerchantPermission
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Shop shop, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();

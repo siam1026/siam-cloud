@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.ScheduledTask;
 import com.siam.package_goods.model.example.ScheduledTaskExample;
 import org.apache.ibatis.annotations.Param;
@@ -9,14 +10,12 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
-public interface ScheduledTaskMapper {
+public interface ScheduledTaskMapper extends BaseMapper<ScheduledTask> {
     int countByExample(ScheduledTaskExample example);
 
     int deleteByExample(ScheduledTaskExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(ScheduledTask record);
 
     int insertSelective(ScheduledTask record);
 

@@ -36,11 +36,9 @@ import java.util.Map;
 @Transactional(rollbackFor = Exception.class)
 @Api(tags = "购物车模块相关接口", description = "ShoppingCartController")
 public class ShoppingCartController {
+
     @Autowired
     private ShoppingCartService shoppingCartService;
-
-//    @Autowired
-//    private MemberTokenService memberTokenService;
 
     @Autowired
     private GoodsSpecificationOptionService goodsSpecificationOptionService;
@@ -64,7 +62,7 @@ public class ShoppingCartController {
         }
 
         //只查询当前登录用户的购物车信息
-//        shoppingCart.setMemberId(loginMember.getId());
+        shoppingCart.setMemberId(loginMember.getId());
         //只查询商品有效的购物车记录
         shoppingCart.setIsGoodsExists(true);
         Page<Map<String, Object>> page = shoppingCartService.getListByPageJoinGoods(shoppingCart.getPageNo(), shoppingCart.getPageSize(), shoppingCart);
@@ -109,10 +107,10 @@ public class ShoppingCartController {
 
         //判断是否为第一次加入购物车，如果不是则数量加1
         ShoppingCartExample example = new ShoppingCartExample();
-//        example.createCriteria().andMemberIdEqualTo(loginMember.getId())
-//                .andShopIdEqualTo(shoppingCart.getShopId())
-//                .andGoodsIdEqualTo(shoppingCart.getGoodsId())
-//                .andSpecListEqualTo(shoppingCart.getSpecList());
+        example.createCriteria().andMemberIdEqualTo(loginMember.getId())
+                .andShopIdEqualTo(shoppingCart.getShopId())
+                .andGoodsIdEqualTo(shoppingCart.getGoodsId())
+                .andSpecListEqualTo(shoppingCart.getSpecList());
         List<ShoppingCart> shoppingCartList = shoppingCartService.selectByExample(example);
         if(shoppingCartList!=null && shoppingCartList.size() > 0){
             ShoppingCart dbShoppingCart = shoppingCartList.get(0);
@@ -124,7 +122,7 @@ public class ShoppingCartController {
 
         }else{
             //第一次加入购物车
-//            shoppingCart.setMemberId(loginMember.getId());
+            shoppingCart.setMemberId(loginMember.getId());
             shoppingCart.setNumber(Quantity.INT_1);
             shoppingCartService.insertSelective(shoppingCart);
         }
@@ -142,18 +140,18 @@ public class ShoppingCartController {
      * @author 暹罗
      */
     @PostMapping(value = "/updateNumber")
-    public BasicResult updateNumber(@RequestBody @Validated(value = {}) ShoppingCart shoppingCart, int type, HttpServletRequest request){
+    public BasicResult updateNumber(@RequestBody @Validated(value = {}) ShoppingCart shoppingCart, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
         ShoppingCart dbShoppingCart = shoppingCartService.selectByPrimaryKey(shoppingCart.getId());
-//        if(!dbShoppingCart.getMemberId().equals(loginMember.getId())){
-//            basicResult.setSuccess(false);
-//            basicResult.setCode(BasicResultCode.ERR);
-//            basicResult.setMessage("该购物车单品不是你的，不允许修改");
-//            return basicResult;
-//        }
-        if(type!=Quantity.INT_0 && type!=Quantity.INT_1){
+        if(!dbShoppingCart.getMemberId().equals(loginMember.getId())){
+            basicResult.setSuccess(false);
+            basicResult.setCode(BasicResultCode.ERR);
+            basicResult.setMessage("该购物车单品不是你的，不允许修改");
+            return basicResult;
+        }
+        if(shoppingCart.getType()!=Quantity.INT_0 && shoppingCart.getType()!=Quantity.INT_1){
             basicResult.setSuccess(false);
             basicResult.setCode(BasicResultCode.ERR);
             basicResult.setMessage("操作类型不正确");
@@ -168,9 +166,9 @@ public class ShoppingCartController {
 
         //加减操作后，购物车单品的实际数量
         int actualNumber = 0;
-        if(type == Quantity.INT_0){
+        if(shoppingCart.getType() == Quantity.INT_0){
             actualNumber = dbShoppingCart.getNumber() - shoppingCart.getNumber();
-        }else if(type == Quantity.INT_1){
+        }else if(shoppingCart.getType() == Quantity.INT_1){
             actualNumber = dbShoppingCart.getNumber() + shoppingCart.getNumber();
         }
 
@@ -206,12 +204,12 @@ public class ShoppingCartController {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
         ShoppingCart dbShoppingCart = shoppingCartService.selectByPrimaryKey(param.getId());
-//        if(!dbShoppingCart.getMemberId().equals(loginMember.getId())){
-//            basicResult.setSuccess(false);
-//            basicResult.setCode(BasicResultCode.ERR);
-//            basicResult.setMessage("该购物车单品不是你的，不允许删除");
-//            return basicResult;
-//        }
+        if(!dbShoppingCart.getMemberId().equals(loginMember.getId())){
+            basicResult.setSuccess(false);
+            basicResult.setCode(BasicResultCode.ERR);
+            basicResult.setMessage("该购物车单品不是你的，不允许删除");
+            return basicResult;
+        }
 
         //删除该购物车单品
         shoppingCartService.deleteByPrimaryKey(param.getId());

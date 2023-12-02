@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_goods.service.CouponsShopRelationService;
 import com.siam.package_goods.service.ShopService;
 import com.siam.package_common.entity.BasicData;
@@ -60,6 +61,7 @@ public class AdminCouponsController {
         return BasicResult.success();
     }
 
+    @AdminPermission
     @ApiOperation(value = "修改优惠卷-TODO")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Coupons param) {
@@ -71,6 +73,7 @@ public class AdminCouponsController {
         return BasicResult.success();
     }
 
+    @AdminPermission
     @ApiOperation(value = "删除优惠卷")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Coupons param) {

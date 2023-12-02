@@ -17,8 +17,6 @@ public interface ReplyMapper extends BaseMapper<Reply> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Reply record);
-
     int insertSelective(Reply record);
 
     List<Reply> selectByExample(ReplyExample example);

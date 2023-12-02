@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.ShopChangeRecord;
 import com.siam.package_goods.model.example.ShopChangeRecordExample;
 import org.apache.ibatis.annotations.Param;
@@ -9,14 +10,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface ShopChangeRecordMapper {
+public interface ShopChangeRecordMapper extends BaseMapper<ShopChangeRecord> {
     int countByExample(ShopChangeRecordExample example);
 
     int deleteByExample(ShopChangeRecordExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(ShopChangeRecord record);
 
     int insertSelective(ShopChangeRecord record);
 

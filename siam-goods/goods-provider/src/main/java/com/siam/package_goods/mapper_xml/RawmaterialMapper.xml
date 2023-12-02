@@ -119,16 +119,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.Rawmaterial" >
-    insert into tb_rawmaterial (id, name, main_image, 
-      description, unit, price, 
-      stock, stock_lower_limit, stock_upper_limit, 
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{mainImage,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
-      #{stock,jdbcType=DECIMAL}, #{stockLowerLimit,jdbcType=DECIMAL}, #{stockUpperLimit,jdbcType=DECIMAL}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.Rawmaterial" useGeneratedKeys="true" keyProperty="id">
     insert into tb_rawmaterial
     <trim prefix="(" suffix=")" suffixOverrides="," >

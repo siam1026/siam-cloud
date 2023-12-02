@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.PaperworkPush;
 import com.siam.package_goods.model.example.PaperworkPushExample;
 import org.apache.ibatis.annotations.Param;
@@ -9,14 +10,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface PaperworkPushMapper {
+public interface PaperworkPushMapper extends BaseMapper<PaperworkPush> {
     int countByExample(PaperworkPushExample example);
 
     int deleteByExample(PaperworkPushExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(PaperworkPush record);
 
     int insertSelective(PaperworkPush record);
 

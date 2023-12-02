@@ -33,9 +33,6 @@ public class MerchantShopChangeRecordController {
 
 //    @Autowired
 //    private MerchantService merchantService;
-//
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
 
     @Autowired
     private SettingService settingService;

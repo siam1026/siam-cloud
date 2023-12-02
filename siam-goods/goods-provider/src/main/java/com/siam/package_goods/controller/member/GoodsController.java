@@ -5,6 +5,7 @@ import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
+import com.siam.package_feign.mod_feign.order.CommonFeignClient;
 import com.siam.package_goods.entity.Setting;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_goods.service.SettingService;
@@ -16,6 +17,7 @@ import com.siam.package_goods.entity.Shop;
 import com.siam.package_goods.model.dto.GoodsMenuDto;
 import com.siam.package_goods.service.GoodsService;
 import com.siam.package_goods.service.ShopService;
+import com.siam.package_order.entity.TravelingDistanceVo;
 import com.siam.package_user.model.param.AdminParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,8 +46,8 @@ public class GoodsController {
     @Autowired
     private ShopService shopService;
 
-//    @Autowired
-//    private CommonService commonService;
+    @Autowired
+    private CommonFeignClient commonFeignClient;
 
     @Autowired
     private SettingService settingService;
@@ -119,24 +121,24 @@ public class GoodsController {
         //如果返回值小于等于0，则代表当前位置超出配送范围 或 当前位置不合法 -- 需要将该店铺从列表中移除
         //计算配送时长、距离公里数
         /*String addressB = dbShop.getProvince() + dbShop.getCity() + dbShop.getArea() + dbShop.getStreet();*/
-//        TravelingDistanceVo travelingDistanceVo = commonService.selectTravelingDistance(coordinateMap.get("lng"), coordinateMap.get("lat"), dbShop.getLongitude(), dbShop.getLatitude());
-//        System.out.println("\n\n" + dbShop.getName() + "'travelingDistanceVo.getDistanceValue() : " + travelingDistanceVo.getDistanceValue());
-//        Setting setting = settingService.selectCurrent();
-//        if(travelingDistanceVo.getDistanceValue().compareTo(BigDecimal.ZERO) == 0){
-//            //如果距离为0，则代表百度地图没有计算结果
-//            //还有一种情况会造成距离为0，那就是起点和终点相等--这种情况也算作地址填写错误
-//            resultMap.put("isOutofDeliveryRange", true);
-//        }else if(travelingDistanceVo.getDistanceValue().compareTo(setting.getDeliveryDistanceLimit()) > 0){
-//            //超出5.5公里则不予配送
-//            resultMap.put("isOutofDeliveryRange", true);
-//        }else{
-//            resultMap.put("isOutofDeliveryRange", false);
-//        }
-//        System.out.println("\n\n" + dbShop.getName() + "'isOutofDeliveryRange : " + resultMap.get("isOutofDeliveryRange"));
+        TravelingDistanceVo travelingDistanceVo = commonFeignClient.selectTravelingDistance(coordinateMap.get("lng"), coordinateMap.get("lat"), dbShop.getLongitude(), dbShop.getLatitude());
+        System.out.println("\n\n" + dbShop.getName() + "'travelingDistanceVo.getDistanceValue() : " + travelingDistanceVo.getDistanceValue());
+        Setting setting = settingService.selectCurrent();
+        if(travelingDistanceVo.getDistanceValue().compareTo(BigDecimal.ZERO) == 0){
+            //如果距离为0，则代表百度地图没有计算结果
+            //还有一种情况会造成距离为0，那就是起点和终点相等--这种情况也算作地址填写错误
+            resultMap.put("isOutofDeliveryRange", true);
+        }else if(travelingDistanceVo.getDistanceValue().compareTo(setting.getDeliveryDistanceLimit()) > 0){
+            //超出5.5公里则不予配送
+            resultMap.put("isOutofDeliveryRange", true);
+        }else{
+            resultMap.put("isOutofDeliveryRange", false);
+        }
+        System.out.println("\n\n" + dbShop.getName() + "'isOutofDeliveryRange : " + resultMap.get("isOutofDeliveryRange"));
 
         //查询当前门店是否营业
-//        Boolean isOperatingOfShop = commonService.selectIsOperatingOfShop(dbShop.getId());
-//        resultMap.put("isOperatingOfShop", isOperatingOfShop);
+        Boolean isOperatingOfShop = commonFeignClient.selectIsOperatingOfShop(dbShop.getId());
+        resultMap.put("isOperatingOfShop", isOperatingOfShop);
 
         basicResult.setData(resultMap);
         basicResult.setSuccess(true);
@@ -298,7 +300,7 @@ public class GoodsController {
     @ApiOperation(value = "首页商品推荐列表")
     @PostMapping(value = "/homePage/recommendGoodsList")
     public BasicResult recommendGoodsListOfHomePage(@RequestBody @Validated(value = {}) Goods param              ){
-        //首页商品推荐位置一共有6件商品
+        //首页商品推荐位置一共有6件商品 -- 改成2件商品
         //1、如果在配送距离内有商家，则按照距离由近到远来展示前6个店铺中近一月销量最高的商品
         //2、如果在配送距离内无商家，则展示平台近一月销量最高的前6件商品
         //3、如果不足6个店铺，则从平台列表中补齐
@@ -334,7 +336,7 @@ public class GoodsController {
         //按照定位地址来查询前6个店铺
         //sql算出来的距离是米，所以这里要乘以1000进行换算
         Setting currentSetting = settingService.selectCurrent();
-        Page<Shop> shopPage = shopService.selectByDistance(1, 6, coordinateMap.get("lng"), coordinateMap.get("lat"), currentSetting.getDeliveryDistanceLimit().multiply(BigDecimal.valueOf(1000)));
+        Page<Shop> shopPage = shopService.selectByDistance(1, 2, coordinateMap.get("lng"), coordinateMap.get("lat"), currentSetting.getDeliveryDistanceLimit().multiply(BigDecimal.valueOf(1000)));
         for (Shop shop : shopPage.getRecords()) {
             List<Map<String, Object>> goodsList = goodsService.getListByLatelyMonthlySalesTopNumber(startTime, endTime, Quantity.INT_1, shop.getId());
             if (!goodsList.isEmpty()){
@@ -342,7 +344,7 @@ public class GoodsController {
             }
         }
         //如果不足6个店铺，则从平台列表中补齐
-        int num = Quantity.INT_6 - shopPage.getRecords().size();
+        int num = Quantity.INT_2 - shopPage.getRecords().size();
         if (num > 0){
             List<Map<String, Object>> goodsList = goodsService.getListByLatelyMonthlySalesTopNumber(startTime, endTime, num, null);
             resultList.addAll(goodsList);

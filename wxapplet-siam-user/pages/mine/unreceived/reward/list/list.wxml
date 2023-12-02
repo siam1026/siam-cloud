@@ -1,0 +1,15 @@
+<view>
+  <view wx:for="{{list}}" wx:key="index" class="lists-class" data-id="{{item.id}}">
+    <view class="list-top-class">
+      <text>{{item.message}}</text>
+      <view class="integral-item-number {{item.operateType==1?'pay-success':'pay-fail'}}">
+        <text decode="true" class="denominationSalePrice"
+          decode="true">&nbsp;&nbsp;&nbsp;{{item.operateType==1?"+":"-"}}{{item.number}}</text>
+      </view>
+    </view>
+    <view class="list-top-class">
+      <text class="createTime">{{item.createTime}}</text>
+    </view>
+  </view>
+  <is-show-tip isShow="{{list.length<=0}}" bind:bindTap="goToDrink" buttonText="去兑换" top="25" bottom="0" text="{{list.length<=0}}" tipText="暂无充值记录" button="{{button}}"></is-show-tip>
+</view>

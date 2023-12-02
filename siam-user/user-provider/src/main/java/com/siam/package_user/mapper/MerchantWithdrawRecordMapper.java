@@ -20,8 +20,6 @@ public interface MerchantWithdrawRecordMapper extends BaseMapper<MerchantWithdra
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MerchantWithdrawRecord record);
-
     int insertSelective(MerchantWithdrawRecord record);
 
     List<MerchantWithdrawRecord> selectByExample(MerchantWithdrawRecordExample example);

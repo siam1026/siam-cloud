@@ -18,22 +18,18 @@
 						<el-option label="审核不通过" :value="3"></el-option>
 					</el-select>
 				</el-form-item>                 -->
-				<el-form-item>
+				<el-form-item label="">
 					<el-date-picker
-						v-model="searchMsg.startDate_tmp"
-						value-format="timestamp"
-						format="yyyy/MM/dd"
-						type="datetime"
-						placeholder="选择开始日期">
+					v-model="searchMsg.createTime"
+					type="daterange"
+					align="right"
+					unlink-panels
+					range-separator="至"
+					start-placeholder="开始日期"
+					end-placeholder="结束日期"
+					:picker-options="pickerOptions">
 					</el-date-picker>
-					<el-date-picker
-						v-model="searchMsg.endDate_tmp"
-						value-format="timestamp"
-						format="yyyy/MM/dd"
-						type="datetime"
-						placeholder="选择结束日期">
-					</el-date-picker>          
-				</el-form-item>                    
+				</el-form-item>      
 				<el-form-item>
 					<el-button type="primary" @click="getList(1)">查询</el-button>
 				</el-form-item>
@@ -66,8 +62,14 @@
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
-			<!-- <el-button type="danger" @click="batchRemove" :isDisabled="this.sels.length===0">批量删除</el-button> -->
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="searchMsg.pageSize" :total="total" style="float:right;">
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:page-sizes="[10, 20, 50, 100]"
+				:page-size="searchMsg.pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total"
+				style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -113,6 +115,73 @@
 	export default {
 		data() {
 			return {
+				pickerOptions: {
+					shortcuts: [{
+						text: '最近一周',
+							onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 7);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近两周',
+							onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 14);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近一月',
+						onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 30);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近三月',
+						onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 30 * 3);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近半年',
+						onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 180);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近一年',
+						onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 30 * 12);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近两年',
+						onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 30 * 24);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近三年',
+						onClick(picker) {
+							const end = new Date();
+							let start = new Date();
+							start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 30 * 36);
+							picker.$emit('pick', [start, end]);
+						}
+					}]
+				},				
 				todayList:{}, //今日数据
 				searchMsg: {
 					pageNo: 1,
@@ -184,6 +253,10 @@
 			formatType (row, column) { // 0=正常/启用  1=禁用
 				return row.isDisabled ? '禁用' : '正常';
 			},
+			handleSizeChange(val) {
+				this.searchMsg.pageSize = val;
+				this.getList();
+			},			
 			handleCurrentChange(val) {
 				this.searchMsg.pageNo = val;
 				this.getList();
@@ -191,7 +264,7 @@
 			addUnitFixedTwo(row, column) { // 添加单位
 				return Number((row[column.property] || 0)).toFixed(2) + '元'
 			},
-						getList(pageNoParam) { // 获取列表
+			getList(pageNoParam) { // 获取列表
 				if(pageNoParam){
 				this.searchMsg.pageNo = pageNoParam;
 				} // 获取商品门店列表
@@ -199,30 +272,13 @@
 				let param = Object.assign(vue.searchMsg);
 				param.auditStatus = -1; //查询到账成功、审核不通过的记录
 
-				//暂时不做时间前后的判断
-				if(param.startDate_tmp == undefined){
-					delete param.startCreateTime;
-				// param.startDate = "1970/01/01";
-				}else{
-					//注意：前端似乎没有HH，只有hh，写HH无法解析
-					let startDate_tmp = new Date(param.startDate_tmp);
-					startDate_tmp.setHours(0);
-					startDate_tmp.setMinutes(0);
-					startDate_tmp.setSeconds(0);	          
-					param.startCreateTime = this.$utils.formatDate(startDate_tmp, 'yyyy/MM/dd hh:mm:ss');
-				}
-				if(param.endDate_tmp == undefined){
-					delete param.endCreateTime;
-				// var curDate = new Date();
-				// var preDate = new Date(curDate.getTime() - 24*60*60*1000); //前一天
-				// var nextDate = new Date(curDate.getTime() + 24*60*60*1000); //后一天          
-				// param.endDate = this.$utils.formatDate(nextDate, 'yyyy/MM/dd');
-				}else{
-					let endDate_tmp = new Date(param.endDate_tmp);
-					endDate_tmp.setHours(23);
-					endDate_tmp.setMinutes(59);
-					endDate_tmp.setSeconds(59);	                    
-					param.endCreateTime = this.$utils.formatDate(endDate_tmp, 'yyyy/MM/dd hh:mm:ss');
+				//处理开始日期、结束日期
+				if(vue.searchMsg.createTime){
+					let startDate = vue.searchMsg.createTime[0];
+					let endDate = vue.searchMsg.createTime[1];
+					param.startCreateTime = this.$utils.formatDate(new Date(startDate), 'yyyy/MM/dd hh:mm:ss');
+					param.endCreateTime = this.$utils.formatDate(new Date(endDate), 'yyyy/MM/dd hh:mm:ss');
+					delete param.createTime;
 				}
 
 				vue.listLoading = true;

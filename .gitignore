@@ -39,4 +39,4 @@ logs/info.log
 logs
 log.path_IS_UNDEFINED
 
-internal
+application-test.yml

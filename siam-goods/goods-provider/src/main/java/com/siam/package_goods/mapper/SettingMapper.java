@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_goods.entity.Setting;
 import com.siam.package_goods.model.example.SettingExample;
@@ -10,14 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 import java.util.Map;
 
-public interface SettingMapper {
+public interface SettingMapper extends BaseMapper<Setting> {
     int countByExample(SettingExample example);
 
     int deleteByExample(SettingExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(Setting record);
 
     int insertSelective(Setting record);
 

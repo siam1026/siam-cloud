@@ -1,0 +1,130 @@
+<view class="top-detail">
+	<view class="current-tips" catchtap="customerServiceWechat">
+		联系客服可领取运费险，获取客服微信请戳这里
+	</view>
+</view>
+<view class="top-detail">
+	<view class="top-shop-name">
+		<text decode="true">{{order.description}}</text>
+	</view>
+	<view class="top-shop-name">
+		<view bindtap="bindSelectAll">
+			<checkbox checked="{{isSelectAll}}"></checkbox>全选
+		</view>
+		<view>
+			<text>退款金额</text>
+			<text>￥{{order.actualPrice}}</text>
+		</view>
+	</view>
+	<view class="commdiy-lists">
+		<checkbox-group bindchange="checkboxChange">
+			<view wx:for="{{orderDetailList}}" class="order-detail-list" wx:key="key">
+				<label>
+					<checkbox checked="{{item.checked}}" value="{{index}}" index="{{index}}"></checkbox>
+				</label>
+				<image src="{{item.mainImage}}" mode="scaleToFill" class="order-mainImage"></image>
+				<view class="order-detail">
+					<view class="order-goodsName-number">
+						<view class="order-goodsName out_of_range one_row">{{item.goodsName}}</view>
+						<text class="order-number" wx:if="{{item.oldNumber>1}}">x{{item.oldNumber}}</text>
+						<text class="order-number">￥{{item.subtotal}}</text>
+					</view>
+					<!-- <text>x{{item.number}}</text> -->
+					<view class="item-stepper">
+						<view class="order-specListAnalysis out_of_range one_row">{{item.specListAnalysis}}</view>
+						<view class='stepper' wx:if="{{item.oldNumber>1}}">
+							<block>
+								<text class='reduce-class' bindtap='bindMinus' data-goodsId="{{item.goodsId}}"
+									data-number="{{item.number}}">－</text>
+								<input disabled type='number' value='{{item.number}}' class='reduce-class'></input>
+								<text bindtap='bindPlus' class="add-class" data-goodsId="{{item.goodsId}}"
+									data-index="{{index}}" data-number="{{item.number}}"
+									data-oldNumber="{{item.oldNumber}}">＋</text>
+							</block>
+						</view>
+					</view>
+				</view>
+			</view>
+		</checkbox-group>
+	</view>
+	<view class="order-delivery-fee" wx:if="{{order.reducedPrice>0}}">
+		<text>满减费</text>
+		<text>-￥{{order.reducedPrice}}</text>
+	</view>
+	<view class="order-delivery-fee">
+		<text>配送费</text>
+		<text>￥{{order.deliveryFee}}</text>
+	</view>
+</view>
+<view class="refund-reason">
+	<view class="refund-reason-top">
+		<text>退款原因</text>
+		<view class="refund-reason-top-right">
+			<view bindtap="isAllowApplyRefund">
+				<text wx:if="{{!notSelected}}" class="theme-color">（必选）</text>
+				<text wx:if="{{!notSelected}}" class="not-select">请选择</text>
+				<text wx:if="{{notSelected}}" class="theme-color">{{cancelOrderNoReasonList[oldCancelOrderNoReason].name}}</text>
+			</view>
+			<text class="iconfont iconhtbArrowright02"></text>
+		</view>
+	</view>
+	<view class="textarea-uploader">
+		<textarea placeholder="补充详细退款原因，有利于商家更快的帮您处理" bindinput="bindRefundReasonDescription"
+			placeholder-class="textarea-placeholder" disabled="{{textareaDisabled}}"></textarea>
+		<view class="flex_between"><text></text><text>{{uploaderImages.length}}/3</text></view>
+		<view class="uploader-images-view">
+			<view wx:for="{{uploaderImages}}" wx:key="index" wx:for-item="img" class="uploaderItems">
+				<image src="{{img}}" data-index="{{index}}" data-imgs="{{uploaderImages}}" bindtap="viewImage"
+					class="uploader-imgs-item" mode="aspectFill"></image>
+				<text class="iconfont icon55 uploader-close-img" bindtap="closeImage" data-index="{{index}}"></text>
+			</view>
+			<text class="iconfont iconshangchuantupian1" bindtap="uploadImage" wx:if="{{uploaderImages.length<=2}}"></text>
+		</view>
+	</view>
+</view>
+
+<view class="apply-refund">
+	<view class="top_tips">
+		<text class="refund-type">({{refundJson.name}})</text>
+	</view>
+	<view class="apply-refund-bottom">
+
+		<view class="refund-price">
+			<text>退款金额</text>
+			<text>￥{{order.actualPrice}}</text>
+		</view>
+		<view class="refund-submit theme-bg" bindtap="submitApplyRefund">
+			<view>提交</view>
+		</view>
+	</view>
+</view>
+
+<mp-halfScreenDialog show="{{choiceReasonApplyDialog}}" extClass="extClassShoppingCart">
+	<view slot="title">选择取消原因</view>
+	<view slot="desc">
+		<scroll-view style="height: 55vh;" scroll-y>
+			<radio-group class="choiceReason-radio-group" bindchange="radioChange">
+				<label wx:for="{{cancelOrderNoReasonList}}" wx:key="key"
+					class="choiceReason-lable {{cancelOrderNoReasonList.length-1!=index?'choiceReason-border':''}}">
+					{{item.name}}
+					<radio value="{{index}}" checked="{{item.checked}}"></radio>
+				</label>
+			</radio-group>
+		</scroll-view>
+	</view>
+	<view slot="footer">
+		<view class="good-choice-btn theme-bg" bindtap="cancelOrderNoReasonApply">确定</view>
+	</view>
+</mp-halfScreenDialog>
+<mp-halfScreenDialog show="{{customerServiceWechatDialog}}" extClass="extClassShoppingCart" bind:close="close">
+	<view slot="title">客服二维码</view>
+	<view slot="desc">
+		<scroll-view style="height: 35vh;" scroll-y>
+			<view class="wechat-code-view">
+				<image src="{{current.customerServiceWechatQrcode}}" show-menu-by-longpress="true"
+				mode="aspectFit" class="customerServiceWechatQrcode" bindtap="viewQrCodeImage"></image>
+				<view class="customerServiceWechat">客服微信号：{{current.customerServiceWechat}}</view>
+			</view>
+		</scroll-view>
+	</view>
+</mp-halfScreenDialog>

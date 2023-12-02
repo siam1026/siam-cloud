@@ -1,6 +1,6 @@
 #端口配置
 server:
-  port: 9600
+  port: 9000
 
 ##配置Eureka信息
 eureka:

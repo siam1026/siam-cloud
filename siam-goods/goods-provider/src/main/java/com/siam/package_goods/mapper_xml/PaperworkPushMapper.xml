@@ -112,14 +112,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.PaperworkPush" >
-    insert into tb_paperwork_push (id, name, content, 
-      pushed_number, last_pushed_time, sort_number, 
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
-      #{pushedNumber,jdbcType=INTEGER}, #{lastPushedTime,jdbcType=TIMESTAMP}, #{sortNumber,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.PaperworkPush" useGeneratedKeys="true" keyProperty="id">
     insert into tb_paperwork_push
     <trim prefix="(" suffix=")" suffixOverrides="," >

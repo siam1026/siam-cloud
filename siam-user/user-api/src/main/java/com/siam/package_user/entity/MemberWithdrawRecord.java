@@ -56,6 +56,7 @@ public class MemberWithdrawRecord {
 
     private BigDecimal actualAmount;
 
+    @TableField("audit_status")
     private Integer auditStatus;
 
     private String auditReason;

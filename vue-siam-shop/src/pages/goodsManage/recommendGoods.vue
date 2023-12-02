@@ -49,8 +49,14 @@
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
-			<!-- <el-button type="danger" @click="batchRemove" :isDisabled="this.sels.length===0">批量删除</el-button> -->
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="searchMsg.pageSize" :total="total" style="float:right;">
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:page-sizes="[10, 20, 50, 100]"
+				:page-size="searchMsg.pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total"
+				style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -168,27 +174,31 @@
 			formatappType (row, column) { // app类型0=android  1=ios
 				return row.apptype == 1 ? 'ios' : 'android';
 			},
-      formatType (row, column) { // 0-待上架，1-已上架，2-已下架，3-已删除,4-售罄
-        let type = row[column.property] 
-        switch (type) {
-          case 1:
-            return '待上架'
-            break;
-          case 2:
-            return '已上架'
-            break;
-          case 3:
-            return '已下架'
-            break;
-          case 4:
-            return '售罄'
-            break;
-        }
+			formatType (row, column) { // 0-待上架，1-已上架，2-已下架，3-已删除,4-售罄
+				let type = row[column.property] 
+				switch (type) {
+				case 1:
+					return '待上架'
+					break;
+				case 2:
+					return '已上架'
+					break;
+				case 3:
+					return '已下架'
+					break;
+				case 4:
+					return '售罄'
+					break;
+				}
 			},
+			handleSizeChange(val) {
+				this.searchMsg.pageSize = val;
+				this.getList();
+			},			
 			handleCurrentChange(val) {
 				this.searchMsg.pageNo = val;
 				this.getList();
-      },
+      		},
 			getList(pageNoParam) { // 获取列表
 				if(pageNoParam){
 				this.searchMsg.pageNo = pageNoParam;

@@ -1,6 +1,7 @@
 package com.siam.package_goods.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -14,6 +15,9 @@ import java.util.Date;
 @TableName("tb_goods")
 @ApiModel(value = "商品表")
 public class Goods {
+
+    @TableField(select = false)
+    private Integer menuId;
 
     /**
      * 状态 1=待上架 2=已上架 3=已下架 4=售罄

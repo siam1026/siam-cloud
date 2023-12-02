@@ -47,9 +47,6 @@ public class MemberInviteRelationServiceImpl implements MemberInviteRelationServ
 //    private CouponsMemberRelationService couponsMemberRelationService;
 
     @Autowired
-    private MemberTokenService memberTokenService;
-
-    @Autowired
     private MemberSessionManager memberSessionManager;
 
     @Override

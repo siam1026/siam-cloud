@@ -29,9 +29,6 @@ public class MerchantAppraiseController {
     private AppraiseService appraiseService;
 
 //    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
-//    @Autowired
 //    private MerchantService merchantService;
 
     @Autowired
@@ -67,9 +64,8 @@ public class MerchantAppraiseController {
     public BasicResult list(@RequestBody @Validated(value = {}) Appraise appraise, HttpServletRequest request){
         BasicData basicResult = new BasicData();
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
-//        Merchant merchant = merchantService.selectByPrimaryKey(merchantToken.getMerchantId());
 
-//        appraise.setShopId(merchant.getShopId());
+        appraise.setShopId(loginMerchant.getShopId());
         Page<Map<String, Object>> page = appraiseService.getMapListByPage(appraise.getPageNo(), appraise.getPageSize(), appraise);
 
         return BasicResult.success(page);

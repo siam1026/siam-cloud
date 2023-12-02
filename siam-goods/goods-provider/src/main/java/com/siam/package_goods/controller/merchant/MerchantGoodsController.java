@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_goods.service.*;
 import com.siam.package_common.entity.BasicData;
@@ -64,9 +65,6 @@ public class MerchantGoodsController {
     @Autowired
     private CouponsGoodsRelationService couponsGoodsRelationService;
 
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
-//
 //    @Autowired
 //    private MerchantService merchantService;
 
@@ -145,7 +143,7 @@ public class MerchantGoodsController {
             @ApiImplicitParam(name = "menuId", value = "菜单id", required = false, paramType = "query", dataType = "int"),
     })
     @PostMapping(value = "/insert")
-    public BasicResult insert(@RequestBody @Validated(value = {}) Goods goods, int menuId, HttpServletRequest request){
+    public BasicResult insert(@RequestBody @Validated(value = {}) Goods goods, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
         //获取当前登录用户绑定的门店编号
@@ -172,7 +170,7 @@ public class MerchantGoodsController {
         //建立商品与类别的关系
         MenuGoodsRelation insertMenuGoodsRelation = new MenuGoodsRelation();
         insertMenuGoodsRelation.setGoodsId(goods.getId());
-        insertMenuGoodsRelation.setMenuId(menuId);
+        insertMenuGoodsRelation.setMenuId(goods.getMenuId());
         insertMenuGoodsRelation.setCreateTime(new Date());
         insertMenuGoodsRelation.setUpdateTime(new Date());
         menuGoodsRelationService.insertSelective(insertMenuGoodsRelation);
@@ -206,6 +204,7 @@ public class MerchantGoodsController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "修改商品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "商品表主键id", required = true, paramType = "query", dataType = "int"),
@@ -232,7 +231,7 @@ public class MerchantGoodsController {
             @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
     })
     @PostMapping(value = "/update")
-    public BasicResult update(@RequestBody @Validated(value = {}) Goods goods, int menuId, HttpServletRequest request){
+    public BasicResult update(@RequestBody @Validated(value = {}) Goods goods, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
         //获取当前登录用户绑定的门店编号
@@ -261,10 +260,10 @@ public class MerchantGoodsController {
         if(list!=null && list.size()>0){
             //如果商品原先的类别被修改了，现在就修改数据重新建立关系
             MenuGoodsRelation dbMenuGoodsRelation = list.get(0);
-            if(menuId != dbMenuGoodsRelation.getMenuId()){
+            if(goods.getMenuId() != dbMenuGoodsRelation.getMenuId()){
                 MenuGoodsRelation updateMenuGoodsRelation = new MenuGoodsRelation();
                 updateMenuGoodsRelation.setId(dbMenuGoodsRelation.getId());
-                updateMenuGoodsRelation.setMenuId(menuId);
+                updateMenuGoodsRelation.setMenuId(goods.getMenuId());
                 updateMenuGoodsRelation.setUpdateTime(new Date());
                 menuGoodsRelationService.updateByPrimaryKeySelective(updateMenuGoodsRelation);
             }
@@ -272,7 +271,7 @@ public class MerchantGoodsController {
             //如果商品原先没有类别，现在就建立关系
             MenuGoodsRelation insertMenuGoodsRelation = new MenuGoodsRelation();
             insertMenuGoodsRelation.setGoodsId(goods.getId());
-            insertMenuGoodsRelation.setMenuId(menuId);
+            insertMenuGoodsRelation.setMenuId(goods.getMenuId());
             insertMenuGoodsRelation.setCreateTime(new Date());
             insertMenuGoodsRelation.setUpdateTime(new Date());
             menuGoodsRelationService.insertSelective(insertMenuGoodsRelation);
@@ -288,7 +287,7 @@ public class MerchantGoodsController {
                 int count = pictureUploadRecordService.countByExample(uploadRecordExample);
                 if(count == 0){
                     PictureUploadRecord uploadRecord = new PictureUploadRecord();
-//                    uploadRecord.setShopId(dbMerchant.getShopId());
+                    uploadRecord.setShopId(loginMerchant.getShopId());
                     uploadRecord.setUrl(str);
                     uploadRecord.setModule(Quantity.INT_1);
                     uploadRecord.setCreateTime(new Date());
@@ -304,6 +303,7 @@ public class MerchantGoodsController {
         return basicResult;
     }
 
+    @MerchantPermission
     @ApiOperation(value = "删除商品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "商品表主键id", required = true, paramType = "query", dataType = "int"),

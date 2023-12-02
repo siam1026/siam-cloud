@@ -2,6 +2,7 @@ package com.siam.package_common.config;
 
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.entity.BasicResult;
+import com.siam.package_common.exception.PermissionException;
 import com.siam.package_common.exception.StoneCustomerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler {
             e.printStackTrace();
             basicResult.setSuccess(false);
             basicResult.setCode(BasicResultCode.ERR);
+            basicResult.setMessage(e.getMessage());
+        }else if(e instanceof PermissionException){
+            e.printStackTrace();
+            basicResult.setSuccess(false);
+            basicResult.setCode(((PermissionException) e).getCode());
             basicResult.setMessage(e.getMessage());
         }else{
             log.error("\n系统异常", e);

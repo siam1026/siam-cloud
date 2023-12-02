@@ -72,8 +72,14 @@
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
-			<!-- <el-button type="danger" @click="batchRemove" :status="this.sels.length===0">批量删除</el-button> -->
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="searchMsg.pageSize" :total="total" style="float:right;">
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:page-sizes="[10, 20, 50, 100]"
+				:page-size="searchMsg.pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total"
+				style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -358,12 +364,16 @@
 				}else{
 					return "-";
 				}
-			},           
+			},
+			handleSizeChange(val) {
+				this.searchMsg.pageSize = val;
+				this.getList();
+			},			    
 			handleCurrentChange(val) {
 				this.searchMsg.pageNo = val;
 				this.getList();
 			},
-						getList(pageNoParam) { // 获取列表
+			getList(pageNoParam) { // 获取列表
 				if(pageNoParam){
 				this.searchMsg.pageNo = pageNoParam;
 				} // 获取商品辅料列表

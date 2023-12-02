@@ -1,6 +1,9 @@
 package com.siam.package_order.service_impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
+import com.alipay.api.domain.Coupon;
+import com.alipay.api.domain.Person;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siam.package_common.constant.BusinessType;
@@ -44,6 +47,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
@@ -103,7 +107,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Autowired
     private MemberInviteRelationFeignClient memberInviteRelationFeignClient;
 
-    @Resource(name = "emptyRewardServiceImpl")
+    @Resource(name = "rewardServiceImpl")
     private RewardService rewardService;
 
     @Autowired
@@ -169,7 +173,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         orderMapper.updateByPrimaryKeySelective(updateOrder);
     }
 
-    public void insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
+    public Order insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
         //基础校验
@@ -285,7 +289,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             CouponsMemberRelation dbCouponsMemberRelation = couponsMemberRelationFeignClient.selectCouponsMemberRelationByPrimaryKey(couponsMemberRelationId);
             Integer couponsId = dbCouponsMemberRelation.getCouponsId();
             Map couponsMap = couponsFeignClient.selectCouponsAndGoodsByPrimaryKey(couponsId);
-            Coupons dbCoupons = (Coupons) couponsMap.get("coupons");
+            Coupons dbCoupons = BeanUtil.mapToBean((Map) couponsMap.get("coupons"), Coupons.class, false);
             if(Coupons.TYPE_DISCOUNT.equals(dbCoupons.getPreferentialType())){
                 //折扣优惠券
                 //如果是商家中心发放的优惠券，则需要判断关联商品
@@ -343,14 +347,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 log.debug("优惠券折扣额度：" + dbCoupons.getDiscountAmount().toString());
 
                 //计算使用优惠券时优惠的金额
-                subtractPrice= subtractNum.multiply((BigDecimal.ONE.subtract(((Coupons)couponsMap.get("coupons")).getDiscountAmount()))).setScale(Quantity.INT_2, BigDecimal.ROUND_HALF_UP);
+                subtractPrice= subtractNum.multiply((BigDecimal.ONE.subtract(dbCoupons.getDiscountAmount()))).setScale(Quantity.INT_2, BigDecimal.ROUND_HALF_UP);
                 finalPrice = finalPrice.subtract(subtractPrice);
 
                 //标识订单商品详情
                 couponsDiscountOrderDetail.setIsUsedCoupons(true);
                 couponsDiscountOrderDetail.setCouponsDiscountPrice(subtractPrice);
 
-            }else if(Coupons.TYPE_FULL_REDUCTION.equals(((Coupons)couponsMap.get("coupons")).getPreferentialType())){
+            }else if(Coupons.TYPE_FULL_REDUCTION.equals(dbCoupons.getPreferentialType())){
                 //TODO-满减优惠券的使用逻辑待定，初步探讨是满减规则或满减优惠券两者选其一，像奶茶这种产品下单金额比较小，所以估计用不着满减优惠券；
                 //优惠券为满减卷类型
                 //这里要依据使用满减规则后的最终价格来进行判断
@@ -366,7 +370,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
             param.setCouponsId(couponsId);
             param.setCouponsMemberRelationId(couponsMemberRelationId);
-            param.setCouponsDescription(((Coupons)couponsMap.get("coupons")).getName() + "-优惠" + subtractPrice + "元");
+            param.setCouponsDescription((dbCoupons).getName() + "-优惠" + subtractPrice + "元");
             log.debug("使用优惠券时优惠的金额：" + subtractPrice.toString());
         }
 
@@ -480,7 +484,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         //添加订单记录
         Order insertOrder = new Order();
-//        insertOrder.setMemberId(loginMember.getId());
+        insertOrder.setMemberId(loginMember.getId());
         insertOrder.setOrderNo(orderNo);
         insertOrder.setGoodsTotalQuantity(goodsTotalQuantity);
         insertOrder.setGoodsTotalPrice(goodsTotalPrice);
@@ -606,10 +610,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,true);
         }
 
-        //加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
+        /*//加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
         Message message = new Message("TID_COMMON", "CLOSE_OVERDUE_ORDER", JSON.toJSONString(dbOrder).getBytes());
         message.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_5M);
-        rocketMQTemplate.getProducer().send(message);
+        rocketMQTemplate.getProducer().send(message);*/
+
+        return dbOrder;
     }
 
     @Override
@@ -642,7 +648,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+            /*goodsFeignClient.increaseStock(goodsId, number);*/
         }
 
         //退回优惠卷
@@ -828,13 +834,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 memberBillingRecord.setMessage("订单退款-下单奖励积分退回");
                 memberBillingRecord.setOrderId(dbOrder.getId());
                 memberBillingRecord.setCreateTime(new Date());
-//                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
 
                 //之前的账单记录标注已退回
                 MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                 updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                 updateMemberBillingRecord.setIsReturn(true);
-//                memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
             }
 
             //退回下单佣金奖励
@@ -863,63 +869,63 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                         message = "订单退款-下单用户佣金奖励退回";
                     }
 
-//                    Member dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    Member dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
                     //增加用户的邀请新用户注册奖励金额
-//                    BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-//                    Member updateMember = new Member();
-//                    updateMember.setId(dbMember.getId());
-//                    updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
-//                    updateMember.setUpdateTime(new Date());
-//                    memberFeignClient.updateByPrimaryKeySelective(updateMember);
-//                    dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
-//
-//                    //增加用户账单记录
-//                    MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
-//                    memberBillingRecord.setMemberId(dbMember.getId());
-//                    memberBillingRecord.setType(type);
-//                    memberBillingRecord.setOperateType(MemberBillingRecord.OPERATE_TYPE_SUB);
-//                    memberBillingRecord.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
-//                    memberBillingRecord.setNumber(dbMemberBillingRecord.getNumber());
-//                    memberBillingRecord.setMessage(message);
-//                    memberBillingRecord.setOrderId(dbOrder.getId());
-//                    memberBillingRecord.setCreateTime(new Date());
-//                    memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
-//
-//                    //之前的账单记录标注已退回
-//                    MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
-//                    updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
-//                    updateMemberBillingRecord.setIsReturn(true);
-//                    memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
-//                }
+                    Member updateMember = new Member();
+                    updateMember.setId(dbMember.getId());
+                    updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
+                    updateMember.setUpdateTime(new Date());
+                    memberFeignClient.updateByPrimaryKeySelective(updateMember);
+                    dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+
+                    //增加用户账单记录
+                    MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
+                    memberBillingRecord.setMemberId(dbMember.getId());
+                    memberBillingRecord.setType(type);
+                    memberBillingRecord.setOperateType(MemberBillingRecord.OPERATE_TYPE_SUB);
+                    memberBillingRecord.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
+                    memberBillingRecord.setNumber(dbMemberBillingRecord.getNumber());
+                    memberBillingRecord.setMessage(message);
+                    memberBillingRecord.setOrderId(dbOrder.getId());
+                    memberBillingRecord.setCreateTime(new Date());
+                    memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+
+                    //之前的账单记录标注已退回
+                    MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
+                    updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
+                    updateMemberBillingRecord.setIsReturn(true);
+                    memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                }
                 }
             }
 
-            //获取该订单对应的商家信息
-            Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
-            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
-            Member bindMember = memberFeignClient.selectByPrimaryKey(dbMerchant.getMemberId());
-            if (bindMember != null) {
-                //发送微信公众号消息通知商家
-                String title = "尊敬的商家，您有一个订单已被用户取消，为避免损失，请不要继续备货哦 - 取餐号" + dbOrder.getQueueNo();
-                String addressStr = dbOrder.getContactProvince() + dbOrder.getContactCity() + dbOrder.getContactArea() + dbOrder.getContactStreet() + dbOrder.getContactHouseNumber();
-                String orderDescription = dbOrder.getShoppingWay() == Quantity.INT_1
-                        ? ("自取订单 - 取餐号" + dbOrder.getQueueNo())
-                        : ("配送订单 - 取餐号" + dbOrder.getQueueNo() + " - " + addressStr);
-                String contacts = dbOrder.getContactRealname().concat(" - ").concat(dbOrder.getContactPhone());
-                String remark = "取消原因：" + getRefundReasonText(insertOrderRefund.getRefundReason());
-                wxPublicPlatformNotifyService.sendOrderCancelMessageForMerchant(bindMember.getWxPublicPlatformOpenId(), title, orderDescription, dbOrder.getActualPrice() + "元", insertOrderRefund.getRefundAmount() + "元", insertOrderRefund.getCreateTime(), contacts, remark);
-            } else {
-                log.debug(dbOrder.getShopName() + "还未绑定小程序账号，发送订单取消通知失败");
-            }
+        //获取该订单对应的商家信息
+        Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+        Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+        Member bindMember = memberFeignClient.selectByPrimaryKey(dbMerchant.getMemberId());
+        if (bindMember != null) {
+            //发送微信公众号消息通知商家
+            String title = "尊敬的商家，您有一个订单已被用户取消，为避免损失，请不要继续备货哦 - 取餐号" + dbOrder.getQueueNo();
+            String addressStr = dbOrder.getContactProvince() + dbOrder.getContactCity() + dbOrder.getContactArea() + dbOrder.getContactStreet() + dbOrder.getContactHouseNumber();
+            String orderDescription = dbOrder.getShoppingWay() == Quantity.INT_1
+                    ? ("自取订单 - 取餐号" + dbOrder.getQueueNo())
+                    : ("配送订单 - 取餐号" + dbOrder.getQueueNo() + " - " + addressStr);
+            String contacts = dbOrder.getContactRealname().concat(" - ").concat(dbOrder.getContactPhone());
+            String remark = "取消原因：" + getRefundReasonText(insertOrderRefund.getRefundReason());
+            wxPublicPlatformNotifyService.sendOrderCancelMessageForMerchant(bindMember.getWxPublicPlatformOpenId(), title, orderDescription, dbOrder.getActualPrice() + "元", insertOrderRefund.getRefundAmount() + "元", insertOrderRefund.getCreateTime(), contacts, remark);
+        } else {
+            log.debug(dbOrder.getShopName() + "还未绑定小程序账号，发送订单取消通知失败");
+        }
 
-            //商家端中心进行语音提醒
-            Boolean isOpenOrderAudio = dbShop.getIsOpenOrderAudio();
-            if (isOpenOrderAudio) {
-                webSocketService.pushMessage(dbMerchant.getMobile(), BusinessType.ORDER_APPLY_REFUND);
-            }
+        //商家端中心进行语音提醒
+        Boolean isOpenOrderAudio = dbShop.getIsOpenOrderAudio();
+        if (isOpenOrderAudio) {
+            webSocketService.pushMessage(dbMerchant.getMobile(), BusinessType.ORDER_APPLY_REFUND);
         }
     }
+
 
     @Override
     public void applyRefund(OrderParam param) throws IOException {
@@ -939,9 +945,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if(dbOrder == null){
             throw new StoneCustomerException("该订单不存在");
         }
-//        if(!dbOrder.getMemberId().equals(loginMember.getId())){
-//            throw new StoneCustomerException("该订单不是你的，不允许取消");
-//        }
+        if(!dbOrder.getMemberId().equals(loginMember.getId())){
+            throw new StoneCustomerException("该订单不是你的，不允许取消");
+        }
 
         //订单支付后24小时(1天)内 & 订单状态不等于(1=未付款 7=售后处理中 8=已退款(废弃选项) 9=售后处理完成 10=已取消(未支付) 11=已取消(已支付))时，用户可以申请退款；如果可以无责取消订单，则无需显示申请退款按钮；
         OrderParam orderParam = new OrderParam();
@@ -1108,11 +1114,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 //        }
 
         //查找该订单对应的交易记录
-//        MemberTradeRecord memberTradeRecord = memberTradeRecordService.selectByPrimaryKey(dbOrder.getTradeId());
-//        int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
-//                ? Quantity.INT_1 :
-//                (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
-//                        : (memberTradeRecord.getPaymentMode() == Quantity.INT_3 ? Quantity.INT_3 : Quantity.INT_0));
+        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbOrder.getTradeId());
+        int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
+                ? Quantity.INT_1 :
+                (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
+                        : (memberTradeRecord.getPaymentMode() == Quantity.INT_3 ? Quantity.INT_3 : Quantity.INT_0));
 
         //添加退款记录
         OrderRefund insertOrderRefund = new OrderRefund();
@@ -1123,7 +1129,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         insertOrderRefund.setRefundReasonDescription(param.getOrderRefund().getRefundReasonDescription());
         insertOrderRefund.setEvidenceImages(param.getOrderRefund().getEvidenceImages());
         insertOrderRefund.setRefundAmount(param.getOrderRefund().getRefundAmount());
-//        insertOrderRefund.setRefundAccount(refundAccount);
+        insertOrderRefund.setRefundAccount(refundAccount);
         insertOrderRefund.setStatus(Quantity.INT_2); //跳过第一步-退款申请已提交，直接到等待商家处理
         insertOrderRefund.setGoodsTotalQuantity(goodsTotalQuantity);
         insertOrderRefund.setGoodsTotalPrice(goodsAmount);
@@ -1703,15 +1709,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             rewardService.giveInviterReward(dbMember.getId(), commissionAmount, MemberBillingRecord.TYPE_OWN_COMMISSION, message, dbOrder.getId());
         }
 
-        //加入MQ延时队列，订单支付超过1个小时 且 订单未取消/未申请退款，则将订单修改为已完成
+        /*//加入MQ延时队列，订单支付超过1个小时 且 订单未取消/未申请退款，则将订单修改为已完成
         Message message01 = new Message("TID_COMMON", "AUTO_COMPLETED_ORDER", JSON.toJSONString(dbOrder).getBytes());
         message01.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_1H);
-        rocketMQTemplate.getProducer().send(message01);
+        rocketMQTemplate.getProducer().send(message01);*/
 
-        //加入MQ延时队列，订单支付超过10分钟，状态还是处于待处理、待配送，则给与商家中心PC端订单即将超时语音提醒
+        /*//加入MQ延时队列，订单支付超过10分钟，状态还是处于待处理、待配送，则给与商家中心PC端订单即将超时语音提醒
         Message message02 = new Message("TID_COMMON", "REMIND_OVERTIME_ORDER", JSON.toJSONString(dbOrder).getBytes());
         message02.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_10M);
-        rocketMQTemplate.getProducer().send(message02);
+        rocketMQTemplate.getProducer().send(message02);*/
     }
 
     @Override

@@ -1,0 +1,136 @@
+page{
+  background-color: #f7f7f7;
+}
+
+.scroll-views{
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
+
+.delivery-address-list{
+  background: #fff;
+  margin: 20rpx;
+  border-radius: 15rpx;
+  margin-bottom: 20rpx;
+}
+
+.my-address{
+  font-size: 28rpx;
+  padding: 20rpx 0 0 20rpx;
+}
+
+.address-name{
+  font-size: 28rpx;
+}
+
+.delivery-address-item{
+  border-bottom: 1rpx solid #ededed;
+  padding: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+}
+
+.address-detail-info{
+  width: 85%;
+}
+
+.personal-info{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 24rpx;
+}
+
+.default-address{
+  padding: 5rpx;
+  background: #9f9f9b;
+  color: white;
+  border-radius: 10rpx;
+  margin-right: 8rpx;
+  font-size: 20rpx;
+  padding: 0 10rpx;
+}
+
+.address-tag{
+  padding: 5rpx 8rpx;
+  color: white;
+  border-radius: 10rpx;
+  margin-right: 8rpx;
+}
+
+.phone-number,.username-class{
+  color:#9f9f9b;
+  margin-right: 8rpx;
+}
+
+.self-taking-list{
+  border-bottom: 1rpx solid #ededed;
+}
+
+.self-taking-item{
+  padding: 20rpx 20rpx 10rpx 20rpx;
+}
+
+.business-hours-distance,.store-address-details{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10rpx 0;
+}
+
+.store-name{
+  font-size: 36rpx;
+  line-height: 60rpx;
+}
+
+.business-hours,.store-address{
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  width: 75%;
+}
+
+.business-hours view,.store-address view{
+  color: #9f9f9b;
+  width: 100%;
+}
+
+.distance-class{
+  font-size: 24rpx;
+}
+
+.icon-detail{
+  width: 14rpx;
+  height: auto;
+  margin-left: 10rpx;
+}
+
+.insert-address-view{
+  position: fixed;
+  bottom: 0;
+  height: 100rpx;
+  line-height: 100rpx;
+  text-align: center;
+  font-size: 30rpx;
+  width: 100%;
+  background: #fff;
+  z-index: 6;
+  box-shadow: -2px 0px 5px 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.view-line{
+  height: 20rpx;
+  background: #f5f5f5;
+  border: none;
+}
+
+.iconbianji-copy{
+  font-size: 50rpx;
+}

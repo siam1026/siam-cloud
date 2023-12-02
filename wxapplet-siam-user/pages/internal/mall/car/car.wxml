@@ -1,0 +1,92 @@
+<scroll-view scroll-y="true" style="height:{{winHeight}}px">
+  <checkbox-group class="weui-slidecells" bindchange="checkboxChange">
+    <view class="page__bd">
+      <view class="weui-slidecells" wx:for="{{items}}" wx:key="index">
+        <mp-slideview buttons="{{slideButtons}}" icon="{{true}}" data-checkboxIndex="{{index}}"
+          bindbuttontap="slideButtonTap" throttle="300">
+          <view class="weui-slidecell {{item.disable?'isDisable':''}}">
+            <label class="checkbox-group-label">
+              <checkbox value="{{index}}" index='{{index}}' class="theme-color theme-border-color"
+                checked="{{item.checked}}" disabled="{{item.disable}}" />
+
+              <view class="commdity-item">
+                <image src="{{item.mainImage?item.mainImage:'../../assets/images/load-image.png'}}" mode="aspectFill"
+                  class="commodity-icon"></image>
+                <view class="sell-out out-store" wx:if="{{item.goodsStatus==1}}">未上架</view>
+                <view class="sell-out out-store" wx:elif="{{item.goodsStatus==3}}">已下架</view>
+                <view class="sell-out out-store" wx:elif="{{item.goodsStatus==4}}">已售罄</view>
+                <view class="commdity-types">
+                  <view class="commodity-name-type">
+                    <view class="commdity-name out_of_range one_row">{{item.goodsName}}</view>
+                    <view class="types">{{item.restructure}}</view>
+                  </view>
+                  <view class="commdity-money">￥{{item.price}}</view>
+                </view>
+              </view>
+            </label>
+            <view class='stepper'>
+              <view class='flex_center car_reduce_add reduce-class' bindtap='bindMinus' data-num="{{index}},{{item.number}}">－</view>
+              <input disabled type='number' value='{{item.number}}' class='radd-reduce-input'></input>
+              <view bindtap='bindPlus' class="flex_center car_reduce_add add-class" data-num="{{index}},{{item.number}}">＋</view>
+            </view>
+          </view>
+        </mp-slideview>
+      </view>
+    </view>
+  </checkbox-group>
+  <is-show-tip isShow="{{items.length<=0}}" src="{{imageTip}}" top="20"
+    text="{{items.length<=0}}" tipText="您的购物车有点寂寞"></is-show-tip>
+  <view class="gotogg theme-bg" bindtap="goToDrink" wx:if="{{items.length<=0}}">去逛逛</view>
+  <view class="like-list-view" wx:if="{{likeList.length>0}}">
+    <view class="title-like-view theme-color">
+      <view class="title-view">猜你喜欢</view>
+    </view>
+    <view class="like-items">
+      <view class="like-item" wx:for="{{likeList}}" wx:key="index" wx:if="{{index<6}}" bindtap="commodityDetailTap"
+        data-id="{{item.id}}">
+        <view class="like-detail-view">
+          <image src="{{item.mainImage}}" mode="aspectFill" class="icon-like-class"></image>
+          <view class="fullname-class out_of_range one_row">{{item.name}}</view>
+          <view class="engname-class out_of_range one_row">{{item.detailmainImage}}</view>
+        </view>
+        <view class="like-money-view">
+          <view class="like-money">
+            <text>￥</text>
+            <text>{{item.price}}</text>
+          </view>
+          <view class="plus-view theme-bg">+</view>
+        </view>
+      </view>
+      <is-show-tip isShow="{{likeList.length<=0}}" src="{{imageTip}}" top="20"
+    text="{{likeList.length<=0}}" tipText="暂无数据"></is-show-tip>
+    </view>
+  </view>
+</scroll-view>
+<view class="settlement-view" wx:if="{{items.length>0}}">
+  <view class="total-payable-view">
+    <view class="total-payable">
+      <text class="title-text">应付合计</text>
+      <view class="total-payable-money-view">
+        <text class="sign-icon">￥</text>
+        <text class="total-payable-money">{{totalPrice}}</text>
+      </view>
+    </view>
+    <view class="baozhuangfei-class">
+      <text decode="true">运费 ￥0&nbsp;&nbsp;</text>
+      <text class="theme-color-border full-reduction-view"
+        hidden="{{!fullPriceReductionIsHidden}}">{{fullReductionRuleName}}</text>
+    </view>
+  </view>
+  <!-- <view
+    class="to-pay-view theme-bg wx:if='{{items.length>0&&fullPriceReduction>0&&totalPrice>0}}'"
+    hover-class="hover-class-public"
+    bindtap="{{items.length>0&&fullPriceReduction>=0&&totalPrice>0?'goToPay':'goToTap'}}">
+    去结算(￥{{fullPriceReductionIsHidden?fullPriceReduction:totalPrice}})
+  </view> -->
+  <view
+    class="to-pay-view theme-bg wx:if='{{items.length>0&&fullPriceReduction>0&&totalPrice>0}}'"
+    hover-class="hover-class-public"
+    bindtap="goToPay">
+    去结算(￥{{fullPriceReductionIsHidden?fullPriceReduction:totalPrice}})
+  </view>
+</view>

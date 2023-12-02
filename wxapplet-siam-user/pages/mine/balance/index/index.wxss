@@ -1,0 +1,96 @@
+page {
+  background: #f5f5f5;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.balance-views {
+  height: 360rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+}
+
+.balance-view {
+  font-size: 60rpx;
+}
+
+.balance-text {
+  font-size: 28rpx;
+}
+
+.balance-detail{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin-top: 20rpx;
+}
+
+.balance-detail-info{
+  text-align: center;
+}
+
+.balance-quota{
+  font-size: 32rpx;
+}
+
+.balance-title{
+  font-size: 22rpx;
+}
+
+.integral-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 26rpx;
+  margin: 20rpx;
+  border-radius: 15rpx;
+  background-color: white;
+}
+
+.integral-item-name {
+  font-size: 28rpx;
+  color: rgb(0, 0, 0);
+  margin-bottom: 10rpx;
+}
+
+.integral-item-time {
+  font-size: 26rpx;
+  color: rgb(141, 141, 141)
+}
+
+.integral-item-number {
+  font-size: 34rpx;
+}
+
+.color-integral {
+  color: red;
+}
+
+.scroll-views {
+  background: #f5f5f5;
+  height: 100%;
+}
+
+.withdrawal-button {
+  /* margin-top: 60rpx; */
+  font-size: 28rpx;
+}
+
+.order-title {
+  font-size: 28rpx;
+  color: rgb(141, 141, 141);
+}
+
+.order-info {
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+
+.extClassSelectCurrent .weui-half-screen-dialog__ft.weui-half-screen-dialog__ft {
+  padding: 0;
+}

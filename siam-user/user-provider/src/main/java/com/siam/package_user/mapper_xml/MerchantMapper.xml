@@ -160,30 +160,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.Merchant" >
-    insert into tb_merchant (id, shop_id, username,
-      mobile, PASSWORD, password_salt,
-      nickname, roles, head_img,
-      sex, email, certificate_type,
-      certificate_img, is_disabled, is_deleted,
-      audit_status, real_name, id_card,
-      opening_bank_address, opening_bank_name, bank_card,
-      alipay_account, wechat_account, balance,
-      withdrawable_balance, frozen_balance, order_frozen_balance,
-      member_id, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR},
-      #{mobile,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{passwordSalt,jdbcType=VARCHAR},
-      #{nickname,jdbcType=VARCHAR}, #{roles,jdbcType=VARCHAR}, #{headImg,jdbcType=VARCHAR},
-      #{sex,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, #{certificateType,jdbcType=VARCHAR},
-      #{certificateImg,jdbcType=VARCHAR}, #{isDisabled,jdbcType=BIT}, #{isDeleted,jdbcType=BIT},
-      #{auditStatus,jdbcType=INTEGER}, #{realName,jdbcType=VARCHAR}, #{idCard,jdbcType=VARCHAR},
-      #{openingBankAddress,jdbcType=VARCHAR}, #{openingBankName,jdbcType=VARCHAR}, #{bankCard,jdbcType=VARCHAR},
-      #{alipayAccount,jdbcType=VARCHAR}, #{wechatAccount,jdbcType=VARCHAR}, #{balance,jdbcType=DECIMAL},
-      #{withdrawableBalance,jdbcType=DECIMAL}, #{frozenBalance,jdbcType=DECIMAL}, #{orderFrozenBalance,jdbcType=DECIMAL},
-      #{memberId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.Merchant" useGeneratedKeys="true" keyProperty="id">
     insert into tb_merchant
     <trim prefix="(" suffix=")" suffixOverrides="," >

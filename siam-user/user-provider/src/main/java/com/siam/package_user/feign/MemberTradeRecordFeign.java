@@ -39,9 +39,10 @@ public class MemberTradeRecordFeign {
     }
 
     @RequestMapping(value = "/insertSelective")
-    void insertSelective(@RequestBody MemberTradeRecord memberTradeRecord){
+    int insertSelective(@RequestBody MemberTradeRecord memberTradeRecord){
         log.debug("\n\n》》》 insertSelective - memberTradeRecord = " + JSON.toJSONString(memberTradeRecord));
         memberTradeRecordService.insertSelective(memberTradeRecord);
+        return memberTradeRecord.getId();
     }
 
     @RequestMapping(value = "/selectByOutTradeNo")

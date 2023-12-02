@@ -19,8 +19,6 @@ public interface OrderRefundMapper extends BaseMapper<OrderRefund> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(OrderRefund record);
-
     int insertSelective(OrderRefund record);
 
     List<OrderRefund> selectByExample(OrderRefundExample example);

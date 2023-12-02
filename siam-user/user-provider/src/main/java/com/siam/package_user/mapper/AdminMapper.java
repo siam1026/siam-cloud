@@ -18,8 +18,6 @@ public interface AdminMapper extends BaseMapper<Admin> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Admin record);
-
     int insertSelective(Admin record);
 
     List<Admin> selectByExample(AdminExample example);

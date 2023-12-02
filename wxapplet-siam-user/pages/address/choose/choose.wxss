@@ -1,0 +1,180 @@
+page{
+  background: #fff;
+  width: 100%;
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.swiper-tab{
+  width: 100%;
+  text-align: center;
+  height: 88rpx;
+  line-height: 88rpx;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  background: #fff;
+  z-index: 1;
+  border-bottom: 1rpx solid #ededed;
+}
+
+.swiper-tab-item{
+  width: 100%; 
+}
+
+.swiper-box{
+  display: block; 
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden;
+}
+
+.swiper-items{
+  height: 100%;
+}
+
+.scroll-views{
+  height: 100%;
+  background: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
+
+.delivery-address-list{
+  height: 100%;
+}
+
+.my-address{
+  font-size: 28rpx;
+  padding: 20rpx;
+}
+
+.delivery-address-choice{
+  margin-right: 20rpx;
+  font-size: 30rpx;
+}
+
+.address-name{
+  width: 100%;
+  font-size: 30rpx;
+  margin: 5px 0 5px 0;
+}
+
+.address-name-text{
+  width: 80%;
+}
+
+.address-items{
+  width: 100%;
+}
+
+.delivery-address-item{
+  border-bottom: 1rpx solid #ededed;
+  padding: 10rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.personal-info{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 24rpx;
+}
+
+.default-address{
+  padding: 5rpx;
+  background: #9f9f9b;
+  color: white;
+  border-radius: 10rpx;
+  margin-right: 8rpx;
+}
+
+.address-tag{
+  padding: 5rpx 8rpx;
+  color: white;
+  border-radius: 10rpx;
+  margin-right: 8rpx;
+}
+
+.phone-number,.username-class{
+  color:#9f9f9b;
+  margin-right: 8rpx;
+}
+
+.self-taking-list{
+  border-bottom: 1rpx solid #ededed;
+}
+
+.self-taking-item{
+  padding: 20rpx 20rpx 10rpx 20rpx;
+}
+
+.business-hours-distance,.store-address-details{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10rpx 0;
+  font-size: 28rpx;
+}
+
+.store-name{
+  font-size: 32rpx;
+  line-height: 60rpx;
+}
+
+.business-hours,.store-address{
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  width: 75%;
+}
+
+.business-hours view,.store-address view{
+  color: #9f9f9b;
+  width: 100%;
+}
+
+.distance-class{
+  font-size: 24rpx;
+}
+
+.view-details{
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-detail{
+  width: 14rpx;
+  height: auto;
+  margin-left: 10rpx;
+}
+
+.insert-address-view{
+  position: fixed;
+  bottom: 0;
+  height: 100rpx;
+  line-height: 100rpx;
+  text-align: center;
+  font-size: 32rpx;
+  width: 100%;
+  background: #fff;
+  z-index: 6;
+  box-shadow: -2px 0px 5px 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.edit-icon{
+  width: 7%;
+  height: auto;
+}
+
+.iconbianji-copy{
+  font-size: 50rpx;
+}

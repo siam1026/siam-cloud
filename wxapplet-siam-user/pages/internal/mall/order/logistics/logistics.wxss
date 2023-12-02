@@ -1,0 +1,95 @@
+page {
+   background: #f3f3f3;
+}
+
+.log_top {
+   background: white;
+   margin: 20rpx;
+   border-radius: 15rpx;
+   padding: 20rpx;
+}
+
+.log_top .log_top_title {
+   font-size: 28rpx;
+}
+
+.title_value{
+   font-weight: bold;
+}
+
+.log_content {
+   background: #fff;
+   padding: 20rpx 30rpx 0 40rpx;
+   box-sizing: border-box;
+   margin: 0 20rpx 20rpx 20rpx;
+   border-radius: 15rpx;
+}
+
+.log_content .log_content_box {
+   /* border-left: 1rpx solid #ededed; */
+}
+
+.log_content .log_content_box .log_content_box_add {
+   padding-bottom: 30rpx;
+   position: relative;
+   font-size: 28rpx;
+   padding-left: 30rpx;
+}
+
+.is_index_end{
+   border-left: 1rpx solid #ededed;
+}
+
+.not_index_end{
+   border-left: 1rpx solid white;
+}
+
+.log_content .log_content_box .log_content_box_add .address {
+   line-height: 40rpx;
+   color: #898989;
+}
+
+.log_content .log_content_box .log_content_box_add .spot {
+   width: 40rpx;
+   height: 40rpx;
+   border-radius: 50%;
+   position: absolute;
+   left: -3.2%;
+   top: 1.2%;
+   background: #d5d5d5;
+   font-size: 24rpx;
+   color: white;
+}
+
+.log_content .log_content_box .log_content_box_add .spot.default {
+   background: #004ca0;
+   color: white;
+}
+
+.log_content .log_content_box .log_content_box_add .default {
+   color: black;
+}
+
+.time{
+   color: #898989;
+   font-size: 26rpx;
+}
+
+.kuaidi_wu {
+   margin: 0 20rpx;
+   padding: 120rpx 20rpx;
+   text-align: center;
+   font-size: 28rpx;
+   background: white;
+   border-radius: 15rpx;
+}
+
+.logfooter {
+   margin: 120rpx auto;
+   text-align: center;
+   font-size: 28rpx;
+}
+
+.pinglun-btn{
+   margin: 0;
+ }

@@ -20,8 +20,6 @@ public interface MerchantBillingRecordMapper extends BaseMapper<MerchantBillingR
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MerchantBillingRecord record);
-
     int insertSelective(MerchantBillingRecord record);
 
     List<MerchantBillingRecord> selectByExample(MerchantBillingRecordExample example);

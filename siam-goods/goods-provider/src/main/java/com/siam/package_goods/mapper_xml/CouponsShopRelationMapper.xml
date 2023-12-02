@@ -104,12 +104,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.CouponsShopRelation" >
-    insert into tb_coupons_shop_relation (id, coupons_id, shop_id, 
-      create_time)
-    values (#{id,jdbcType=INTEGER}, #{couponsId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.CouponsShopRelation" useGeneratedKeys="true" keyProperty="id">
     insert into tb_coupons_shop_relation
     <trim prefix="(" suffix=")" suffixOverrides="," >

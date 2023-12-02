@@ -108,14 +108,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.AdminToken" >
-    insert into tb_admin_token (id, admin_id, username,
-      token, type, create_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{adminId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR},
-      #{token,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.AdminToken" useGeneratedKeys="true" keyProperty="id">
     insert into tb_admin_token
     <trim prefix="(" suffix=")" suffixOverrides="," >

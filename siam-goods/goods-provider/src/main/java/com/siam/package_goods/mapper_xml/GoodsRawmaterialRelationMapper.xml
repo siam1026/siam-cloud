@@ -129,14 +129,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.GoodsRawmaterialRelation" >
-    insert into tb_goods_rawmaterial_relation (id, goods_id, rawmaterial_id, 
-      consumed_quantity, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{rawmaterialId,jdbcType=INTEGER}, 
-      #{consumedQuantity,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.GoodsRawmaterialRelation" useGeneratedKeys="true" keyProperty="id">
     insert into tb_goods_rawmaterial_relation
     <trim prefix="(" suffix=")" suffixOverrides="," >

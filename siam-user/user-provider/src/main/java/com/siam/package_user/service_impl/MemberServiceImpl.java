@@ -7,9 +7,16 @@ import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.*;
+import com.siam.package_feign.mod_feign.goods.CouponsFeignClient;
+import com.siam.package_feign.mod_feign.goods.CouponsMemberRelationFeignClient;
+import com.siam.package_feign.mod_feign.goods.SettingFeignClient;
 import com.siam.package_feign.mod_feign.goods.SmsLogFeignClient;
+import com.siam.package_goods.entity.Coupons;
+import com.siam.package_goods.entity.CouponsMemberRelation;
+import com.siam.package_goods.entity.Setting;
 import com.siam.package_goods.entity.SmsLog;
 import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.controller.member.WxLoginController;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
 import com.siam.package_user.entity.MemberInviteRelation;
@@ -21,8 +28,8 @@ import com.siam.package_user.model.result.MemberResult;
 import com.siam.package_user.service.MemberBillingRecordService;
 import com.siam.package_user.service.MemberInviteRelationService;
 import com.siam.package_user.service.MemberService;
-import com.siam.package_user.service.MemberTokenService;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_weixin_basic.config.WxSession;
 import com.siam.package_weixin_basic.util.WXBizDataCrypt;
 import com.siam.package_weixin_basic.util.WxQrCodeUtils;
 import lombok.Data;
@@ -71,22 +78,19 @@ public class MemberServiceImpl implements MemberService {
 //    private WxPublicPlatformSubscribeUserService wxPublicPlatformSubscribeUserService;
 
     @Autowired
-    private MemberTokenService memberTokenService;
-
-    @Autowired
     private OSSUtils ossUtils;
 
-//    @Autowired
-//    private SettingFeignClient settingFeignClient;
+    @Autowired
+    private SettingFeignClient settingFeignClient;
 
     @Autowired
     private MemberBillingRecordService memberBillingRecordService;
 
-//    @Autowired
-//    private CouponsMemberRelationService couponsMemberRelationService;
+    @Autowired
+    private CouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
 
-//    @Autowired
-//    private CouponsService couponsService;
+    @Autowired
+    private CouponsFeignClient couponsFeignClient;
 
     @Autowired
     private MemberInviteRelationService memberInviteRelationService;
@@ -584,12 +588,12 @@ public class MemberServiceImpl implements MemberService {
             }
         }
 
-//        //获取小程序openId
-//        WxSession wxSession = WxLoginController.getSessionKeyFromWxByCode(param.getCode());
-//        if (wxSession.getOpenid() == null) {
-//            throw new StoneCustomerException("用户唯一标识获取失败");
-//        }
-//        log.debug("\n\n自动注册获取的openid：" + wxSession.getOpenid());
+        //获取小程序openId
+        WxSession wxSession = WxLoginController.getSessionKeyFromWxByCode(param.getCode());
+        if (wxSession.getOpenid() == null) {
+            throw new StoneCustomerException("用户唯一标识获取失败");
+        }
+        log.debug("\n\n自动注册获取的openid：" + wxSession.getOpenid());
 
         // 判断是否已经注册
         Member dbMember = memberMapper.selectByMobile(param.getMobile());
@@ -615,7 +619,7 @@ public class MemberServiceImpl implements MemberService {
         //创建登录cookie
         TokenUtil.addLoginCookie(token);
 
-//        memberResult.setOpenId(wxSession.getOpenid());
+        memberResult.setOpenId(wxSession.getOpenid());
         memberResult.setToken(token);
         return memberResult;
     }
@@ -669,24 +673,30 @@ public class MemberServiceImpl implements MemberService {
         //获取会员卡号
         String vipNo = this.generateVipNo();
 
-        BigDecimal registrationRewardPoints = BigDecimal.ZERO;
-        //新用户注册赠送邀请新用户注册奖励金额
-        BigDecimal registrationRewardInviteRewardAmount = BigDecimal.ZERO;
+        //获取积分设置
+        Setting setting = settingFeignClient.selectCurrent();
+        BigDecimal registrationRewardPoints = setting.getRegistrationRewardPoints();
+        registrationRewardPoints = registrationRewardPoints == null ? BigDecimal.ZERO : registrationRewardPoints;
 
-//        //获取积分设置
-//        Setting setting = settingFeignClient.selectCurrent();
-//        BigDecimal registrationRewardPoints = setting.getRegistrationRewardPoints();
-//        registrationRewardPoints = registrationRewardPoints == null ? BigDecimal.ZERO : registrationRewardPoints;
-//
-//        //新用户注册赠送邀请新用户注册奖励金额
-//        BigDecimal registrationRewardInviteRewardAmount = setting.getRegistrationRewardInviteRewardAmount();
+        //新用户注册赠送邀请新用户注册奖励金额
+        BigDecimal registrationRewardInviteRewardAmount = setting.getRegistrationRewardInviteRewardAmount();
+
+        //默认密码为123456
+        String passwordSalt = CommonUtils.genSalt();
+        String password = "123456";
+        password = CommonUtils.genMd5Password(password, passwordSalt);
+
+        //TODO MARK - 新用户默认余额给1000元
+        BigDecimal balance = new BigDecimal(1000);
 
         // 添加member记录
         Member insertMember = new Member();
         insertMember.setUsername(param.getUsername());
         insertMember.setMobile(param.getMobile());
+        insertMember.setPassword(password);
+        insertMember.setPasswordSalt(passwordSalt);
         /*insertMember.setNickname(member.getNickname());*/
-        insertMember.setBalance(BigDecimal.ZERO);
+        insertMember.setBalance(balance);
         insertMember.setLoginCount(Quantity.INT_1);
         insertMember.setInviteCode(null);
         insertMember.setIsDisabled(false);
@@ -753,15 +763,15 @@ public class MemberServiceImpl implements MemberService {
             memberBillingRecordService.insertSelective(memberBillingRecord);
         }
 
-//            //赠送系统默认优惠券-新人3折卷
-//            Coupons dbCoupons = couponsService.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID);
-//            if (dbCoupons == null) {
-//                throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
-//            }
-//            CouponsMemberRelation couponsMemberRelation = new CouponsMemberRelation();
-//            couponsMemberRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
-//            couponsMemberRelation.setMemberId(insertMember.getId());
-//            couponsMemberRelationService.insertSelective(couponsMemberRelation);
+        //赠送系统默认优惠券-新人3折卷
+        Coupons dbCoupons = couponsFeignClient.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID);
+        if (dbCoupons == null) {
+            throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
+        }
+        CouponsMemberRelation couponsMemberRelation = new CouponsMemberRelation();
+        couponsMemberRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
+        couponsMemberRelation.setMemberId(insertMember.getId());
+        couponsMemberRelationFeignClient.insertSelective(couponsMemberRelation);
 
         log.debug("邀请者id:" + param.getInviterId());
         if (param.getInviterId() != null && !param.getInviterId().equals("") && !param.getInviterId().equals("undefined")) {
@@ -778,17 +788,17 @@ public class MemberServiceImpl implements MemberService {
                 memberInviteRelationService.insertSelective(memberInviteRelation);
                 log.debug("end-------创建用户邀请关系");
 
-//                    log.debug("start-------发送邀请优惠卷");
-//                    //发送邀请卷
-//                    Coupons inviteCoupons = couponsService.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
-//                    if (inviteCoupons == null) {
-//                        throw new StoneCustomerException("系统默认优惠券-邀请新人卷不存在");
-//                    }
-//                    CouponsMemberRelation inviteCouponsMemberRelation = new CouponsMemberRelation();
-//                    inviteCouponsMemberRelation.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
-//                    inviteCouponsMemberRelation.setMemberId(Integer.valueOf(inviterId));
-//                    couponsMemberRelationService.insertSelective(inviteCouponsMemberRelation);
-//                    log.debug("end-------发送邀请优惠卷");
+                log.debug("start-------发送邀请优惠卷");
+                //发送邀请卷
+                Coupons inviteCoupons = couponsFeignClient.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+                if (inviteCoupons == null) {
+                    throw new StoneCustomerException("系统默认优惠券-邀请新人卷不存在");
+                }
+                CouponsMemberRelation inviteCouponsMemberRelation = new CouponsMemberRelation();
+                inviteCouponsMemberRelation.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+                inviteCouponsMemberRelation.setMemberId(Integer.valueOf(param.getInviterId()));
+                couponsMemberRelationFeignClient.insertSelective(inviteCouponsMemberRelation);
+                log.debug("end-------发送邀请优惠卷");
 
                 //将注册方式改为邀请注册
                 updateMember = new Member();

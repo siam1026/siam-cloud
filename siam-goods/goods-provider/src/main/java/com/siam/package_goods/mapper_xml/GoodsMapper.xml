@@ -147,24 +147,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.Goods" >
-    insert into tb_goods (id, shop_id, name,
-      main_image, sub_images, detail,
-      detail_images, price, stock,
-      is_hot, is_new, status, is_sale,
-      sale_price, monthly_sales, total_sales,
-      total_comments, preferential_name, packing_charges,
-      product_time, exchange_points, sort_number,
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-      #{mainImage,jdbcType=VARCHAR}, #{subImages,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR},
-      #{detailImages,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER},
-      #{isHot,jdbcType=BIT}, #{isNew,jdbcType=BIT}, #{status,jdbcType=INTEGER}, #{isSale,jdbcType=BIT},
-      #{salePrice,jdbcType=DECIMAL}, #{monthlySales,jdbcType=INTEGER}, #{totalSales,jdbcType=INTEGER},
-      #{totalComments,jdbcType=INTEGER}, #{preferentialName,jdbcType=VARCHAR}, #{packingCharges,jdbcType=DECIMAL},
-      #{productTime,jdbcType=DECIMAL}, #{exchangePoints,jdbcType=INTEGER}, #{sortNumber,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.Goods" useGeneratedKeys="true" keyProperty="id">
     insert into tb_goods
     <trim prefix="(" suffix=")" suffixOverrides="," >

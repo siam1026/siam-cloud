@@ -143,12 +143,12 @@ public class PlatformPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
 
             //修改订单信息：补填用户交易id
             Order updateOrder = new Order();
             updateOrder.setId(dbOrder.getId());
-            updateOrder.setTradeId(insertMemberTradeRecord.getId());
+            updateOrder.setTradeId(insertMemberTradeRecordId);
             updateOrder.setPaymentMode(Quantity.INT_2);
             updateOrder.setUpdateTime(new Date());
             orderService.updateByPrimaryKeySelective(updateOrder);
@@ -209,7 +209,7 @@ public class PlatformPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
 
             //修改订单信息：补填自取订单改为配送的用户交易id
             //配送费、收获地址id要持久化到数据库，回调时配送费从用户交易记录表中获取(考虑到有些地方无论订单类型都会将配送费展示出来)，收获地址id从订单表中获取
@@ -218,7 +218,7 @@ public class PlatformPayController {
             updateOrder.setMerchantDeliveryFee(merchantDeliveryFee);
             updateOrder.setDeliveryAddressId(platformPayDto.getDeliveryAddressId());
             updateOrder.setChangeToDeliveryOutTradeNo(outTradeNo);
-            updateOrder.setChangeToDeliveryTradeId(insertMemberTradeRecord.getId());
+            updateOrder.setChangeToDeliveryTradeId(insertMemberTradeRecordId);
             updateOrder.setPaymentMode(Quantity.INT_2);
             updateOrder.setUpdateTime(new Date());
             orderService.updateByPrimaryKeySelective(updateOrder);

@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+      "mp-halfScreenDialog": "../../../../components/half-screen-dialog/half-screen-dialog",
+      "is-show-tip": "../../../../components/is-show-tip/is-show-tip"
+  },
+  "navigationBarTitleText": "我的奖励",
+  "navigationBarBackgroundColor": "#004ca0",
+  "navigationBarTextStyle": "white"
+}

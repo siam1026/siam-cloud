@@ -123,18 +123,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.MemberBillingRecord" >
-    insert into tb_member_billing_record (id, member_id, type,
-      operate_type, coin_type, number,
-      service_fee, message, order_id,
-      points_mall_order_id, is_return, is_settled,
-      create_time)
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
-      #{operateType,jdbcType=INTEGER}, #{coinType,jdbcType=INTEGER}, #{number,jdbcType=DECIMAL},
-      #{serviceFee,jdbcType=DECIMAL}, #{message,jdbcType=VARCHAR}, #{orderId,jdbcType=INTEGER},
-      #{pointsMallOrderId,jdbcType=INTEGER}, #{isReturn,jdbcType=BIT}, #{isSettled,jdbcType=BIT},
-      #{createTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.MemberBillingRecord" useGeneratedKeys="true" keyProperty="id">
     insert into tb_member_billing_record
     <trim prefix="(" suffix=")" suffixOverrides="," >

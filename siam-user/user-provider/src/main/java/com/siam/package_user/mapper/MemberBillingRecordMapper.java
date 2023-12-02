@@ -22,8 +22,6 @@ public interface MemberBillingRecordMapper extends BaseMapper<MemberBillingRecor
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MemberBillingRecord record);
-
     int insertSelective(MemberBillingRecord record);
 
     List<MemberBillingRecord> selectByExample(MemberBillingRecordExample example);

@@ -1,0 +1,28 @@
+
+
+@import "/components/iconfont.wxss";
+@import "/app.wxss";
+/* 网络错误 */
+.internet-error{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.icon-internet-error{
+  width: 188rpx;
+  height: auto;
+  margin: 20rpx;
+}
+
+.text-tip-class{
+  font-size: 26rpx;
+  line-height: 80rpx;
+  color: #858585;
+}
+
+.iconfont{
+  font-size: 110rpx;
+  color: #8a96a3;
+}

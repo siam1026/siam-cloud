@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.entity.MenuGoodsRelation;
 import com.siam.package_goods.model.example.MenuGoodsRelationExample;
 import org.apache.ibatis.annotations.Delete;
@@ -10,14 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface MenuGoodsRelationMapper {
+public interface MenuGoodsRelationMapper extends BaseMapper<MenuGoodsRelation> {
     int countByExample(MenuGoodsRelationExample example);
 
     int deleteByExample(MenuGoodsRelationExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(MenuGoodsRelation record);
 
     int insertSelective(MenuGoodsRelation record);
 

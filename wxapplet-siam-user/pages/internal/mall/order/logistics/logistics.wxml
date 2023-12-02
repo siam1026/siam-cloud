@@ -1,0 +1,22 @@
+<view class="log">
+   <view class='log_top'>
+      <view class='log_top_title'>快递公司：<text class="title_value">{{logisticsJson.logisticsWay}}</text></view>
+      <view class='log_top_title'>运单编号：<text class="title_value">{{logisticsJson.logisticsNo}}</text></view>
+      <view class='log_top_title'>物流状态：<text class="title_value">{{logisticsJson.logisticsStatusText}}</text></view>
+   </view>
+   <view class='log_top flex_between'>
+      <view class='log_top_title'>快递员：{{logisticsJson.courierName}}</view>
+      <button size="mini" class="pinglun-btn theme-color-border" bindtap="contactCourier"
+         style="font-size: 22rpx;">联系快递员</button>
+   </view>
+   <view class="log_content" wx:if="{{list.length > 0}}">
+      <view class="log_content_box">
+         <view class="log_content_box_add {{index+1!=list.length?'is_index_end':'not_index_end'}}" wx:for="{{list}}" wx:key="index">
+            <view class="spot {{index === 0 ? 'default' : ''}} flex_center">{{list.length-index}}</view>
+            <view class="address {{index === 0 ? 'default' : ''}}">{{item.description}}</view>
+            <view class="time {{index === 0 ? 'default' : ''}}">{{item.descriptionTime}}</view>
+         </view>
+      </view>
+   </view>
+   <view wx:else class="kuaidi_wu">暂无物流信息</view>
+</view>

@@ -39,7 +39,14 @@
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="searchMsg.pageSize" :total="total" style="float:right;">
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:page-sizes="[10, 20, 50, 100]"
+				:page-size="searchMsg.pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total"
+				style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -236,11 +243,15 @@
 					break;
 				}
 			},
+			handleSizeChange(val) {
+				this.searchMsg.pageSize = val;
+				this.getList();
+			},			
 			handleCurrentChange(val) {
 				this.searchMsg.pageNo = val;
 				this.getList();
 			},
-						getList(pageNoParam) { // 获取列表
+			getList(pageNoParam) { // 获取列表
 				if(pageNoParam){
 				this.searchMsg.pageNo = pageNoParam;
 				} // 获取规格列表

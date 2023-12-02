@@ -16,8 +16,6 @@ public interface MerchantTokenMapper extends BaseMapper<MerchantToken> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MerchantToken record);
-
     int insertSelective(MerchantToken record);
 
     List<MerchantToken> selectByExample(MerchantTokenExample example);

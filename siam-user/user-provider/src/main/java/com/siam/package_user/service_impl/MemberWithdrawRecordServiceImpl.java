@@ -50,9 +50,6 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
     private MemberTradeRecordService memberTradeRecordService;
 
     @Autowired
-    private MemberTokenService memberTokenService;
-
-    @Autowired
     private SettingFeignClient settingFeignClient;
 
     @Autowired
@@ -98,14 +95,13 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
             throw new StoneCustomerException("提现金额必须大于0");
         }
 
-//        Setting setting = settingFeignClient.selectCurrent();
-//        if(dbMember.getInviteRewardAmount().compareTo(setting.getMemberWithdrawMeetAmount()) < 0){
-//            throw new StoneCustomerException("奖励金累计到(≥)" + setting.getMemberWithdrawMeetAmount() + "元才可以提现");
-//        }
+        Setting setting = settingFeignClient.selectCurrent();
+        if(dbMember.getInviteRewardAmount().compareTo(setting.getMemberWithdrawMeetAmount()) < 0){
+            throw new StoneCustomerException("奖励金累计到(≥)" + setting.getMemberWithdrawMeetAmount() + "元才可以提现");
+        }
 
-        BigDecimal memberWithdrawFee = BigDecimal.ZERO;
         //自动计算平台手续费
-//        BigDecimal memberWithdrawFee = setting.getMemberWithdrawFee().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal memberWithdrawFee = setting.getMemberWithdrawFee().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         BigDecimal platformFee = param.getWithdrawAmount().multiply(memberWithdrawFee).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal totalAmount = param.getWithdrawAmount().add(platformFee).setScale(2, BigDecimal.ROUND_HALF_UP);
 

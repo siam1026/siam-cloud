@@ -20,8 +20,6 @@ public interface MemberWithdrawRecordMapper extends BaseMapper<MemberWithdrawRec
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MemberWithdrawRecord record);
-
     int insertSelective(MemberWithdrawRecord record);
 
     List<MemberWithdrawRecord> selectByExample(MemberWithdrawRecordExample example);

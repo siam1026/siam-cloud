@@ -269,44 +269,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_goods.entity.Shop" >
-    insert into tb_shop (id, merchant_id, name,
-      code, province, city,
-      area, street, is_operating,
-      start_time, end_time, manage_primary,
-      manage_minor, shop_img, shop_within_img,
-      shop_logo_img, certificate_type1, certificate_img1,
-      certificate_type2, certificate_img2, special_type,
-      special_img, audit_status, audit_reason,
-      audit_time, take_out_phone, contact_realname,
-      contact_phone, announcement, brief_introduction,
-      start_delivery_price, delivery_starting_price,
-      delivery_kilometer_price, delivery_distance_limit,
-      service_rating, business_license, id_card_front_side,
-      id_card_back_side, status, reduced_delivery_price,
-      is_open_order_audio, is_open_local_print, is_open_cloud_print,
-      first_poster, house_number, longitude,
-      latitude, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-      #{code,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
-      #{area,jdbcType=VARCHAR}, #{street,jdbcType=VARCHAR}, #{isOperating,jdbcType=BIT},
-      #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, #{managePrimary,jdbcType=VARCHAR},
-      #{manageMinor,jdbcType=VARCHAR}, #{shopImg,jdbcType=VARCHAR}, #{shopWithinImg,jdbcType=VARCHAR},
-      #{shopLogoImg,jdbcType=VARCHAR}, #{certificateType1,jdbcType=VARCHAR}, #{certificateImg1,jdbcType=VARCHAR},
-      #{certificateType2,jdbcType=VARCHAR}, #{certificateImg2,jdbcType=VARCHAR}, #{specialType,jdbcType=VARCHAR},
-      #{specialImg,jdbcType=VARCHAR}, #{auditStatus,jdbcType=INTEGER}, #{auditReason,jdbcType=VARCHAR},
-      #{auditTime,jdbcType=TIMESTAMP}, #{takeOutPhone,jdbcType=VARCHAR}, #{contactRealname,jdbcType=VARCHAR},
-      #{contactPhone,jdbcType=VARCHAR}, #{announcement,jdbcType=VARCHAR}, #{briefIntroduction,jdbcType=VARCHAR},
-      #{startDeliveryPrice,jdbcType=DECIMAL}, #{deliveryStartingPrice,jdbcType=DECIMAL},
-      #{deliveryKilometerPrice,jdbcType=DECIMAL}, #{deliveryDistanceLimit,jdbcType=DECIMAL},
-      #{serviceRating,jdbcType=DECIMAL}, #{businessLicense,jdbcType=VARCHAR}, #{idCardFrontSide,jdbcType=VARCHAR},
-      #{idCardBackSide,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{reducedDeliveryPrice,jdbcType=DECIMAL},
-      #{isOpenOrderAudio,jdbcType=BIT}, #{isOpenLocalPrint,jdbcType=BIT}, #{isOpenCloudPrint,jdbcType=BIT},
-      #{firstPoster,jdbcType=VARCHAR}, #{houseNumber,jdbcType=VARCHAR}, #{longitude,jdbcType=DECIMAL},
-      #{latitude,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_goods.entity.Shop" useGeneratedKeys="true" keyProperty="id">
     insert into tb_shop
     <trim prefix="(" suffix=")" suffixOverrides="," >

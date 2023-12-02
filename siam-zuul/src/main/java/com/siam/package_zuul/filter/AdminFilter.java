@@ -110,10 +110,6 @@ public class AdminFilter extends ZuulFilter implements StoneFilter {
             return null;
         }
 
-        //需要设置编码格式，否则前端拿不到返回数据（暂时注释掉，因为加了这两句代码，swagger获取不到返回信息）
-        /*response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json;charset=UTF-8");*/
-
         BasicResult basicResult = new BasicResult();
         basicResult.setSuccess(false);
         basicResult.setCode(BaseCode.TOKEN_ERR);

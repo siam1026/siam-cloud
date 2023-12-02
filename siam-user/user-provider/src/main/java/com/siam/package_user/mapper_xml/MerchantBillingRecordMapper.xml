@@ -114,16 +114,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.MerchantBillingRecord" >
-    insert into tb_merchant_billing_record (id, merchant_id, type, 
-      operate_type, coin_type, number, 
-      service_fee, message, create_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
-      #{operateType,jdbcType=INTEGER}, #{coinType,jdbcType=INTEGER}, #{number,jdbcType=DECIMAL}, 
-      #{serviceFee,jdbcType=DECIMAL}, #{message,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.MerchantBillingRecord" useGeneratedKeys="true" keyProperty="id">
     insert into tb_merchant_billing_record
     <trim prefix="(" suffix=")" suffixOverrides="," >

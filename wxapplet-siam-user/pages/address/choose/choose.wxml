@@ -1,0 +1,60 @@
+<view class="swiper-tab self-adaption" wx:if="{{pageType!='orderDetail'}}">
+	<view class="swiper-tab-item" wx:for="{{modeList}}" wx:key="index" data-current="{{index}}" bindtap="clickTab" hover-class='hover-click-class'>
+		<view class="swiper_table_item_view {{currentTab==item.modeId?'active':''}}" data-current="{{index}}" bindtap="clickTab">
+			{{item.modeName}}
+		</view> 
+	</view>
+</view>
+<swiper current="{{currentTab}}" class="swiper-box" duration="300" style="height:{{winHeight-5}}px" bindchange="bindSlideChange">
+	<swiper-item class="swiper-items">
+		<scroll-view bindscrolltoupper="onPullDownRefresh" upper-threshold="-50" wx:if="{{addressList.length>0}}" bindscrolltolower="onReachBottom" lower-threshold="0" scroll-x="false" scroll-y="true" class='scroll-views'>
+			<view class="delivery-address-list"> 
+				<view class="my-address">我的地址</view>
+				<view class="delivery-address-item" wx:for="{{addressList}}" wx:key="index" hover-class="hover-class-public">
+					<text class="delivery-address-choice theme-color"
+          wx:if="{{chooseId==item.id}}">✓</text>
+					<view class="address-items" bindtap="{{pageType=='orderDetail'?'confirmChoiceDelivery':'confirmChoice'}}" data-index="{{index}}">
+						<view class="address-name">
+							<text class="address-name-text out_of_range one_row">{{item.province}}{{item.city}}{{item.area}}{{item.street}}</text>
+						</view>
+						<view class="personal-info">
+							<view class="default-address" wx:if="{{item.isDefault}}">默认地址</view>
+							<!-- <view class="address-tag theme-bg">家</view> -->
+							<view class="phone-number">{{item.phone}}</view>
+							<view class="username-class">{{item.realname}}</view>
+						</view>
+					</view>
+					<text class="iconfont iconbianji-copy" bindtap="editAddressTap" data-data="{{item}}" data-key="{{index}}"></text>
+					
+				</view>
+			</view>
+		</scroll-view>
+		<is-show-tip isShow="{{addressList.length<=0}}" bind:bindTap="goToDrink" buttonText="去喝一杯" top="45" bottom="10" text="{{addressList.length<=0}}" tipText="您还没有地址信息" button="{{addressList.length>0}}"></is-show-tip>
+	</swiper-item>
+
+	<swiper-item class="swiper-items" wx:if="{{pageType!='orderDetail'}}">
+		<scroll-view bindscrolltoupper="onPullDownRefresh" upper-threshold="-50" bindscrolltolower="onReachBottom" lower-threshold="0" scroll-y class='scroll-views'>
+			<view class="self-taking-list">
+				<view class="self-taking-item" bindtap="confirmShopChoice" hover-class="hover-class-public" data-index="{{index}}">
+					<view class="store-name out_of_range one_row">{{shopAddress.name}}</view>
+					<view class="business-hours-distance">
+						<view class="business-hours">
+							<text class="iconfont iconshijian"></text>
+							<view>{{shopAddress.startTime}}-{{shopAddress.endTime}}
+								<text class="isNotData" wx:if="{{!item.isBusiness||!item.isOperating}}">{{shopAddress.isBusinessText}}</text>
+							</view>
+						</view>
+						<!-- <view class="distance-class">距您226m</view> -->
+					</view>
+					<view class="store-address-details">
+						<view class="store-address">
+							<text class="iconfont icondizhi"></text>
+							<view class="out_of_range one_row">{{shopAddress.province}}{{shopAddress.city}}{{shopAddress.area}}{{shopAddress.street}}</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+	</swiper-item>
+</swiper>
+<navigator url="../insert/insert" class="insert-address-view theme-color self-adaption" wx:if="{{currentTab==0||pageType=='orderDetail'}}">+新增地址</navigator>

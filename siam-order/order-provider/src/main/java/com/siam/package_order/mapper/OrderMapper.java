@@ -22,8 +22,6 @@ public interface OrderMapper extends BaseMapper<Order> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Order record);
-
     int insertSelective(Order record);
 
     List<Order> selectByExample(OrderExample example);

@@ -17,8 +17,6 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Advertisement record);
-
     int insertSelective(Advertisement record);
 
     List<Advertisement> selectByExample(AdvertisementExample example);

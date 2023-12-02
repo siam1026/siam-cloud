@@ -24,7 +24,7 @@ public interface OrderService extends IService<Order> {
 
     void delete(OrderParam param);
 
-    void insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
+    Order insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
 
     void cancelOrder(OrderParam param);
 

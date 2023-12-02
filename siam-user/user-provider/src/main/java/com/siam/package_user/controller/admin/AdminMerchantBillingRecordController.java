@@ -30,9 +30,6 @@ public class AdminMerchantBillingRecordController {
     @Autowired
     private MerchantService merchantService;
 
-    @Autowired
-    private MerchantTokenService merchantTokenService;
-
     @ApiOperation(value = "商家账单记录列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) MerchantBillingRecordParam param) {

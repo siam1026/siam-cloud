@@ -1,19 +1,18 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_weixin_basic.config.WxPublicPlatformSubscribeUser;
 import com.siam.package_goods.model.example.WxPublicPlatformSubscribeUserExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface WxPublicPlatformSubscribeUserMapper {
+public interface WxPublicPlatformSubscribeUserMapper extends BaseMapper<WxPublicPlatformSubscribeUser> {
     int countByExample(WxPublicPlatformSubscribeUserExample example);
 
     int deleteByExample(WxPublicPlatformSubscribeUserExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(WxPublicPlatformSubscribeUser record);
 
     int insertSelective(WxPublicPlatformSubscribeUser record);
 

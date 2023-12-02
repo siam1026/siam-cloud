@@ -2,6 +2,7 @@ package com.siam.package_order.controller.member;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.entity.BasicResult;
+import com.siam.package_order.entity.Order;
 import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.model.vo.OrderVo;
 import com.siam.package_order.model.vo.OrderVo2;
@@ -32,7 +33,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Resource(name = "emptyRewardServiceImpl")
+    @Resource(name = "rewardServiceImpl")
     private RewardService rewardService;
 
     /**
@@ -67,8 +68,8 @@ public class OrderController {
      */
     @PostMapping(value = "/insert")
     public BasicResult insertOrder(@RequestBody @Validated(value = {}) OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-        orderService.insert(param);
-        return BasicResult.success();
+        Order order = orderService.insert(param);
+        return BasicResult.success(order);
     }
 
     /**

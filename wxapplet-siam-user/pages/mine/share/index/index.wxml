@@ -1,0 +1,119 @@
+<!-- <mp-navigation-bar loading="{{loading}}" show="{{show}}" animated="{{animated}}" color="{{color}}" background="{{background}}" 
+title="全民参与 · 邀请好友" back="{{true}}" ext-class="{{extClass}}"></mp-navigation-bar> -->
+<view class="share-top">
+	<!-- <view class="share-text-top" style="padding-top:{{statusBarHeight}}rpx;">全民参与·邀请好友</view> -->
+	<view class="wodejl-view" bindtap="bindReward">我的奖励>></view>
+	<view>
+		<image src="../../../../assets/share-invite/2.png" class="top-img" mode="aspectFit"></image>
+	</view>
+	<view class="top-tis">
+		获得好友下单现金返利
+		</view>
+	<view class="top-coupon">
+		<view class="hdgz-view" bindtap="bindActivityRules">活动规则>></view>
+		
+		<view class="">
+			<image src="../../../../assets/share-invite/3.png" class="top-coupon-img" mode="aspectFit"></image>
+		</view>
+		
+		<view class="top-send" catchtap="goodShareDialog">
+			<image src="../../../../assets/share-invite/4.png" class="top-send-img" mode="widthFix"></image>
+		</view>
+		
+	</view>
+	<view class="top-list">
+		<image src="../../../../assets/share-invite/5.png" class="top-list-img" mode="aspectFit"></image>
+		<view class="invite-relation-number">{{inviteRelationList.length}}</view>
+		<view class="top-null-view" wx:if="{{inviteRelationList.length<=0}}">
+			<image src="../../../../assets/share-invite/6.png" class="top-null-img" mode="aspectFit"></image>
+		</view>
+
+		<scroll-view class="list-wrapper" wx:else scroll-y style="height:180px">
+			<view class="invite-relation-wrapper" wx:for="{{inviteRelationList}}" wx:key="index" data-id="{{item.id}}">
+				<view class="user-info-wrapper">
+					<image src="{{item.headImg}}" class="headImg"></image>
+					<view class="username out_of_range one_row">{{item.username}}</view>
+				</view>
+				<view class="description">+1</view>
+			</view>
+			<!-- <view wx:if="{{inviteRelationList.length>3}}">查看更多>></view> -->
+		</scroll-view>
+	</view>
+	<mp-halfScreenDialog show="{{activityRulesDialog}}" extClass="extClassShoppingCart">
+	<view slot="title">活动规则</view>
+	<view slot="desc">
+		<scroll-view style="height: 55vh;" scroll-y>
+			<view class="activity-rule">
+				<text>{{inviteFriendsActivityRule}}</text>
+			</view>
+		</scroll-view>
+	</view>
+</mp-halfScreenDialog>
+<mp-halfScreenDialog show="{{goodShareDialog}}" extClass="extClassShoppingCart">
+	<view slot="title">好物分享</view>
+	<view slot="desc">
+		<view class="wechat-images-view flex_between">
+			<button open-type="share" class="flex_column" style="margin:0rpx;background:none !important;color: none !important;">
+				<image src="../../../../assets/share-invite/wx.png" mode="widthFix" class="invite-wechat-image"></image>
+				<text class="share-text">微信</text>
+			</button>
+			
+			<button class="flex_column" bindtap="createGoodImgDialog" style="margin:0rpx;background:none !important;color: none !important;">
+				<image src="../../../../assets/share-invite/pyq.png" mode="widthFix" class="invite-tupian-image"></image>
+				<text class="share-text">朋友圈</text>
+			</button>
+		</view>
+	</view>
+	<view slot="footer">
+	</view>
+</mp-halfScreenDialog>
+<!-- <mp-halfScreenDialog show="{{createGoodImgDialog}}" extClass="extClassCreateGoodImg">
+	<view slot="title">生成美图</view>
+	<view slot="desc">
+		<scroll-view style="height: 100vh;" scroll-y>
+			<swiper indicator-dots="{{indicatorDots}}" class="carousel-swiper" autoplay="{{autoplay}}" interval="{{interval}}"
+				duration="{{duration}}" indicator-active-color="{{afterColor}}" style="margin-top:10rpx;" bindchange="bindSlideChange">
+				<block wx:for="{{advertisementList}}" wx:key="index">
+					<swiper-item class="carousel-swiper-item">
+						<image src="{{item.mainImageUrl}}" class="carousel-image" mode='aspectFill' data-index="{{index}}"
+							data-imageLinkUrl="{{item.imageLinkUrl}}" bindtap="viewImage" />
+							
+					</swiper-item>
+				</block>
+			</swiper>
+			<image src="{{qrCode}}" class="qrcodeImage" mode='modeFix'/>
+		</scroll-view>
+	</view>
+	<view slot="footer">
+		<view class="halfScreenDialog-btn theme-bg" bindtap="saveDialogShow">保存</view>
+	</view>
+</mp-halfScreenDialog> -->
+<mp-halfScreenDialog show="{{createGoodImgDialog}}" extClass="extClassCreateGoodImg">
+	<view slot="title">朋友圈分享美图</view>
+	<view slot="desc">
+		<scroll-view style="height: 100vh;" scroll-y>
+			<view class="carousel-show">
+				<swiper indicator-dots="{{indicatorDots}}" class="carousel-swiper" autoplay="{{autoplay}}" interval="{{interval}}"
+				duration="{{duration}}" indicator-active-color="{{afterColor}}" bindchange="bindSlideChange">
+				<block wx:for="{{advertisementList}}" wx:key="index">
+					<swiper-item class="carousel-swiper-item">
+						<image src="{{item.mainImageUrl}}" class="carousel-image" mode='aspectFit' data-index="{{index}}"
+							data-imageLinkUrl="{{item.imageLinkUrl}}" bindtap="viewImage" />
+					</swiper-item>
+				</block>
+			</swiper>
+			</view>
+			<!-- <image src="{{qrCode}}" class="qrcodeImage" mode='modeFix'/> -->
+		</scroll-view>
+	</view>
+	<view slot="footer">
+		<view class="halfScreenDialog-btn flex_center theme-bg" bindtap="saveDialogShow">保存</view>
+	</view>
+</mp-halfScreenDialog>
+<mp-dialog title="保存图片" show="{{saveDialogShow}}" buttons="{{buttons}}" mask-closable="{{maskClosable}}"
+	catchtouchmove="true" bindbuttontap="createGoodImgSave" extClass="extClassSaveGoodImg">
+	<scroll-view style="height: 40vh;" scroll-y>
+		<image src="{{advertisementList[saveIndex].mainImageUrl}}" class="carousel-image" mode='aspectFill'/>
+	</scroll-view>
+</mp-dialog>
+</view>

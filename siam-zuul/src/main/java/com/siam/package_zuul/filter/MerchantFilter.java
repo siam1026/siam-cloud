@@ -80,10 +80,6 @@ public class MerchantFilter extends ZuulFilter implements StoneFilter {
         HttpServletRequest request = currentContext.getRequest();
         HttpServletResponse response = currentContext.getResponse();
 
-        //从header中获取token
-        /*String token = request.getHeader("token");
-        log.debug("\ntoken = " + token);*/
-
         //从header或param里面获取token(暂时这样写，兼容之前前端的写法)
         String token = TokenUtil.getToken();
         log.debug("\ntoken = " + token);
@@ -106,10 +102,6 @@ public class MerchantFilter extends ZuulFilter implements StoneFilter {
         if(loginMerchant != null){
             return null;
         }
-
-        //需要设置编码格式，否则前端拿不到返回数据（暂时注释掉，因为加了这两句代码，swagger获取不到返回信息）
-        /*response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json;charset=UTF-8");*/
 
         BasicResult basicResult = new BasicResult();
         basicResult.setSuccess(false);

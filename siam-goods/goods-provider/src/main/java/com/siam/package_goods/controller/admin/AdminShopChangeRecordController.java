@@ -1,6 +1,7 @@
 package com.siam.package_goods.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_goods.service.SettingService;
 import com.siam.package_goods.model.param.ShopChangeRecordParam;
 import com.siam.package_common.entity.BasicData;
@@ -39,9 +40,6 @@ public class AdminShopChangeRecordController {
 
 //    @Autowired
 //    private MerchantService merchantService;
-//
-//    @Autowired
-//    private MerchantTokenService merchantTokenService;
 
     @Autowired
     private SettingService settingService;
@@ -65,6 +63,7 @@ public class AdminShopChangeRecordController {
      * @return
      * @author 暹罗
      */
+    @AdminPermission
     @PostMapping(value = "/audit")
     public BasicResult audit(@RequestBody @Validated(value = {ValidGroupOfId.class, ValidGroupOfAudit.class}) ShopChangeRecordParam shopChangeRecordParam){
         BasicResult basicResult = new BasicResult();

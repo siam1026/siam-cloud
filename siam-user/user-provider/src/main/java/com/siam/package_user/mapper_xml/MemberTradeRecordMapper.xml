@@ -119,16 +119,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_user.entity.MemberTradeRecord" >
-    insert into tb_member_trade_record (id, member_id, merchant_id,
-      out_trade_no, trade_no, type,
-      payment_mode, amount, status,
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER},
-      #{outTradeNo,jdbcType=VARCHAR}, #{tradeNo,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
-      #{paymentMode,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_user.entity.MemberTradeRecord" useGeneratedKeys="true" keyProperty="id">
     insert into tb_member_trade_record
     <trim prefix="(" suffix=")" suffixOverrides="," >

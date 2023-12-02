@@ -1,5 +1,6 @@
 package com.siam.package_user.controller.merchant;
 
+import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_user.model.param.MerchantParam;
 import com.siam.package_user.model.result.MerchantResult;
@@ -90,6 +91,7 @@ public class MerchantController {
      *
      * @author 暹罗
      */
+    @MerchantPermission
     @PostMapping(value = "/updatePassword")
     public BasicResult updatePassword(@RequestBody @Validated(value = {}) MerchantParam param) {
         merchantService.updatePassword(param);

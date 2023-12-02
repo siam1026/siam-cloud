@@ -17,8 +17,6 @@ public interface AppraiseMapper extends BaseMapper<Appraise> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Appraise record);
-
     int insertSelective(Appraise record);
 
     List<Appraise> selectByExample(AppraiseExample example);

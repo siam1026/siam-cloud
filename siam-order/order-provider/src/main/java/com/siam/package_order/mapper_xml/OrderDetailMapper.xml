@@ -126,18 +126,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.siam.package_order.entity.OrderDetail" >
-    insert into tb_order_detail (id, order_id, goods_id,
-      goods_name, main_image, spec_list,
-      price, number, subtotal,
-      packing_charges, is_used_coupons, coupons_discount_price,
-      after_coupons_discount_price, is_deleted)
-    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER},
-      #{goodsName,jdbcType=VARCHAR}, #{mainImage,jdbcType=VARCHAR}, #{specList,jdbcType=VARCHAR},
-      #{price,jdbcType=DECIMAL}, #{number,jdbcType=INTEGER}, #{subtotal,jdbcType=DECIMAL},
-      #{packingCharges,jdbcType=DECIMAL}, #{isUsedCoupons,jdbcType=BIT}, #{couponsDiscountPrice,jdbcType=DECIMAL},
-      #{afterCouponsDiscountPrice,jdbcType=DECIMAL}, #{isDeleted,jdbcType=BIT})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.siam.package_order.entity.OrderDetail" useGeneratedKeys="true" keyProperty="id">
     insert into tb_order_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >

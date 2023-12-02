@@ -1,5 +1,6 @@
 package com.siam.package_goods.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.siam.package_goods.model.dto.CouponsDto;
 import com.siam.package_goods.entity.Coupons;
 import com.siam.package_goods.model.example.CouponsExample;
@@ -10,14 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Map;
 
-public interface CouponsMapper {
+public interface CouponsMapper extends BaseMapper<Coupons> {
     int countByExample(CouponsExample example);
 
     int deleteByExample(CouponsExample example);
 
     int deleteByPrimaryKey(Integer id);
-
-    int insert(Coupons record);
 
     int insertSelective(Coupons record);
 

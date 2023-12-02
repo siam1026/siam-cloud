@@ -3,6 +3,7 @@ package com.siam.package_user.service_impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.constant.Quantity;
+import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
@@ -41,9 +42,6 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Autowired
     private MerchantBillingRecordMapper merchantBillingRecordMapper;
-
-    @Autowired
-    private MerchantTokenService merchantTokenService;
 
     @Autowired
     private OSSUtils ossUtils;
@@ -320,17 +318,18 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public MerchantResult getLoginMerchantInfo(MerchantParam param) {
+        BasicData basicResult = new BasicData();
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         Merchant dbMerchant = merchantMapper.selectByPrimaryKey(loginMerchant.getId());
 
-//        //需要返回关联的店铺信息，返回是否营业
-//        Map<String, Object> resultMap = BeanUtils.beanToMap(merchant);
-//        Shop shop = shopFeignClient.selectByPrimaryKey(merchant.getShopId());
-//        resultMap.put("shopName", shop.getName());
-//        resultMap.put("shopLogoImg", shop.getShopLogoImg());
+        //需要返回关联的店铺信息，返回是否营业
+        Map<String, Object> resultMap = com.siam.package_common.util.BeanUtils.beanToMap(dbMerchant);
+        Shop shop = shopFeignClient.selectByPrimaryKey(dbMerchant.getShopId());
+        resultMap.put("shopName", shop.getName());
+        resultMap.put("shopLogoImg", shop.getShopLogoImg());
 
-//        basicResult.setData(resultMap);
+        basicResult.setData(resultMap);
 
         MerchantResult result = new MerchantResult();
         BeanUtils.copyProperties(dbMerchant, result);

@@ -2,10 +2,12 @@ package com.siam.package_order.service_impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.Quantity;
+import com.siam.package_feign.mod_feign.user.MemberFeignClient;
 import com.siam.package_order.service.GiveLikeService;
 import com.siam.package_order.entity.Reply;
 import com.siam.package_order.mapper.ReplyMapper;
 import com.siam.package_order.service.ReplyService;
+import com.siam.package_user.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,8 @@ public class ReplyServiceImpl implements ReplyService {
     @Autowired
     private ReplyMapper replyMapper;
 
-//    @Autowired
-//    private MemberFeignClient memberFeignClient;
+    @Autowired
+    private MemberFeignClient memberFeignClient;
 
     @Autowired
     private GiveLikeService giveLikeService;
@@ -52,8 +54,8 @@ public class ReplyServiceImpl implements ReplyService {
                 //查询被回复的用户名
                 Reply answeredReply = replyMapper.selectByPrimaryKey((int) map.get("replyId"));
                 if(answeredReply.getReplierType() == Quantity.INT_1){
-//                    Member answeredMember = memberFeignClient.selectByPrimaryKey(answeredReply.getMemberId());
-//                    map.put("answeredUsername", answeredMember.getUsername());
+                    Member answeredMember = memberFeignClient.selectByPrimaryKey(answeredReply.getMemberId());
+                    map.put("answeredUsername", answeredMember.getUsername());
                 }else{
                     map.put("answeredUsername", "商家");
                 }
