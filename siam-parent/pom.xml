@@ -9,15 +9,10 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>../siam-common</module>
-        <module>../siam-weixin</module>
-        <module>../siam-eureka</module>
-        <module>../siam-user</module>
-        <module>../siam-goods</module>
-        <module>../siam-order</module>
-        <module>../siam-zuul</module>
-        <module>../siam-feign</module>
-        <module>../siam-monitor</module>
+        <module>./siam-common</module>
+        <module>./siam-weixin</module>
+        <module>./siam-system</module>
+        <module>./siam-monitor</module>
     </modules>
 
     <name>siam-parent</name>
@@ -40,16 +35,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <!-- 控制SpringCloud的版本在Finchley.M7  【配置未生效】-->
-            <!--<dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Finchley.M7</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>-->
-
         </dependencies>
     </dependencyManagement>
 
