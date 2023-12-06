@@ -74,10 +74,9 @@
 ## 系统模块
 
 ~~~
-com.siam     
-├── vue-siam-admin        // 前端-调度后台 [80]
+com.siam
 ├── vue-siam-shop         // 前端-商家后台 [80]
-├── wxapplet-siam-user    // 前端-微信小程序
+├── vue-siam-admin        // 前端-调度后台 [80]
 ├── siam-eureka           // 注册中心 [9000]
 ├── siam-zuul             // 网关服务 [8080]
 ├── siam-user             // 用户服务 [9200]
