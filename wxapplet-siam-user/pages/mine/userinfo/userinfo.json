@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "mp-dialog": "../../../components/dialog/dialog"
-  },
-  "navigationBarTitleText": "个人资料"
-}

@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "mp-searchbar": "../../../../components/searchbar/searchbar",
-    "mp-slideview": "../../../../components/slideview/slideview",
-    "is-show-tip":"../../../../components/is-show-tip/is-show-tip"
-  }
-}

@@ -1,9 +1,0 @@
-<view class="items-class">
-  <text class="text-class">当前账号</text>
-  <text class="account-text">{{userInfo.mobile}}</text>
-</view>
-<view class="view-line"></view>
-<view class="items-class" bindtap="bindVerify">
-  <text class="text-class">重置支付密码</text>
-  <text class="iconfont iconhtbArrowright02"></text>
-</view>

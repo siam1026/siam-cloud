@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "mp-vtabs": "../../../components/vtabs/index",
-    "mp-vtabs-content": "../../../components/vtabs-content/index",
-    "mp-halfScreenDialog": "../../../components/half-screen-dialog/half-screen-dialog",
-    "is-show-tip":"../../../components/is-show-tip/is-show-tip"
-  }
-}

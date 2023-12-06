@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "is-show-tip": "../../../components/is-show-tip/is-show-tip"
-  },
-  "navigationBarTitleText": "收货地址",
-  "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark"
-}

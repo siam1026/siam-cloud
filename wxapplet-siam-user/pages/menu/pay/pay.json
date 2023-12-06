@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "mp-actionSheet": "../../../components/actionsheet/actionsheet",
-    "mp-halfScreenDialog": "../../../../components/half-screen-dialog/half-screen-dialog",
-    "mp-dialog": "../../../../components/dialog/dialog"
-  },
-  "navigationBarTitleText": "确认订单"
-}

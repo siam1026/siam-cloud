@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "mp-slideview": "../../../../components/slideview/slideview",
-    "is-show-tip": "../../../../components/is-show-tip/is-show-tip"
-  },
-  "navigationBarTitleText": "购物车",
-  "disableScroll": true
-}

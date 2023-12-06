@@ -1,9 +1,0 @@
-{
-  "usingComponents": {
-    "mp-dialog": "../../components/dialog/dialog",
-    "is-show-tip":"../../components/is-show-tip/is-show-tip",
-    "mp-halfScreenDialog": "../../components/half-screen-dialog/half-screen-dialog"
-  },
-  "navigationBarTitleText": "暹罗外卖",
-  "enablePullDownRefresh": true
-}

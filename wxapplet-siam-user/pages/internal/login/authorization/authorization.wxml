@@ -1,9 +1,0 @@
-<view class="input-phone-number">
-  <image src="../../../assets/logo/logo.jpg" mode="widthFix" class="brand-icon"></image>
-  <view class="tip-info-text">
-    申请获取你的公开信息（昵称、头像等）
-  </view>
-  <view class="input-button-view">
-    <button class="getphonenumber theme-bg" bindtap="getUserProfile">微信授权</button>
-  </view>
-</view> 
