@@ -28,25 +28,48 @@
     <img src="./doc/images/wechat/公众号.jpg" width="500" />
 </p>
 
-项目已有较详细的  [系统功能清单](https://docs.qq.com/sheet/DYWxmUkpPdkNha0pa?tab=BB08J2) 和 [项目搭建文档](https://gitee.com/siam1026/siam-cloud/wikis/pages) ，同时包括了 **Windows**、**Linux** 以及 **Docker** 环境下暹罗外卖的搭建。在使用过程中遇到问题时，首先认真阅读**项目搭建文档**~
+项目已有较详细的 [项目搭建文档](https://gitee.com/siam1026/siam-cloud/wikis/pages) ，同时包括了 **Windows**、**Linux** 以及 **Docker** 环境下暹罗外卖的搭建。在使用过程中遇到问题时，首先认真阅读**项目搭建文档**~
 
 【提问】推荐使用 [Gitee issue](https://github.com/siam1026/siam-cloud/issues) 进行提问，因为issue解决后能够保留解决记录，帮助其它小伙伴避坑。其次可以使用 <a href="https://github.com/siam1026/siam-cloud#关注和交流">QQ群 </a>  或者 <a href="https://github.com/siam1026/siam-cloud#关注和交流">微信群 </a> 进行提问。群里提问注意提问的时间，把遇到**问题的详细过程都描述清楚**，最好**配上图文信息**，这样能有利于更高效的解决问题。
 
+
+
+
 ## 项目介绍
 
-暹罗外卖是一套基于微服务架构的外卖配送系统，开源版本给个人及企业免费使用。
+暹罗外卖是一款Java外卖配送系统，适用于多商户入驻。对标美团外卖、饿了么。系统包含用户端、商家端、配送端以及总管理后台，在线下单，商家接单，骑手抢单配送；
 
-* 采用前后端分离的模式
-* 后端采用Spring Boot、Spring Cloud & Alibaba。
-* 注册中心选型Eureka和Nacos、配置中心选型Nacos。
-* 网关服务选型Zuul和SpringCloud Gateway。
-* 缓存使用Redis。
-* 消息队列使用RocketMQ。
-* 搜索引擎使用ElasticSearch，日志中心使用ELK。
-* 流量控制框架选型Sentinel，分布式事务选型Seata，链路追踪SkyWalking。
-* 监控服务选型SpringBoot Admin，Promethues + Grafana。
+1. 商家管理，商家入驻申请，商家审核
+2. 商品管理，单规格、多规格商品管理，品牌、分类管理、商品评价、商品组
+3. 库存管理，门店要货 、门店调拨、商品入库、商品出库、商品盘点
+4. 订单管理，订单支付、发货、取消、售后等
+5. 同城配送，配售收费、配送人员
+6. 会员管理，会员列表、会员等级、会员提现等
+7. 内容管理，官方资讯、活动通知、素材管理、常见问题
+8. 营销推广，首页轮播、广告管理、优惠券、邀请好友注册返现
+9. 应用设置，基础设置、微信支付、多媒体存储、短信设置
+10. 统计分析，商品销量统计、会员增长统计、订单销量统计
+11. 积分商城，商品管理、营销管理、物流管理等
+12. 订单小票打印，本地打印、云端打印
+13. Excel数据导出，导出表格更加美观、可视
 
-#### 友情链接 [暹罗/siam-server](https://github.com/siam1026/siam-server) 单体服务版本。
+
+## 软件架构
+
+* 前端使用uni-app开发，可打包部署到微信小程序、APP、H5
+* Web端使用vue + Element开发
+* 服务端使用java语言开发，技术栈：Spring Cloud & Alibaba + Redis + RocketMQ + WebSocket + ElasticSearch + ELK + Sentinel + Seata + SkyWalking + SpringBoot Admin + Promethues + Grafana
+
+## 相关资料获取
+
+1. 获取sql文件
+2. 获取接口文档
+3. 获取前端代码
+
+[请加入QQ群或微信群获取](https://github.com/siam1026/siam-cloud#关注和交流)，进群前先在右上角Star本项目
+
+## 关联产品
+暹罗点餐 - 多门店连锁品牌的餐饮点餐系统，单体服务架构：[https://github.com/siam1026/siam-server](https://github.com/siam1026/siam-server)
 
 ## 系统模块
 
