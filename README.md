@@ -80,13 +80,16 @@ com.siam
 ├── siam-eureka           // 注册中心 [9000]
 ├── siam-zuul             // 网关服务 [8080]
 ├── siam-user             // 用户服务 [9200]
-├── siam-goods            // 商品服务 [9201]
-├── siam-order            // 订单服务 [9202]
+├── siam-merchant         // 商家服务 [9201]
+├── siam-rider            // 骑手服务 [9202]
+├── siam-goods            // 商品服务 [9203]
+├── siam-order            // 订单服务 [9204]
+├── siam-promotion        // 促销服务 [9205]
+├── siam-util             // 工具服务 [9206]
 ├── siam-monitor          // 监控服务 [9100]
 ├── siam-common           // 通用模块
-├── siam-feign            // feign接口模块
-├── siam-parent           // 父工程模块
 ├── siam-weixin           // 微信模块
+├── siam-parent           // 父工程模块
 ~~~
 
 
