@@ -8,7 +8,7 @@ import lombok.Data;
  * 前端判断"接口调用成功与否"取决于success属性，success为true-则成功，success为false-则失败
  **/
 @Data
-public class BasicResult {
+public class BasicResult<T> {
 
     public static final Integer CODE_DEFAULT_SUCCESS = 200;
     public static final Integer CODE_DEFAULT_ERROR = 500;
@@ -22,12 +22,12 @@ public class BasicResult {
 
     private String message;
 
-    private Object data;
+    private T data;
 
     public BasicResult() {
     }
 
-    public BasicResult(Boolean success, Integer code, String message, Object data) {
+    public BasicResult(Boolean success, Integer code, String message, T data) {
         this.success = success;
         this.code = code;
         this.message = message;
@@ -38,7 +38,7 @@ public class BasicResult {
         return new BasicResult(true, CODE_DEFAULT_SUCCESS, MESSAGE_DEFAULT_SUCCESS, null);
     }
 
-    public static BasicResult success(Object data) {
+    public static <T> BasicResult success(T data) {
         return new BasicResult(true, CODE_DEFAULT_SUCCESS, MESSAGE_DEFAULT_SUCCESS, data);
     }
 

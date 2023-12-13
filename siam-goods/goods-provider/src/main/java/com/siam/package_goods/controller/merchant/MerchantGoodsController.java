@@ -2,22 +2,26 @@ package com.siam.package_goods.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.annoation.MerchantPermission;
-import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_goods.service.*;
-import com.siam.package_common.entity.BasicData;
-import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
+import com.siam.package_common.entity.BasicData;
+import com.siam.package_common.entity.BasicResult;
+import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.OSSUtils;
-import com.siam.package_goods.model.dto.GoodsMenuDto;
-import com.siam.package_goods.model.example.MenuGoodsRelationExample;
-import com.siam.package_goods.model.example.PictureUploadRecordExample;
-import com.siam.package_user.auth.cache.MerchantSessionManager;
-import com.siam.package_user.entity.Merchant;
-import com.siam.package_user.util.TokenUtil;
 import com.siam.package_goods.entity.Goods;
 import com.siam.package_goods.entity.MenuGoodsRelation;
-import com.siam.package_goods.entity.PictureUploadRecord;
+import com.siam.package_goods.model.dto.GoodsMenuDto;
+import com.siam.package_goods.model.example.MenuGoodsRelationExample;
+import com.siam.package_goods.service.*;
+import com.siam.package_merchant.auth.cache.MerchantSessionManager;
+import com.siam.package_merchant.entity.Merchant;
+import com.siam.package_promotion.feign.CouponsFeignApi;
+import com.siam.package_promotion.feign.CouponsGoodsRelationFeignApi;
+import com.siam.package_user.util.TokenUtil;
+import com.siam.package_util.entity.PictureUploadRecord;
+import com.siam.package_util.feign.PictureUploadRecordFeignApi;
+import com.siam.package_util.model.example.PictureUploadRecordExample;
+import com.siam.package_util.model.param.PictureUploadRecordParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,7 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -60,16 +67,16 @@ public class MerchantGoodsController {
     private GoodsRawmaterialRelationService goodsRawmaterialRelationService;
 
     @Autowired
-    private CouponsService couponsService;
+    private CouponsFeignApi couponsFeignApi;
 
     @Autowired
-    private CouponsGoodsRelationService couponsGoodsRelationService;
+    private CouponsGoodsRelationFeignApi couponsGoodsRelationFeignApi;
 
 //    @Autowired
 //    private MerchantService merchantService;
 
     @Autowired
-    private PictureUploadRecordService pictureUploadRecordService;
+    private PictureUploadRecordFeignApi pictureUploadRecordFeignApi;
 
     @Autowired
     private MerchantSessionManager merchantSessionManager;
@@ -183,9 +190,9 @@ public class MerchantGoodsController {
         if(StringUtils.isNotBlank(goods.getSubImages())){
             String[] array = goods.getSubImages().split(",");
             for (String str : array) {
-                PictureUploadRecordExample uploadRecordExample = new PictureUploadRecordExample();
-                uploadRecordExample.createCriteria().andUrlEqualTo(str);
-                int count = pictureUploadRecordService.countByExample(uploadRecordExample);
+                PictureUploadRecordParam uploadRecordParam = new PictureUploadRecordParam();
+                uploadRecordParam.setUrl(str);
+                int count = pictureUploadRecordFeignApi.countByExample(uploadRecordParam).getData();
                 if(count == 0){
                     PictureUploadRecord uploadRecord = new PictureUploadRecord();
                     uploadRecord.setShopId(loginMerchant.getShopId());
@@ -193,7 +200,7 @@ public class MerchantGoodsController {
                     uploadRecord.setModule(Quantity.INT_1);
                     uploadRecord.setCreateTime(new Date());
                     uploadRecord.setUpdateTime(new Date());
-                    pictureUploadRecordService.insertSelective(uploadRecord);
+                    pictureUploadRecordFeignApi.insertSelective(uploadRecord);
                 }
             }
         }
@@ -282,9 +289,9 @@ public class MerchantGoodsController {
         if(StringUtils.isNotBlank(goods.getSubImages())){
             String[] array = goods.getSubImages().split(",");
             for (String str : array) {
-                PictureUploadRecordExample uploadRecordExample = new PictureUploadRecordExample();
-                uploadRecordExample.createCriteria().andUrlEqualTo(str);
-                int count = pictureUploadRecordService.countByExample(uploadRecordExample);
+                PictureUploadRecordParam uploadRecordParam = new PictureUploadRecordParam();
+                uploadRecordParam.setUrl(str);
+                int count = pictureUploadRecordFeignApi.countByExample(uploadRecordParam).getData();
                 if(count == 0){
                     PictureUploadRecord uploadRecord = new PictureUploadRecord();
                     uploadRecord.setShopId(loginMerchant.getShopId());
@@ -292,7 +299,7 @@ public class MerchantGoodsController {
                     uploadRecord.setModule(Quantity.INT_1);
                     uploadRecord.setCreateTime(new Date());
                     uploadRecord.setUpdateTime(new Date());
-                    pictureUploadRecordService.insertSelective(uploadRecord);
+                    pictureUploadRecordFeignApi.insertSelective(uploadRecord);
                 }
             }
         }
@@ -339,7 +346,7 @@ public class MerchantGoodsController {
         goodsRawmaterialRelationService.deleteByGoodsId(dbGoods.getId());
 
         //级联删除商品与优惠券的关联关系
-        couponsGoodsRelationService.deleteByGoodsId(dbGoods.getId());
+        couponsGoodsRelationFeignApi.deleteByGoodsId(dbGoods.getId());
 
         //删除商品
         goodsService.deleteByPrimaryKey(dbGoods.getId());

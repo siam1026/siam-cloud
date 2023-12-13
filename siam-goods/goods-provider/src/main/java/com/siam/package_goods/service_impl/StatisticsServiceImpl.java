@@ -4,23 +4,30 @@ import com.alibaba.fastjson.JSON;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.util.DateUtilsExtend;
 import com.siam.package_common.util.DateUtilsPlus;
-import com.siam.package_feign.mod_feign.order.OrderFeignClient;
-import com.siam.package_feign.mod_feign.order.OrderRefundFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberTradeRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MerchantWithdrawRecordFeignClient;
 import com.siam.package_goods.model.example.GoodsExample;
-import com.siam.package_goods.model.example.ShopChangeRecordExample;
-import com.siam.package_goods.model.example.ShopExample;
 import com.siam.package_goods.model.param.StatisticsParam;
-import com.siam.package_goods.service.*;
+import com.siam.package_goods.service.GoodsService;
+import com.siam.package_goods.service.ShoppingCartService;
+import com.siam.package_goods.service.StatisticsService;
+import com.siam.package_merchant.auth.cache.MerchantSessionManager;
+import com.siam.package_merchant.entity.Merchant;
+import com.siam.package_merchant.feign.MerchantWithdrawRecordFeignApi;
+import com.siam.package_merchant.feign.ShopChangeRecordFeignApi;
+import com.siam.package_merchant.feign.ShopFeignApi;
+import com.siam.package_merchant.model.example.ShopChangeRecordExample;
+import com.siam.package_merchant.model.example.ShopExample;
+import com.siam.package_merchant.model.param.ShopChangeRecordParam;
+import com.siam.package_merchant.model.param.ShopParam;
 import com.siam.package_order.entity.OrderRefund;
+import com.siam.package_order.feign.OrderFeignApi;
+import com.siam.package_order.feign.OrderRefundFeignApi;
 import com.siam.package_order.model.param.OrderParam;
-import com.siam.package_user.auth.cache.MerchantSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberTradeRecord;
-import com.siam.package_user.entity.Merchant;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_util.feign.SystemUsageRecordFeignApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,28 +43,28 @@ import java.util.Map;
 public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
-    private OrderFeignClient orderFeignClient;
+    private OrderFeignApi orderFeignApi;
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
-    private ShopService shopService;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
-    private ShopChangeRecordService shopChangeRecordService;
+    private ShopChangeRecordFeignApi shopChangeRecordFeignApi;
 
     @Autowired
-    private SystemUsageRecordService systemUsageRecordService;
+    private SystemUsageRecordFeignApi systemUsageRecordFeignApi;
 
     @Autowired
-    private OrderRefundFeignClient orderRefundFeignClient;
+    private OrderRefundFeignApi orderRefundFeignApi;
 
     @Autowired
-    private MerchantWithdrawRecordFeignClient merchantWithdrawRecordFeignClient;
+    private MerchantWithdrawRecordFeignApi merchantWithdrawRecordFeignApi;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
     private MerchantSessionManager merchantSessionManager;
@@ -78,10 +85,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         //今日支付订单、今日支付金额、待完成订单、待处理退款
         order.setStartTime(DateUtilsExtend.getDayBegin());
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        int dayCountPaid = orderFeignClient.selectCountCompleted(order);
-        BigDecimal daySumActualPrice = orderFeignClient.selectSumActualPrice(order);
-        int unCompletedNum = orderFeignClient.selectCountUnCompleted(order);
-        int waitHandleRefundNum = orderFeignClient.selectCountWaitHandle(order);
+        int dayCountPaid = orderFeignApi.selectCountCompleted(order).getData();
+        BigDecimal daySumActualPrice = orderFeignApi.selectSumActualPrice(order).getData();
+        int unCompletedNum = orderFeignApi.selectCountUnCompleted(order).getData();
+        int waitHandleRefundNum = orderFeignApi.selectCountWaitHandle(order).getData();
 
         //总帐余额 = 累计进账 - 累计出账
         //今日进账 = 所有微信支付入口汇总的金额；退款金额不做计算；余额支付、积分支付这种不算
@@ -89,78 +96,78 @@ public class StatisticsServiceImpl implements StatisticsService {
         MemberTradeRecord memberTradeRecord = new MemberTradeRecord();
         memberTradeRecord.setStartTime(DateUtilsExtend.getDayBegin());
         memberTradeRecord.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal daySumIncome = memberTradeRecordFeignClient.selectSumIncome(memberTradeRecord);
-        BigDecimal daySumExpense = memberTradeRecordFeignClient.selectSumExpense(memberTradeRecord);
+        BigDecimal daySumIncome = memberTradeRecordFeignApi.selectSumIncome(memberTradeRecord).getData();
+        BigDecimal daySumExpense = memberTradeRecordFeignApi.selectSumExpense(memberTradeRecord).getData();
         //退款金额--微信/支付宝
         OrderRefund orderRefund = new OrderRefund();
         orderRefund.setStartTime(DateUtilsExtend.getDayBegin());
         orderRefund.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal daySumRefundAmount = orderRefundFeignClient.selectSumRefundAmount(orderRefund);
+        BigDecimal daySumRefundAmount = orderRefundFeignApi.selectSumRefundAmount(orderRefund).getData();
         daySumExpense = daySumExpense.add(daySumRefundAmount).setScale(2, BigDecimal.ROUND_HALF_UP);
         //退款金额--余额/积分
-        BigDecimal daySumRefundAmountByPlatformCoin = orderRefundFeignClient.selectSumRefundAmountByPlatformCoin(orderRefund);
+        BigDecimal daySumRefundAmountByPlatformCoin = orderRefundFeignApi.selectSumRefundAmountByPlatformCoin(orderRefund).getData();
         daySumExpense = daySumExpense.subtract(daySumRefundAmountByPlatformCoin).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         memberTradeRecord.setStartTime(new Date("1970/1/1 00:00:00"));
         memberTradeRecord.setEndTime(new Date("2100/1/1 00:00:00"));
-        BigDecimal totalSumIncome = memberTradeRecordFeignClient.selectSumIncome(memberTradeRecord);
-        BigDecimal totalSumExpense = memberTradeRecordFeignClient.selectSumExpense(memberTradeRecord);
+        BigDecimal totalSumIncome = memberTradeRecordFeignApi.selectSumIncome(memberTradeRecord).getData();
+        BigDecimal totalSumExpense = memberTradeRecordFeignApi.selectSumExpense(memberTradeRecord).getData();
         //退款金额--微信/支付宝
         orderRefund.setStartTime(new Date("1970/1/1 00:00:00"));
         orderRefund.setEndTime(new Date("2100/1/1 00:00:00"));
-        BigDecimal totalSumRefundAmount = orderRefundFeignClient.selectSumRefundAmount(orderRefund);
+        BigDecimal totalSumRefundAmount = orderRefundFeignApi.selectSumRefundAmount(orderRefund).getData();
         totalSumExpense = totalSumExpense.add(totalSumRefundAmount);
         //退款金额--余额/积分
-        BigDecimal totalSumRefundAmountByPlatformCoin = orderRefundFeignClient.selectSumRefundAmountByPlatformCoin(orderRefund);
+        BigDecimal totalSumRefundAmountByPlatformCoin = orderRefundFeignApi.selectSumRefundAmountByPlatformCoin(orderRefund).getData();
         totalSumExpense = totalSumExpense.subtract(totalSumRefundAmountByPlatformCoin).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         BigDecimal balance = totalSumIncome.subtract(totalSumExpense).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         //商品支付金额、配送费金额、退款金额、配送费退款金额 -- 针对于所有店铺、现金/余额都算
-        Map<String, Object> orderSumField = orderFeignClient.selectSumField(order);
-        Map<String, Object> orderRefundSumField = orderRefundFeignClient.selectSumField(new OrderRefund());
+        Map<String, Object> orderSumField = orderFeignApi.selectSumField(order).getData();
+        Map<String, Object> orderRefundSumField = orderRefundFeignApi.selectSumField(new OrderRefund()).getData();
         BigDecimal totalActualPrice = new BigDecimal((Double) orderSumField.get("totalActualPrice"));
         BigDecimal totalDeliveryFee = new BigDecimal((Double) orderSumField.get("totalDeliveryFee"));
         BigDecimal totalRefundAmount = new BigDecimal((Double) orderRefundSumField.get("totalRefundAmount"));
         BigDecimal totalRefundDeliveryFee = new BigDecimal((Double) orderRefundSumField.get("totalRefundDeliveryFee"));
 
         //待处理开店申请、待处理提现申请、待处理变更资料申请、待处理退款申请
-        ShopExample shopExample = new ShopExample();
-        shopExample.createCriteria().andAuditStatusEqualTo(Quantity.INT_1);
-        int handleShopCount = shopService.countByExample(shopExample);
+        ShopParam shopParam = new ShopParam();
+        shopParam.setAuditStatus(Quantity.INT_1);
+        int handleShopCount = shopFeignApi.countByExample(shopParam).getData();
 
-        int handleMerchantWithdrawCount = (int) merchantWithdrawRecordFeignClient.countByAuditStatus(Quantity.INT_1).getData();
+        int handleMerchantWithdrawCount = merchantWithdrawRecordFeignApi.countByAuditStatus(Quantity.INT_1).getData();
 
-        ShopChangeRecordExample shopChangeExample = new ShopChangeRecordExample();
-        shopChangeExample.createCriteria().andAuditStatusEqualTo(Quantity.INT_1);
-        int handleShopChangeCount = shopChangeRecordService.countByExample(shopChangeExample);
+        ShopChangeRecordParam changeRecordParam = new ShopChangeRecordParam();
+        changeRecordParam.setAuditStatus(Quantity.INT_1);
+        int handleShopChangeCount = shopChangeRecordFeignApi.countByExample(changeRecordParam).getData();
 
         OrderRefund orderRefundCount = new OrderRefund();
         orderRefundCount.setStatus(Quantity.INT_4);
-        int handleOrderRefundCount = orderRefundFeignClient.countByExample(orderRefundCount);
+        int handleOrderRefundCount = orderRefundFeignApi.countByExample(orderRefundCount).getData();
 
         //商家总览：已下架、已上架、全部商家
-        shopExample = new ShopExample();
-        shopExample.createCriteria().andStatusEqualTo(Quantity.INT_3);
-        int underShelfShopCount = shopService.countByExample(shopExample);
+        shopParam = new ShopParam();
+        shopParam.setStatus(Quantity.INT_3);
+        int underShelfShopCount = shopFeignApi.countByExample(shopParam).getData();
 
-        shopExample = new ShopExample();
-        shopExample.createCriteria().andStatusEqualTo(Quantity.INT_2);
-        int onShelfShopCount = shopService.countByExample(shopExample);
+        shopParam = new ShopParam();
+        shopParam.setStatus(Quantity.INT_2);
+        int onShelfShopCount = shopFeignApi.countByExample(shopParam).getData();
 
         /*List filterList = new ArrayList<>();
         filterList.add(Quantity.INT_1);
         filterList.add(Quantity.INT_2);
         filterList.add(Quantity.INT_3);*/
-        shopExample = new ShopExample();
-        shopExample.createCriteria().andAuditStatusEqualTo(Quantity.INT_2);
-        int allShopCount = shopService.countByExample(shopExample);
+        shopParam = new ShopParam();
+        shopParam.setAuditStatus(Quantity.INT_2);
+        int allShopCount = shopFeignApi.countByExample(shopParam).getData();
 
         //用户总览：今日新增、昨日新增、本月新增、会员总数
-        int dayMemberCount = memberFeignClient.selectCountRegister(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd());
-        int yesterdayMemberCount = memberFeignClient.selectCountRegister(DateUtilsExtend.getBeginDayOfYesterday(), DateUtilsExtend.getEndDayOfYesterDay());
-        int thisMonthMemberCount = memberFeignClient.selectCountRegister(DateUtilsExtend.getBeginDayOfMonth(), DateUtilsExtend.getEndDayOfMonth());
-        int allMemberCount = memberFeignClient.countByExample(new Member());
+        int dayMemberCount = memberFeignApi.selectCountRegister(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
+        int yesterdayMemberCount = memberFeignApi.selectCountRegister(DateUtilsExtend.getBeginDayOfYesterday(), DateUtilsExtend.getEndDayOfYesterDay()).getData();
+        int thisMonthMemberCount = memberFeignApi.selectCountRegister(DateUtilsExtend.getBeginDayOfMonth(), DateUtilsExtend.getEndDayOfMonth()).getData();
+        int allMemberCount = memberFeignApi.countByExample(new Member()).getData();
 
         resultMap.put("dayCountPaid", dayCountPaid);
         resultMap.put("daySumActualPrice", daySumActualPrice);
@@ -212,24 +219,24 @@ public class StatisticsServiceImpl implements StatisticsService {
 //        Order order = new Order();
 //
 //        //今日支付金额(商家实际到手金额)
-//        BigDecimal todaySumMerchantIncome = orderFeignClient.selectSumMerchantIncome(order, system_startTime, today_endTime);
+//        BigDecimal todaySumMerchantIncome = orderFeignApi.selectSumMerchantIncome(order, system_startTime, today_endTime);
 //        //昨日支付金额(商家实际到手金额)
-//        BigDecimal yesterdaySumMerchantIncome = orderFeignClient.selectSumMerchantIncome(order, system_startTime, yesterday_endTime);
+//        BigDecimal yesterdaySumMerchantIncome = orderFeignApi.selectSumMerchantIncome(order, system_startTime, yesterday_endTime);
 //
 //        //今日支付订单数量
-//        int todayCountPaid = orderFeignClient.selectCountCompleted(order, system_startTime, today_endTime);
+//        int todayCountPaid = orderFeignApi.selectCountCompleted(order, system_startTime, today_endTime);
 //        //昨日支付订单数量
-//        int yesterdayCountPaid = orderFeignClient.selectCountCompleted(order, system_startTime, yesterday_endTime);
+//        int yesterdayCountPaid = orderFeignApi.selectCountCompleted(order, system_startTime, yesterday_endTime);
 //
 //        //今日截止总共普通注册人数
-//        int todayCountGeneralRegister = memberFeignClient.selectCountGeneralRegister(system_startTime, today_endTime);
+//        int todayCountGeneralRegister = memberFeignApi.selectCountGeneralRegister(system_startTime, today_endTime);
 //        //昨日截止总共普通注册人数
-//        int yesterdayCountGeneralRegister = memberFeignClient.selectCountGeneralRegister(system_startTime, yesterday_endTime);
+//        int yesterdayCountGeneralRegister = memberFeignApi.selectCountGeneralRegister(system_startTime, yesterday_endTime);
 //
 //        //今日截止总共邀请注册人数
-//        int todayCountInviteRegister = memberFeignClient.selectCountInviteRegister(system_startTime, today_endTime);
+//        int todayCountInviteRegister = memberFeignApi.selectCountInviteRegister(system_startTime, today_endTime);
 //        //昨日截止总共邀请注册人数
-//        int yesterdayCountInviteRegister = memberFeignClient.selectCountInviteRegister(system_startTime, yesterday_endTime);
+//        int yesterdayCountInviteRegister = memberFeignApi.selectCountInviteRegister(system_startTime, yesterday_endTime);
 //
 //        resultMap.put("todaySumMerchantIncome", todaySumMerchantIncome);
 //        resultMap.put("yesterdaySumMerchantIncome", yesterdaySumMerchantIncome);
@@ -255,27 +262,27 @@ public class StatisticsServiceImpl implements StatisticsService {
         order.setEndTime(DateUtilsExtend.getDayEnd());
         //今日支付订单、今日实际收入、今日进店人数、今日加购商品
         log.debug("\n\n》》》 StatisticsServiceImpl.todayStatisticByMerchant - order = " + JSON.toJSONString(order));
-        int dayCountPaid = orderFeignClient.selectCountCompleted(order);
-        BigDecimal daySumMerchantIncome = orderFeignClient.selectSumMerchantIncome(order);
-        int todayCountIntoShop = systemUsageRecordService.selectCountIntoShop(loginMerchant.getShopId(), DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd());
+        int dayCountPaid = orderFeignApi.selectCountCompleted(order).getData();
+        BigDecimal daySumMerchantIncome = orderFeignApi.selectSumMerchantIncome(order).getData();
+        int todayCountIntoShop = systemUsageRecordFeignApi.selectCountIntoShop(loginMerchant.getShopId(), DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
         int todayCountShoppingCartGoodsNumber = shoppingCartService.selectCountGoodsNumber(loginMerchant.getShopId(), DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd());
 
         //待制作订单(自取)、待配送订单(外卖)、已完成订单、待处理退款申请
         order.setShopId(loginMerchant.getShopId());
         order.setStatus(Quantity.INT_2);
-        int waitHandleOrderCount = orderFeignClient.countByExample(order);
+        int waitHandleOrderCount = orderFeignApi.countByExample(order).getData();
 
         order.setShopId(loginMerchant.getShopId());
         order.setStatus(Quantity.INT_4);
-        int waitDeliverOrderCount = orderFeignClient.countByExample(order);
+        int waitDeliverOrderCount = orderFeignApi.countByExample(order).getData();
 
         order.setShopId(loginMerchant.getShopId());
         order.setStatus(Quantity.INT_6);
-        int completedOrderCount = orderFeignClient.countByExample(order);
+        int completedOrderCount = orderFeignApi.countByExample(order).getData();
 
         order.setShopId(loginMerchant.getShopId());
         order.setStatus(Quantity.INT_7);
-        int handleOrderRefundCount = orderFeignClient.countByExample(order);
+        int handleOrderRefundCount = orderFeignApi.countByExample(order).getData();
 
         //商品总览：已下架、已上架、库存售罄、全部商品
         GoodsExample goodsExample = new GoodsExample();
@@ -299,8 +306,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal perCustomerTransaction;
         order.setStartTime(startDate);
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal sumActualPrice = orderFeignClient.selectSumActualPrice(order);
-        int countPaid = orderFeignClient.selectCountCompleted(order);
+        BigDecimal sumActualPrice = orderFeignApi.selectSumActualPrice(order).getData();
+        int countPaid = orderFeignApi.selectCountCompleted(order).getData();
         if(countPaid == 0){
             perCustomerTransaction = BigDecimal.valueOf(-1);
         }else{
@@ -310,8 +317,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal orderConversionRate;
         order.setStartTime(startDate);
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        int countOrderPeoples = orderFeignClient.selectCountOrderPeoples(order);
-        int countIntoShop = systemUsageRecordService.selectCountIntoShop(loginMerchant.getShopId(), startDate, DateUtilsExtend.getDayEnd());
+        int countOrderPeoples = orderFeignApi.selectCountOrderPeoples(order).getData();
+        int countIntoShop = systemUsageRecordFeignApi.selectCountIntoShop(loginMerchant.getShopId(), startDate, DateUtilsExtend.getDayEnd()).getData();
         if(countIntoShop == 0){
             orderConversionRate = BigDecimal.valueOf(-1);
         }else{
@@ -321,7 +328,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal orderPaymentConversionRate;
         order.setStartTime(startDate);
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        int countPayers = orderFeignClient.selectCountPayers(order);
+        int countPayers = orderFeignApi.selectCountPayers(order).getData();
         if(countOrderPeoples == 0){
             orderPaymentConversionRate = BigDecimal.valueOf(-1);
         }else{
@@ -408,27 +415,27 @@ public class StatisticsServiceImpl implements StatisticsService {
         order.setShopId(loginMerchant.getShopId());
 
         //今日进店人数
-        todayCountIntoShop = systemUsageRecordService.selectCountIntoShop(loginMerchant.getShopId(), today_startTime, today_endTime);
+        todayCountIntoShop = systemUsageRecordFeignApi.selectCountIntoShop(loginMerchant.getShopId(), today_startTime, today_endTime).getData();
         //昨日进店人数
-        int yesterdayCountIntoShop = systemUsageRecordService.selectCountIntoShop(loginMerchant.getShopId(), yesterday_startTime, yesterday_endTime);
+        int yesterdayCountIntoShop = systemUsageRecordFeignApi.selectCountIntoShop(loginMerchant.getShopId(), yesterday_startTime, yesterday_endTime).getData();
 
         //今日支付金额(商家实际到手金额)
         order.setStartTime(today_startTime);
         order.setEndTime(today_endTime);
-        BigDecimal todaySumMerchantIncome = orderFeignClient.selectSumMerchantIncome(order);
+        BigDecimal todaySumMerchantIncome = orderFeignApi.selectSumMerchantIncome(order).getData();
         //昨日支付金额(商家实际到手金额)
         order.setStartTime(yesterday_startTime);
         order.setEndTime(yesterday_endTime);
-        BigDecimal yesterdaySumMerchantIncome = orderFeignClient.selectSumMerchantIncome(order);
+        BigDecimal yesterdaySumMerchantIncome = orderFeignApi.selectSumMerchantIncome(order).getData();
 
         //今日支付订单数量
         order.setStartTime(today_startTime);
         order.setEndTime(today_endTime);
-        int todayCountPaid = orderFeignClient.selectCountCompleted(order);
+        int todayCountPaid = orderFeignApi.selectCountCompleted(order).getData();
         //昨日支付订单数量
         order.setStartTime(yesterday_startTime);
         order.setEndTime(yesterday_endTime);
-        int yesterdayCountPaid = orderFeignClient.selectCountCompleted(order);
+        int yesterdayCountPaid = orderFeignApi.selectCountCompleted(order).getData();
 
         //今日加购商品数量
         int todayCountGoodsNumber = shoppingCartService.selectCountGoodsNumber(loginMerchant.getShopId(), today_startTime, today_endTime);

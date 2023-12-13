@@ -10,9 +10,7 @@ import com.siam.package_common.util.DateUtilsPlus;
 import com.siam.package_common.util.GenerateNo;
 import com.siam.package_common.util.JsonUtils;
 import com.siam.package_common.util.RedisUtils;
-import com.siam.package_feign.mod_feign.goods.internal.PointsMallCouponsMemberRelationFeignClient;
-import com.siam.package_feign.mod_feign.goods.internal.PointsMallShoppingCartFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
+import com.siam.package_goods.feign.internal.PointsMallShoppingCartFeignApi;
 import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.internal.PointsMallOrder;
 import com.siam.package_order.entity.internal.PointsMallOrderDetail;
@@ -21,12 +19,14 @@ import com.siam.package_order.model.example.internal.PointsMallOrderExample;
 import com.siam.package_order.model.param.internal.PointsMallOrderParam;
 import com.siam.package_order.model.result.internal.PointsMallOrderResult;
 import com.siam.package_order.model.vo.internal.PointsMallOrderVo;
-import com.siam.package_user.auth.cache.MemberSessionManager;
-import com.siam.package_user.entity.Member;
-import com.siam.package_user.util.TokenUtil;
 import com.siam.package_order.service.DeliveryAddressService;
 import com.siam.package_order.service.internal.PointsMallOrderDetailService;
 import com.siam.package_order.service.internal.PointsMallOrderService;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsMemberRelationFeignApi;
+import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.entity.Member;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -39,7 +39,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 分布式事务-本地消息表
@@ -60,7 +63,7 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
     private PointsMallOrderDetailService orderDetailService;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
     private DeliveryAddressService deliveryAddressService;
@@ -69,10 +72,10 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
     private MemberSessionManager memberSessionManager;
 
     @Autowired
-    private PointsMallShoppingCartFeignClient shoppingCartFeignClient;
+    private PointsMallShoppingCartFeignApi shoppingCartFeignApi;
 
     @Autowired
-    private PointsMallCouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
+    private PointsMallCouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
@@ -104,7 +107,7 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
         //TODO(MARK) - 系统默认免运费
         param.setDeliveryFee(BigDecimal.ZERO);
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
-        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
 
 //        //校验防重令牌是否正确 -- 保证该接口的幂等性
 //        String script = "if redis.call('get', KEYS[1]) == ARGV[1]  then  return redis.call('del', KEYS[1])  else  return 0 end";
@@ -115,7 +118,7 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
 
         //校验：如果是从购物车下单的 那么需要校验购物车数据是否存在 以及购物车数据是否属于当前登录用户
         if(param.getShoppingCartIdList()!=null && !param.getShoppingCartIdList().isEmpty()){
-            int count = shoppingCartFeignClient.countByIdListAndMemberId(param.getShoppingCartIdList(), loginMember.getId());
+            int count = shoppingCartFeignApi.countByIdListAndMemberId(param.getShoppingCartIdList(), loginMember.getId()).getData();
             if(count != param.getShoppingCartIdList().size()){
                 throw new StoneCustomerException("购物车数据异常，请刷新页面重新下单");
             }
@@ -220,7 +223,7 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
             orderDetailService.insertSelective(insertDetail);
 
             //TODO - 减少商品库存 (规格的库存该怎么去变化)
-            /*goodsFeignClient.decreaseStock(goodsId, number);*/
+            /*goodsFeignApi.decreaseStock(goodsId, number);*/
         }
 
         //保存本地消息表
@@ -238,14 +241,14 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
 
         //4、如果是从购物车下单的 那么下单成功后需要删除购物车数据  注意用批量删除
         if(param.getShoppingCartIdList()!=null && param.getShoppingCartIdList().size()>0){
-            shoppingCartFeignClient.batchDeleteByIdList(param.getShoppingCartIdList());
+            shoppingCartFeignApi.batchDeleteByIdList(param.getShoppingCartIdList());
         }
 
         //5、修改是否为新用户标识
         if(dbMember.getIsNewPeople()){
             dbMember.setIsNewPeople(false);
             dbMember.setIsRemindNewPeople(false);
-            memberFeignClient.updateByPrimaryKeySelective(dbMember);
+            memberFeignApi.updateByPrimaryKeySelective(dbMember);
         }
 
         //模拟程序出错
@@ -253,7 +256,7 @@ public class LocalMsg_PointsMallOrderServiceImpl implements PointsMallOrderServi
 
         //6、更新优惠卷的使用状态
         if (param.getCouponsMemberRelationId() != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(param.getCouponsMemberRelationId(),true);
+            couponsMemberRelationFeignApi.updateCouponsUsed(param.getCouponsMemberRelationId(),true);
         }
 
         //加入MQ延时队列，检测并关闭超时未支付的订单，5分钟

@@ -12,7 +12,7 @@ import com.siam.package_order.service.AppraiseService;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.service.OrderService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
-import com.siam.package_user.auth.cache.MerchantSessionManager;
+import com.siam.package_merchant.auth.cache.MerchantSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;

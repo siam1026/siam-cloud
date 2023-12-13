@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>siam-merchant</artifactId>
+        <groupId>com.siam</groupId>
+        <version>1.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>merchant-provider</artifactId>
+
+    <name>merchant-provider</name>
+    <url>https://www.siamit.cn</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- 引入公共配置模块API【TODO BUG - 临时配置，解决actuator依赖报错问题】 -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>siam-common</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入用户模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>user-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入商家模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>merchant-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入商品模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>goods-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入订单模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>order-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入促销模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>promotion-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入工具模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>util-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 引入微信支付模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>weixin-pay</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- 整合Eureka注册中心 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>2.1.2.RELEASE</version>
+        </dependency>
+
+        <!-- 整合Seata分布式事务 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <version>2021.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.seata</groupId>
+                    <artifactId>seata-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+        <!-- 整合Actuator监控依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>2.3.3.RELEASE</version>
+        </dependency>
+
+        <!-- 整合prometheus -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+
+        <!-- 整合logstash -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>6.6</version>
+        </dependency>
+
+    </dependencies>
+
+    <!--build内容也需要做替换，因为默认的spring-boot-maven-plugin这种方式，等到后期打包的时候他会一直提示你，你引入的依赖不存在！-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <!--  指定该Main Class为全局的唯一入口 -->
+                    <mainClass>com.siam.package_merchant.MerchantApplication</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

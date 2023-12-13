@@ -27,7 +27,7 @@ public class Swagger2Config {
     // 构建api文档的详细信息函数,注意这里的注解引用的是哪个
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("暹罗外卖-商品+销售服务接口文档")//页面标题
+                .title("暹罗外卖-商品服务接口文档")//页面标题
                 .description("")//描述
                 .version("1.0")//版本号
                 .build();

@@ -1,22 +1,15 @@
 package com.siam.package_order.service_impl.internal;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.Quantity;
-import com.siam.package_common.constant.RocketMQConst;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.*;
-import com.siam.package_weixin_basic.service.WxNotifyService;
-import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
-import com.siam.package_feign.mod_feign.goods.*;
-import com.siam.package_feign.mod_feign.goods.internal.*;
-import com.siam.package_feign.mod_feign.user.MemberBillingRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberInviteRelationFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberTradeRecordFeignClient;
-import com.siam.package_goods.entity.internal.*;
+import com.siam.package_goods.entity.internal.PointsMallGoods;
+import com.siam.package_goods.feign.internal.PointsMallGoodsFeignApi;
+import com.siam.package_goods.feign.internal.PointsMallGoodsSpecificationOptionFeignApi;
+import com.siam.package_goods.feign.internal.PointsMallShoppingCartFeignApi;
 import com.siam.package_order.controller.member.internal.PointsMallWxPayService;
-import com.siam.package_order.entity.*;
+import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.internal.*;
 import com.siam.package_order.mapper.internal.PointsMallOrderMapper;
 import com.siam.package_order.model.example.OrderExample;
@@ -26,26 +19,42 @@ import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.model.param.internal.PointsMallOrderParam;
 import com.siam.package_order.model.result.internal.PointsMallOrderResult;
 import com.siam.package_order.model.vo.internal.PointsMallOrderVo;
-import com.siam.package_order.service.*;
+import com.siam.package_order.service.CommonService;
+import com.siam.package_order.service.DeliveryAddressService;
+import com.siam.package_order.service.OrderService;
 import com.siam.package_order.service.internal.*;
+import com.siam.package_promotion.entity.internal.PointsMallCoupons;
+import com.siam.package_promotion.entity.internal.PointsMallCouponsMemberRelation;
+import com.siam.package_promotion.entity.internal.PointsMallFullReductionRule;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsGoodsRelationFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsMemberRelationFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallFullReductionRuleFeignApi;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
 import com.siam.package_user.entity.MemberTradeRecord;
+import com.siam.package_user.entity.internal.VipRechargeRecord;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberInviteRelationFeignApi;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
+import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
 import com.siam.package_user.model.example.MemberBillingRecordExample;
+import com.siam.package_user.model.param.MemberBillingRecordParam;
 import com.siam.package_user.util.TokenUtil;
-import com.siam.package_weixin_pay.util.*;
-import com.siam.package_goods.entity.*;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_util.feign.SettingFeignApi;
+import com.siam.package_weixin_basic.service.WxNotifyService;
+import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -65,16 +74,16 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     private PointsMallOrderDetailService orderDetailService;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
     private DeliveryAddressService deliveryAddressService;
@@ -89,7 +98,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     private PointsMallOrderRefundService orderRefundService;
 
     @Autowired
-    private MemberInviteRelationFeignClient memberInviteRelationFeignClient;
+    private MemberInviteRelationFeignApi memberInviteRelationFeignApi;
 
     @Autowired
     private PointsMallOrderLogisticsService orderLogisticsService;
@@ -98,7 +107,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     private OrderService orderService;
 
     @Autowired
-    private VipRechargeRecordFeignClient vipRechargeRecordFeignClient;
+    private VipRechargeRecordFeignApi vipRechargeRecordFeignApi;
 
     @Autowired
     private PointsMallOrderRefundGoodsService orderRefundGoodsService;
@@ -116,25 +125,25 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     private CommonService commonService;
 
     @Autowired
-    private PointsMallShoppingCartFeignClient shoppingCartFeignClient;
+    private PointsMallShoppingCartFeignApi shoppingCartFeignApi;
 
     @Autowired
-    private PointsMallGoodsFeignClient goodsFeignClient;
+    private PointsMallGoodsFeignApi goodsFeignApi;
 
     @Autowired
-    private PointsMallGoodsSpecificationOptionFeignClient goodsSpecificationOptionFeignClient;
+    private PointsMallGoodsSpecificationOptionFeignApi goodsSpecificationOptionFeignApi;
 
     @Autowired
-    private PointsMallCouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
+    private PointsMallCouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     @Autowired
-    private PointsMallCouponsFeignClient couponsFeignClient;
+    private PointsMallCouponsFeignApi couponsFeignApi;
 
     @Autowired
-    private PointsMallCouponsGoodsRelationFeignClient couponsGoodsRelationFeignClient;
+    private PointsMallCouponsGoodsRelationFeignApi couponsGoodsRelationFeignApi;
 
     @Autowired
-    private PointsMallFullReductionRuleFeignClient fullReductionRuleFeignClient;
+    private PointsMallFullReductionRuleFeignApi fullReductionRuleFeignApi;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
@@ -167,7 +176,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         //TODO(MARK) - 系统默认免运费
         param.setDeliveryFee(BigDecimal.ZERO);
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
-        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
 
         //校验防重令牌是否正确 -- 保证该接口的幂等性
         /*String script = "if redis.call('get', KEYS[1]) == ARGV[1]  then  return redis.call('del', KEYS[1])  else  return 0 end";
@@ -178,7 +187,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
 
         //校验：如果是从购物车下单的 那么需要校验购物车数据是否存在 以及购物车数据是否属于当前登录用户
         if(param.getShoppingCartIdList()!=null && !param.getShoppingCartIdList().isEmpty()){
-            int count = shoppingCartFeignClient.countByIdListAndMemberId(param.getShoppingCartIdList(), loginMember.getId());
+            int count = shoppingCartFeignApi.countByIdListAndMemberId(param.getShoppingCartIdList(), loginMember.getId()).getData();
             if(count != param.getShoppingCartIdList().size()){
                 throw new StoneCustomerException("购物车数据异常，请刷新页面重新下单");
             }
@@ -283,19 +292,19 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             orderDetailService.insertSelective(insertDetail);
 
             //TODO - 减少商品库存 (规格的库存该怎么去变化)
-            /*goodsFeignClient.decreaseStock(goodsId, number);*/
+            /*goodsFeignApi.decreaseStock(goodsId, number);*/
         }
 
         //4、如果是从购物车下单的 那么下单成功后需要删除购物车数据  注意用批量删除
         if(param.getShoppingCartIdList()!=null && param.getShoppingCartIdList().size()>0){
-            shoppingCartFeignClient.batchDeleteByIdList(param.getShoppingCartIdList());
+            shoppingCartFeignApi.batchDeleteByIdList(param.getShoppingCartIdList());
         }
 
         //5、修改是否为新用户标识
         if(dbMember.getIsNewPeople()){
             dbMember.setIsNewPeople(false);
             dbMember.setIsRemindNewPeople(false);
-            memberFeignClient.updateByPrimaryKeySelective(dbMember);
+            memberFeignApi.updateByPrimaryKeySelective(dbMember);
         }
 
         //模拟程序出错
@@ -303,7 +312,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
 
         //6、更新优惠卷的使用状态
         if (param.getCouponsMemberRelationId() != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(param.getCouponsMemberRelationId(),true);
+            couponsMemberRelationFeignApi.updateCouponsUsed(param.getCouponsMemberRelationId(),true);
         }
 
         /*//加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
@@ -326,7 +335,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
      */
     public void validatePrice(PointsMallOrderParam param){
         //订单总金额以后端计算为准，前端传递过来的总金额需要进行比对-防止前端计算错误
-        //最终应付价格
+        //最终应
         BigDecimal finalPrice;
 
         //1、计算商品总金额
@@ -334,7 +343,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         //商品总数量
         int goodsTotalQuantity = 0;
         for (PointsMallOrderDetail orderDetail : param.getOrderDetailList()) {
-            PointsMallGoods dbGoods = goodsFeignClient.selectByPrimaryKey(orderDetail.getGoodsId());
+            PointsMallGoods dbGoods = goodsFeignApi.selectByPrimaryKey(orderDetail.getGoodsId()).getData();
             if (dbGoods == null){
                 throw new StoneCustomerException("订单商品数据异常，请稍后重试");
             }
@@ -359,7 +368,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             }
             //正常情况下nameList不能为空，为空也要做特殊处理
             if(!nameList.isEmpty()){
-                specOptionPrice = goodsSpecificationOptionFeignClient.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList);
+                specOptionPrice = goodsSpecificationOptionFeignApi.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList).getData();
             }
             //计算单品的总价
             BigDecimal price = dbGoods.getPrice().add(specOptionPrice);
@@ -391,8 +400,8 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         BigDecimal subtractPrice = BigDecimal.ZERO;
         if (couponsMemberRelationId != null) {
             //查询出使用的优惠券信息
-            PointsMallCouponsMemberRelation dbPointsMallCouponsMemberRelation = couponsMemberRelationFeignClient.selectPointsMallCouponsMemberRelationByPrimaryKey(couponsMemberRelationId);
-            Map couponsMap = couponsFeignClient.selectCouponsAndGoodsByPrimaryKey(dbPointsMallCouponsMemberRelation.getCouponsId());
+            PointsMallCouponsMemberRelation dbPointsMallCouponsMemberRelation = couponsMemberRelationFeignApi.selectPointsMallCouponsMemberRelationByPrimaryKey(couponsMemberRelationId).getData();
+            Map couponsMap = couponsFeignApi.selectCouponsAndGoodsByPrimaryKey(dbPointsMallCouponsMemberRelation.getCouponsId()).getData();
             PointsMallCoupons dbPointsMallCoupons = (PointsMallCoupons) couponsMap.get("coupons");
             if(PointsMallCoupons.TYPE_DISCOUNT.equals(dbPointsMallCoupons.getPreferentialType())){
                 //折扣优惠券
@@ -405,7 +414,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                 PointsMallOrderDetail couponsDiscountOrderDetail = null;
 
                 //查询出优惠券关联的所有商品
-                List<Integer> goodsIdList = couponsGoodsRelationFeignClient.getGoodsIdByCouponsId(dbPointsMallCouponsMemberRelation.getCouponsId());
+                List<Integer> goodsIdList = couponsGoodsRelationFeignApi.getGoodsIdByCouponsId(dbPointsMallCouponsMemberRelation.getCouponsId()).getData();
                 for (PointsMallOrderDetail orderDetail : param.getOrderDetailList()) {
                     //判断商品是否能够使用此优惠卷 且 是否应用于最高价格的商品(不包括包装费)
                     if (goodsIdList.contains(orderDetail.getGoodsId())) {
@@ -456,7 +465,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         //3、判断满减规则是否满足使用条件
         //TODO-后端不判断订单应使用哪个满减规则，只对前端传递的满减规则进行是否满足使用条件判断
         if (param.getFullReductionRuleId() != null) {
-            PointsMallFullReductionRule dbFullReductionRule = fullReductionRuleFeignClient.selectByPrimaryKey(param.getFullReductionRuleId());
+            PointsMallFullReductionRule dbFullReductionRule = fullReductionRuleFeignApi.selectByPrimaryKey(param.getFullReductionRuleId()).getData();
             if(finalPrice.compareTo(dbFullReductionRule.getLimitedPrice()) >= 0){
                 finalPrice = finalPrice.subtract(dbFullReductionRule.getReducedPrice());
                 param.setFullReductionRuleId(dbFullReductionRule.getId());
@@ -590,7 +599,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             //退回使用的优惠卷
             Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
             if (couponsMemberRelationId != null) {
-                couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId, false);
+                couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId, false);
             }
         }
     }
@@ -680,15 +689,15 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         List<PointsMallOrderDetail> orderDetailList = orderDetailService.selectByPointsMallOrderId(dbPointsMallOrder.getId());
 
         // 获取下单积分量
-        Setting setting=settingFeignClient.selectCurrent();
+        Setting setting= settingFeignApi.selectCurrent().getData();
 
-        Member dbMember = memberFeignClient.selectByPrimaryKey(dbPointsMallOrder.getMemberId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(dbPointsMallOrder.getMemberId()).getData();
 
         //商品月销量和总销量修改
         for (PointsMallOrderDetail orderDetail : orderDetailList) {
             Integer num = orderDetail.getNumber();
             Integer goodsId = orderDetail.getGoodsId();
-            goodsFeignClient.updateSales(goodsId, num);
+            goodsFeignApi.updateSales(goodsId, num);
         }
 
         //TODO-是否需要插入平台抽佣账单记录
@@ -774,7 +783,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         BigDecimal inviterCommissionPercent, commissionAmount;
         String message;
         //给下单用户的邀请人发放佣金
-        Map<String, Integer> inviterMap = memberInviteRelationFeignClient.selectInviter(dbPointsMallOrder.getMemberId());
+        Map<String, Integer> inviterMap = memberInviteRelationFeignApi.selectInviter(dbPointsMallOrder.getMemberId()).getData();
         if(inviterMap.containsKey("secondLevelInviter")){
             //有2个上级邀请人
             //发放下单用户佣金奖励
@@ -835,7 +844,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         //2、近30天是否有消费这个条件 是指用户下过单(无论什么状态)--只要支付成功过的都算
         //3、近30天是否有消费这个条件 是指外卖系统、积分商城、(会员充值) 任意有一笔消费即可
         //4、近30天是否有消费这个条件 需要排除当前支付的订单
-        Member dbMember = memberFeignClient.selectByPrimaryKey(inviterId);
+        Member dbMember = memberFeignApi.selectByPrimaryKey(inviterId).getData();
         if(!dbMember.getType().equals(Quantity.INT_2)){
             log.info("\n\nid为" + inviterId + "的邀请人不是会员，不给予佣金奖励");
             return;
@@ -843,7 +852,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
 
         //判断当前订单是否为开通会员后的第一笔订单，如果是，则直接给与佣金奖励
         //查询当前用户最近一笔支付成功的会员充值记录
-        VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignClient.selectLastestPaid(dbMember.getId());
+        VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignApi.selectLastestPaid(dbMember.getId()).getData();
         List excludeStatusList = new ArrayList();
         excludeStatusList.add(1);
         excludeStatusList.add(10);
@@ -886,8 +895,8 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         updateMember.setId(dbMember.getId());
         updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
         updateMember.setUpdateTime(new Date());
-        memberFeignClient.updateByPrimaryKeySelective(updateMember);
-        dbMember = memberFeignClient.selectByPrimaryKey(inviterId);
+        memberFeignApi.updateByPrimaryKeySelective(updateMember);
+        dbMember = memberFeignApi.selectByPrimaryKey(inviterId).getData();
 
         //增加用户账单记录
         MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -899,7 +908,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         memberBillingRecord.setMessage(message);
         memberBillingRecord.setPointsMallOrderId(orderId);
         memberBillingRecord.setCreateTime(new Date());
-        memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+        memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
     }
 
     @Override
@@ -1129,7 +1138,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         }
 
         //获取该订单的对应用户
-        Member orderMember = memberFeignClient.selectByPrimaryKey(dbPointsMallOrder.getMemberId());
+        Member orderMember = memberFeignApi.selectByPrimaryKey(dbPointsMallOrder.getMemberId()).getData();
 
         if(param.getStatus() == Quantity.INT_1){
             //审核通过
@@ -1153,8 +1162,8 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                 updateMember.setId(orderMember.getId());
                 updateMember.setPoints(orderMember.getPoints().add(dbPointsMallOrderRefund.getRefundAmount()));
                 updateMember.setTotalConsumePoints(orderMember.getTotalConsumePoints().subtract(dbPointsMallOrderRefund.getRefundAmount()));
-                memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                orderMember = memberFeignClient.selectByPrimaryKey(dbPointsMallOrder.getMemberId());
+                memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                orderMember = memberFeignApi.selectByPrimaryKey(dbPointsMallOrder.getMemberId()).getData();
                 //添加账单记录
                 MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
                 memberBillingRecord.setMemberId(orderMember.getId());
@@ -1164,7 +1173,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                 memberBillingRecord.setNumber(dbPointsMallOrderRefund.getRefundAmount());
                 memberBillingRecord.setMessage(dbPointsMallOrderRefund.getType()==Quantity.INT_1 ? "未发货订单申请退款-积分退回" : "已发货订单申请退款-积分退回");
                 memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                 //退款成功的操作
                 orderService.updateRefundStatus(dbPointsMallOrder.getOrderNo());
@@ -1181,7 +1190,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                 //退回优惠卷
                 Integer couponsMemberRelationId = dbPointsMallOrder.getCouponsMemberRelationId();
                 if (couponsMemberRelationId != null) {
-                    couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,false);
+                    couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,false);
                 }
             }
 
@@ -1213,12 +1222,12 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             typeList.add(MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_OWN_COMMISSION);
-            MemberBillingRecordExample example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeIn(typeList)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT)
-                    .andPointsMallOrderIdEqualTo(dbPointsMallOrder.getId());
-            List<MemberBillingRecord> list = memberBillingRecordFeignClient.selectByExample(example);
+            MemberBillingRecordParam billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setTypeList(typeList);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
+            billingRecordParam.setPointsMallOrderId(dbPointsMallOrder.getId());
+            List<MemberBillingRecord> list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if(!list.isEmpty()){
                 for (MemberBillingRecord dbMemberBillingRecord : list) {
                     Integer type = null;
@@ -1234,7 +1243,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                         message = "订单退款-下单用户佣金奖励退回";
                     }
 
-                    Member dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    Member dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
                     //增加用户的邀请新用户注册奖励金额
                     BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
@@ -1242,8 +1251,8 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                     updateMember.setId(dbMember.getId());
                     updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
                     updateMember.setUpdateTime(new Date());
-                    memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                    dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                    dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
 
                     //增加用户账单记录
                     MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -1255,13 +1264,13 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
                     memberBillingRecord.setMessage(message);
                     memberBillingRecord.setPointsMallOrderId(dbPointsMallOrder.getId());
                     memberBillingRecord.setCreateTime(new Date());
-                    memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                    memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                     //之前的账单记录标注已退回
                     MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                     updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                     updateMemberBillingRecord.setIsReturn(true);
-                    memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                    memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
                 }
             }
         }else if(param.getStatus() == Quantity.INT_2){
@@ -1507,7 +1516,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         dbPointsMallOrderMap.put("isShowLogistics", isShowLogistics);
 
         //返回商家电话
-        /*Shop shop = shopFeignClient.selectByPrimaryKey(dbPointsMallOrder.getShopId());
+        /*Shop shop = shopFeignApi.selectByPrimaryKey(dbPointsMallOrder.getShopId());
         dbPointsMallOrderMap.put("shopContactPhone", shop.getContactPhone());*/
 
         vo.setOrder(dbPointsMallOrderMap);
@@ -1545,13 +1554,13 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+//            goodsFeignApi.increaseStock(goodsId, number);
         }
 
         //退回优惠卷
         Integer couponsMemberRelationId = dbPointsMallOrder.getCouponsMemberRelationId();
         if (couponsMemberRelationId != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,false);
+            couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,false);
         }
 
     }
@@ -1741,11 +1750,11 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+//            goodsFeignApi.increaseStock(goodsId, number);
         }
 
         //查找该订单对应的交易记录
-        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbPointsMallOrder.getTradeId());
+        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignApi.selectByPrimaryKey(dbPointsMallOrder.getTradeId()).getData();
         int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
                 ? Quantity.INT_1 :
                 (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
@@ -1891,13 +1900,13 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
 
         }else if(dbPointsMallOrder.getPaymentMode().equals(Quantity.INT_2)){
             //余额支付
-            Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+            Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
             //增加用户的余额
             Member updateMember = new Member();
             updateMember.setId(dbMember.getId());
             updateMember.setBalance(dbMember.getBalance().add(insertPointsMallOrderRefund.getRefundAmount()));
             updateMember.setTotalConsumeBalance(dbMember.getTotalConsumeBalance().subtract(insertPointsMallOrderRefund.getRefundAmount()));
-            memberFeignClient.updateByPrimaryKeySelective(updateMember);
+            memberFeignApi.updateByPrimaryKeySelective(updateMember);
             //添加账单记录
             MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
             memberBillingRecord.setMemberId(dbMember.getId());
@@ -1907,7 +1916,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             memberBillingRecord.setNumber(insertPointsMallOrderRefund.getRefundAmount());
             memberBillingRecord.setMessage("一分钟内取消订单-余额退回");
             memberBillingRecord.setCreateTime(new Date());
-            memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+            memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
             //退款成功的操作
             updateRefundStatus(dbPointsMallOrder.getOrderNo());
@@ -2116,11 +2125,11 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+//            goodsFeignApi.increaseStock(goodsId, number);
         }
 
         //查找该订单对应的交易记录
-        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbPointsMallOrder.getTradeId());
+        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignApi.selectByPrimaryKey(dbPointsMallOrder.getTradeId()).getData();
         int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
                 ? Quantity.INT_1 :
                 (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
@@ -2444,11 +2453,11 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+//            goodsFeignApi.increaseStock(goodsId, number);
         }
 
         //查找该订单对应的交易记录
-        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbPointsMallOrder.getTradeId());
+        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignApi.selectByPrimaryKey(dbPointsMallOrder.getTradeId()).getData();
         int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
                 ? Quantity.INT_1 :
                 (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
@@ -2722,14 +2731,14 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         String text = null;
         BigDecimal commissionAmount = BigDecimal.ZERO;
 
-        Setting setting=settingFeignClient.selectCurrent();
+        Setting setting= settingFeignApi.selectCurrent().getData();
         //平台邀请佣金
         BigDecimal inviteeConsumeCommissionPercent = setting.getPointsMallInviteeConsumeCommission().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         BigDecimal totalCommissionAmount = param.getActualPrice().multiply(inviteeConsumeCommissionPercent).setScale(Quantity.INT_2, BigDecimal.ROUND_HALF_UP);
         BigDecimal inviterCommissionPercent;
         String message;
         //给下单用户的邀请人发放佣金
-        Map<String, Integer> inviterMap = memberInviteRelationFeignClient.selectInviter(loginMember.getId());
+        Map<String, Integer> inviterMap = memberInviteRelationFeignApi.selectInviter(loginMember.getId()).getData();
         if(inviterMap.containsKey("secondLevelInviter")){
             //有2个上级邀请人
             //发放下单用户佣金奖励
@@ -2772,13 +2781,13 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         //2、近30天是否有消费这个条件 是指用户下过单(无论什么状态)--只要支付成功过的都算
         //3、近30天是否有消费这个条件 是指外卖系统、积分商城、(会员充值) 任意有一笔消费即可
         //4、近30天是否有消费这个条件 需要排除当前支付的订单
-        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
         if(!dbMember.getType().equals(Quantity.INT_2)){
             text = "您现在不是会员，充值会员后，您可得到"+ commissionAmount +"元返利";
         }else{
             //判断当前订单是否为开通会员后的第一笔订单，如果是，则直接给与佣金奖励
             //查询当前用户最近一笔支付成功的会员充值记录
-            VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignClient.selectLastestPaid(dbMember.getId());
+            VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignApi.selectLastestPaid(dbMember.getId()).getData();
             List excludeStatusList = new ArrayList();
             excludeStatusList.add(1);
             excludeStatusList.add(10);

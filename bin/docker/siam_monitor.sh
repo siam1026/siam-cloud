@@ -9,7 +9,7 @@ docker stop siam-monitor
 docker rm siam-monitor
 
 ###运行镜像
-docker run -d -p 9605:9605 --name siam-monitor siam-monitor:v1.0
+docker run -d -p 9605:9605 -e JAVA_OPTS="-Xms128m -Xmx256m" -e JAVA_PROFILES_ACTIVE="-Dspring.profiles.active=test" --name siam-monitor siam-monitor:v1.0
 
 ###推送至阿里云容器镜像
 spawn docker login --username=siam registry-vpc.cn-hangzhou.aliyuncs.com

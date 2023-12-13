@@ -5,17 +5,17 @@ import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
-import com.siam.package_common.util.OSSUtils;
-import com.siam.package_feign.mod_feign.goods.SmsLogFeignClient;
-import com.siam.package_goods.entity.SmsLog;
 import com.siam.package_user.auth.cache.AdminSessionManager;
 import com.siam.package_user.entity.Admin;
 import com.siam.package_user.mapper.AdminMapper;
 import com.siam.package_user.model.example.AdminExample;
 import com.siam.package_user.model.param.AdminParam;
 import com.siam.package_user.model.result.AdminResult;
-import com.siam.package_user.service.*;
+import com.siam.package_user.service.AdminService;
+import com.siam.package_user.service.MemberTradeRecordService;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_util.entity.SmsLog;
+import com.siam.package_util.feign.SmsLogFeignApi;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,49 +35,7 @@ public class AdminServiceImpl implements AdminService {
     private AdminMapper adminMapper;
 
     @Autowired
-    private AdminTokenService adminTokenService;
-
-    @Autowired
-    private OSSUtils ossUtils;
-
-//    @Autowired
-//    private ShopService shopService;
-//
-//    @Autowired
-//    private OrderService orderService;
-//
-//    @Autowired
-//    private ShoppingCartService shoppingCartService;
-//
-//    @Autowired
-//    private SystemUsageRecordService systemUsageRecordService;
-
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private SmsLogFeignClient smsLogFeignClient;
-
-    @Autowired
-    private MerchantWithdrawRecordService merchantWithdrawRecordService;
-
-//    @Autowired
-//    private ShopChangeRecordService shopChangeRecordService;
-//
-//    @Autowired
-//    private OrderRefundService orderRefundService;
-//
-//    @Autowired
-//    private PointsMallOrderRefundService pointsMallOrderRefundService;
-//
-//    @Resource(name = "pointsMallOrderServiceImpl")
-//    private PointsMallOrderService pointsMallOrderService;
-//
-//    @Autowired
-//    private PointsMallShoppingCartService pointsMallShoppingCartService;
-//
-//    @Autowired
-//    private PointsMallGoodsService pointsMallGoodsService;
+    private SmsLogFeignApi smsLogFeignApi;
 
     @Autowired
     private MemberTradeRecordService memberTradeRecordService;
@@ -164,7 +122,7 @@ public class AdminServiceImpl implements AdminService {
             //万能验证码，放行
         }else {
             // 判断验证码是否匹配
-            SmsLog smsLog = smsLogFeignClient.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_LOGIN, 5);
+            SmsLog smsLog = smsLogFeignApi.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_LOGIN, 5).getData();
             if (smsLog==null || !smsLog.getVerifyCode().equals(param.getMobileCode())) {
                 throw new StoneCustomerException("手机验证码错误");
             }
@@ -249,7 +207,7 @@ public class AdminServiceImpl implements AdminService {
             //万能验证码，放行
         }else {
             // 判断验证码是否匹配
-            SmsLog smsLog = smsLogFeignClient.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_FINDPWD, 5);
+            SmsLog smsLog = smsLogFeignApi.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_FINDPWD, 5).getData();
             if (smsLog==null || !smsLog.getVerifyCode().equals(param.getMobileCode())) {
                 throw new StoneCustomerException("手机验证码错误");
             }

@@ -2,21 +2,21 @@ package com.siam.package_order;
 
 import com.alibaba.fastjson.JSON;
 import com.siam.package_common.constant.Quantity;
-import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import com.siam.package_common.util.AliyunExpressUtils;
 import com.siam.package_common.util.DateUtilsExtend;
 import com.siam.package_common.util.GsonUtils;
-import com.siam.package_feign.mod_feign.goods.ShopFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MerchantFeignClient;
+import com.siam.package_merchant.entity.Merchant;
+import com.siam.package_merchant.entity.Shop;
+import com.siam.package_merchant.feign.MerchantFeignApi;
+import com.siam.package_merchant.feign.ShopFeignApi;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.entity.OrderDetail;
 import com.siam.package_order.mapper.OrderDetailMapper;
 import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.service.OrderService;
-import com.siam.package_goods.entity.Shop;
 import com.siam.package_user.entity.Member;
-import com.siam.package_user.entity.Merchant;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.exception.MQBrokerException;
@@ -51,13 +51,13 @@ public class OrderApplicationTest {
     private RocketMQTemplate rocketMQTemplate;
 
     @Autowired
-    private ShopFeignClient shopFeignClient;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
-    private MerchantFeignClient merchantFeignClient;
+    private MerchantFeignApi merchantFeignApi;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
     private WxPublicPlatformNotifyService wxPublicPlatformNotifyService;
@@ -77,11 +77,11 @@ public class OrderApplicationTest {
 
         Order dbOrder = orderService.selectByPrimaryKey(953);
         List<OrderDetail> orderDetailList = orderDetailMapper.selectByOrderId(dbOrder.getId());
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
 
         //获取该订单对应的商家信息
-        Merchant merchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
-        Member bindMember = memberFeignClient.selectByPrimaryKey(merchant.getMemberId());
+        Merchant merchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
+        Member bindMember = memberFeignApi.selectByPrimaryKey(merchant.getMemberId()).getData();
         if(bindMember != null){
             //如果商品明细内容过长，则需要分多次发送公众号消息
             //字数：38*4=152 -> 112

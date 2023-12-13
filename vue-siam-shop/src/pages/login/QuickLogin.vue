@@ -129,7 +129,7 @@
               mobile: vue.ruleForm.mobile,
               mobileCode: vue.ruleForm.mobileCode
             }
-            vue.$http.post(vue, '/api-user/rest/merchant/loginByMobile', companyInfo,
+            vue.$http.post(vue, '/api-merchant/rest/merchant/loginByMobile', companyInfo,
               (vue, data)=> {
                 vue.logining = false;
                 console.log("token="+data.data.token);
@@ -152,7 +152,7 @@
       },
       getUserInfo(token) {
         let vue = this
-        vue.$http.post(vue, '/api-user/rest/merchant/getLoginMerchantInfo', {"token" : token},
+        vue.$http.post(vue, '/api-merchant/rest/merchant/getLoginMerchantInfo', {"token" : token},
           (vue, data)=> {
             let user = data.data
             user.password = vue.ruleForm.password

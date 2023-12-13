@@ -241,7 +241,7 @@ import { type } from 'os';
 				}
 
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-user/rest/merchant/merchantBillingRecord/list',param,
+				vue.$http.post(vue, '/api-merchant/rest/merchant/merchantBillingRecord/list',param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -255,7 +255,7 @@ import { type } from 'os';
 						});
 					}
 				)
-				vue.$http.post(vue, '/api-user/rest/merchant/merchantBillingRecord/statisticalAmount', param,
+				vue.$http.post(vue, '/api-merchant/rest/merchant/merchantBillingRecord/statisticalAmount', param,
 					(vue, data) => {
 						//统计入账、出账的金额						
 						vue.todayList.incomeAmount = Number(data.data.incomeAmount).toFixed(2);

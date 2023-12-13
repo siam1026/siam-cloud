@@ -54,13 +54,13 @@ public class WebMvcConfig {
         registry.addFilter(merchantFilter)
 //                .addPathPatterns("/api-member/rest/member/**")
                 .addPathPatterns("/*/rest/merchant/**")
-                .excludePathPatterns("/api-user/rest/merchant/login")
-                .excludePathPatterns("/api-user/rest/merchant/loginByMobile")
-                .excludePathPatterns("/api-user/rest/merchant/logout")
-                .excludePathPatterns("/api-user/rest/merchant/register")
-                .excludePathPatterns("/api-user/rest/merchant/registerByMobile")
-                .excludePathPatterns("/api-user/rest/merchant/verification/login")
-                .excludePathPatterns("/api-user/rest/merchant/forgetPassword/step1");
+                .excludePathPatterns("/api-merchant/rest/merchant/login")
+                .excludePathPatterns("/api-merchant/rest/merchant/loginByMobile")
+                .excludePathPatterns("/api-merchant/rest/merchant/logout")
+                .excludePathPatterns("/api-merchant/rest/merchant/register")
+                .excludePathPatterns("/api-merchant/rest/merchant/registerByMobile")
+                .excludePathPatterns("/api-merchant/rest/merchant/verification/login")
+                .excludePathPatterns("/api-merchant/rest/merchant/forgetPassword/step1");
 
         //管理员拦截器
         registry.addFilter(adminFilter)

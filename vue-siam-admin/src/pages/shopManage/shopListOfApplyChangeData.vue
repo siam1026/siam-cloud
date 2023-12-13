@@ -433,7 +433,7 @@
 				let formData = new FormData();
 				formData.append('file', value);
 				vue.$http.postupload(
-					vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+					vue, '/api-util/rest/admin/uploadSingleImage', formData,
 					function (vue, data) {
 					option.onSuccess();
 					let obj = {
@@ -513,7 +513,7 @@
                 // param.city = city
                 // param.area = area
 
-				vue.$http.post(vue, '/api-goods/rest/admin/shopChangeRecord/list', param,
+				vue.$http.post(vue, '/api-merchant/rest/admin/shopChangeRecord/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -536,7 +536,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-goods/rest/admin/shop/delete', {"ids" : [id]},
+					vue.$http.delete(vue, '/api-merchant/rest/admin/shop/delete', {"ids" : [id]},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -599,7 +599,7 @@
 					});		
 					return false;
 				}
-				let url = '/api-goods/rest/admin/shopChangeRecord/audit';
+				let url = '/api-merchant/rest/admin/shopChangeRecord/audit';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						// // this.editLoading = false;

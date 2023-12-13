@@ -7,14 +7,14 @@ import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.*;
-import com.siam.package_feign.mod_feign.goods.CouponsFeignClient;
-import com.siam.package_feign.mod_feign.goods.CouponsMemberRelationFeignClient;
-import com.siam.package_feign.mod_feign.goods.SettingFeignClient;
-import com.siam.package_feign.mod_feign.goods.SmsLogFeignClient;
-import com.siam.package_goods.entity.Coupons;
-import com.siam.package_goods.entity.CouponsMemberRelation;
-import com.siam.package_goods.entity.Setting;
-import com.siam.package_goods.entity.SmsLog;
+import com.siam.package_promotion.feign.CouponsFeignApi;
+import com.siam.package_promotion.feign.CouponsMemberRelationFeignApi;
+import com.siam.package_util.feign.SettingFeignApi;
+import com.siam.package_util.feign.SmsLogFeignApi;
+import com.siam.package_promotion.entity.Coupons;
+import com.siam.package_promotion.entity.CouponsMemberRelation;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_util.entity.SmsLog;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.controller.member.WxLoginController;
 import com.siam.package_user.entity.Member;
@@ -81,16 +81,16 @@ public class MemberServiceImpl implements MemberService {
     private OSSUtils ossUtils;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
     private MemberBillingRecordService memberBillingRecordService;
 
     @Autowired
-    private CouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
+    private CouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     @Autowired
-    private CouponsFeignClient couponsFeignClient;
+    private CouponsFeignApi couponsFeignApi;
 
     @Autowired
     private MemberInviteRelationService memberInviteRelationService;
@@ -99,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
     private WxQrCodeUtils wxQrCodeUtils;
 
     @Autowired
-    private SmsLogFeignClient smsLogFeignClient;
+    private SmsLogFeignApi smsLogFeignApi;
 
 //    @Autowired
 //    private PointsMallCouponsMemberRelationService pointsMallCouponsMemberRelationService;
@@ -582,7 +582,7 @@ public class MemberServiceImpl implements MemberService {
             //万能验证码，放行
         }else{
             // 判断验证码是否匹配
-            SmsLog smsLog = smsLogFeignClient.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_LOGIN, 5);
+            SmsLog smsLog = smsLogFeignApi.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_LOGIN, 5).getData();
             if (smsLog==null || !smsLog.getVerifyCode().equals(param.getMobileCode())) {
                 throw new StoneCustomerException("手机验证码错误");
             }
@@ -674,7 +674,7 @@ public class MemberServiceImpl implements MemberService {
         String vipNo = this.generateVipNo();
 
         //获取积分设置
-        Setting setting = settingFeignClient.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent().getData();
         BigDecimal registrationRewardPoints = setting.getRegistrationRewardPoints();
         registrationRewardPoints = registrationRewardPoints == null ? BigDecimal.ZERO : registrationRewardPoints;
 
@@ -764,14 +764,14 @@ public class MemberServiceImpl implements MemberService {
         }
 
         //赠送系统默认优惠券-新人3折卷
-        Coupons dbCoupons = couponsFeignClient.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID);
+        Coupons dbCoupons = couponsFeignApi.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID).getData();
         if (dbCoupons == null) {
             throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
         }
         CouponsMemberRelation couponsMemberRelation = new CouponsMemberRelation();
         couponsMemberRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
         couponsMemberRelation.setMemberId(insertMember.getId());
-        couponsMemberRelationFeignClient.insertSelective(couponsMemberRelation);
+        couponsMemberRelationFeignApi.insertSelective(couponsMemberRelation);
 
         log.debug("邀请者id:" + param.getInviterId());
         if (param.getInviterId() != null && !param.getInviterId().equals("") && !param.getInviterId().equals("undefined")) {
@@ -790,14 +790,14 @@ public class MemberServiceImpl implements MemberService {
 
                 log.debug("start-------发送邀请优惠卷");
                 //发送邀请卷
-                Coupons inviteCoupons = couponsFeignClient.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+                Coupons inviteCoupons = couponsFeignApi.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID).getData();
                 if (inviteCoupons == null) {
                     throw new StoneCustomerException("系统默认优惠券-邀请新人卷不存在");
                 }
                 CouponsMemberRelation inviteCouponsMemberRelation = new CouponsMemberRelation();
                 inviteCouponsMemberRelation.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
                 inviteCouponsMemberRelation.setMemberId(Integer.valueOf(param.getInviterId()));
-                couponsMemberRelationFeignClient.insertSelective(inviteCouponsMemberRelation);
+                couponsMemberRelationFeignApi.insertSelective(inviteCouponsMemberRelation);
                 log.debug("end-------发送邀请优惠卷");
 
                 //将注册方式改为邀请注册
@@ -980,7 +980,7 @@ public class MemberServiceImpl implements MemberService {
             //万能验证码，放行
         }else{
             // 判断验证码是否匹配
-            SmsLog smsLog = smsLogFeignClient.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_FINDPWD, 5);
+            SmsLog smsLog = smsLogFeignApi.getLastLog(param.getMobile(), BusinessType.SMS_LOG_TYPE_FINDPWD, 5).getData();
             if (smsLog==null || !smsLog.getVerifyCode().equals(param.getMobileCode())) {
                 throw new StoneCustomerException("手机验证码错误");
             }

@@ -590,7 +590,7 @@ export default {
       console.log(formData);
       _this.$http.postupload(
         _this,
-        "/api-goods/rest/merchant/uploadSingleImage",
+        "/api-util/rest/merchant/uploadSingleImage",
         formData,
         function (_this, data) {
           if (data.success) {
@@ -712,7 +712,7 @@ export default {
       console.log(formData);
       vue.$http.postupload(
         vue,
-        "/api-goods/rest/merchant/uploadSingleImage",
+        "/api-util/rest/merchant/uploadSingleImage",
         formData,
         function (vue, data) {
           let obj = {
@@ -826,7 +826,7 @@ export default {
         formData.append("file", file_);
         _this.$http.postupload(
           _this,
-          "/api-goods/rest/merchant/uploadSingleImage",
+          "/api-util/rest/merchant/uploadSingleImage",
           formData,
           function (_this, data) {
             console.log(data);

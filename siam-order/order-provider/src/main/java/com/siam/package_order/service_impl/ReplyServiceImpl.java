@@ -2,7 +2,7 @@ package com.siam.package_order.service_impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.Quantity;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
+import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_order.service.GiveLikeService;
 import com.siam.package_order.entity.Reply;
 import com.siam.package_order.mapper.ReplyMapper;
@@ -21,7 +21,7 @@ public class ReplyServiceImpl implements ReplyService {
     private ReplyMapper replyMapper;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
     private GiveLikeService giveLikeService;
@@ -54,7 +54,7 @@ public class ReplyServiceImpl implements ReplyService {
                 //查询被回复的用户名
                 Reply answeredReply = replyMapper.selectByPrimaryKey((int) map.get("replyId"));
                 if(answeredReply.getReplierType() == Quantity.INT_1){
-                    Member answeredMember = memberFeignClient.selectByPrimaryKey(answeredReply.getMemberId());
+                    Member answeredMember = memberFeignApi.selectByPrimaryKey(answeredReply.getMemberId()).getData();
                     map.put("answeredUsername", answeredMember.getUsername());
                 }else{
                     map.put("answeredUsername", "商家");

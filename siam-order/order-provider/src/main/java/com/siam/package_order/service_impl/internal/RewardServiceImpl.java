@@ -3,13 +3,13 @@ package com.siam.package_order.service_impl.internal;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.util.DateUtilsExtend;
-import com.siam.package_feign.mod_feign.goods.SettingFeignClient;
-import com.siam.package_feign.mod_feign.goods.internal.VipRechargeRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberBillingRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberInviteRelationFeignClient;
-import com.siam.package_goods.entity.Setting;
-import com.siam.package_goods.entity.internal.VipRechargeRecord;
+import com.siam.package_util.feign.SettingFeignApi;
+import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberInviteRelationFeignApi;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_user.entity.internal.VipRechargeRecord;
 import com.siam.package_order.mapper.OrderMapper;
 import com.siam.package_order.model.example.OrderExample;
 import com.siam.package_order.model.example.internal.PointsMallOrderExample;
@@ -40,22 +40,22 @@ public class RewardServiceImpl implements RewardService {
     private OrderMapper orderMapper;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
-    private MemberInviteRelationFeignClient memberInviteRelationFeignClient;
+    private MemberInviteRelationFeignApi memberInviteRelationFeignApi;
 
     @Resource(name = "pointsMallOrderServiceImpl")
     private PointsMallOrderService pointsMallOrderService;
 
     @Autowired
-    private VipRechargeRecordFeignClient vipRechargeRecordFeignClient;
+    private VipRechargeRecordFeignApi vipRechargeRecordFeignApi;
 
     @Autowired
     private MemberSessionManager memberSessionManager;
@@ -71,7 +71,7 @@ public class RewardServiceImpl implements RewardService {
         //2、近30天是否有消费这个条件 是指用户下过单(无论什么状态)--只要支付成功过的都算
         //3、近30天是否有消费这个条件 是指外卖系统、积分商城、(会员充值) 任意有一笔消费即可
         //4、近30天是否有消费这个条件 需要排除当前支付的订单
-        Member dbMember = memberFeignClient.selectByPrimaryKey(inviterId);
+        Member dbMember = memberFeignApi.selectByPrimaryKey(inviterId).getData();
         if(!dbMember.getType().equals(Quantity.INT_2)){
             log.info("\n\nid为" + inviterId + "的邀请人不是会员，不给予佣金奖励");
             return;
@@ -79,7 +79,7 @@ public class RewardServiceImpl implements RewardService {
 
         //判断当前订单是否为开通会员后的第一笔订单，如果是，则直接给与佣金奖励
         //查询当前用户最近一笔支付成功的会员充值记录
-        VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignClient.selectLastestPaid(dbMember.getId());
+        VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignApi.selectLastestPaid(dbMember.getId()).getData();
         List excludeStatusList = new ArrayList();
         excludeStatusList.add(1);
         excludeStatusList.add(10);
@@ -123,8 +123,8 @@ public class RewardServiceImpl implements RewardService {
         updateMember.setId(dbMember.getId());
         updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
         updateMember.setUpdateTime(new Date());
-        memberFeignClient.updateByPrimaryKeySelective(updateMember);
-        dbMember = memberFeignClient.selectByPrimaryKey(inviterId);
+        memberFeignApi.updateByPrimaryKeySelective(updateMember);
+        dbMember = memberFeignApi.selectByPrimaryKey(inviterId).getData();
 
         //增加用户账单记录
         MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -136,7 +136,7 @@ public class RewardServiceImpl implements RewardService {
         memberBillingRecord.setMessage(message);
         memberBillingRecord.setOrderId(orderId);
         memberBillingRecord.setCreateTime(new Date());
-        memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+        memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
     }
 
     @Override
@@ -147,14 +147,14 @@ public class RewardServiceImpl implements RewardService {
         String text = null;
         BigDecimal commissionAmount = BigDecimal.ZERO;
 
-        Setting setting=settingFeignClient.selectCurrent();
+        Setting setting= settingFeignApi.selectCurrent().getData();
         //平台邀请佣金
         BigDecimal inviteeConsumeCommissionPercent = setting.getInviteeConsumeCommission().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         BigDecimal totalCommissionAmount = param.getActualPrice().multiply(inviteeConsumeCommissionPercent).setScale(Quantity.INT_2, BigDecimal.ROUND_HALF_UP);
         BigDecimal inviterCommissionPercent;
         String message;
         //给下单用户的邀请人发放佣金
-        Map<String, Integer> inviterMap = memberInviteRelationFeignClient.selectInviter(loginMember.getId());
+        Map<String, Integer> inviterMap = memberInviteRelationFeignApi.selectInviter(loginMember.getId()).getData();
         if(inviterMap.containsKey("secondLevelInviter")){
             //有2个上级邀请人
             //发放下单用户佣金奖励
@@ -197,13 +197,13 @@ public class RewardServiceImpl implements RewardService {
         //2、近30天是否有消费这个条件 是指用户下过单(无论什么状态)--只要支付成功过的都算
         //3、近30天是否有消费这个条件 是指外卖系统、积分商城、(会员充值) 任意有一笔消费即可
         //4、近30天是否有消费这个条件 需要排除当前支付的订单
-        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
         if(!dbMember.getType().equals(Quantity.INT_2)){
             text = "您现在不是会员，充值会员后，您可得到"+ commissionAmount +"元返利";
         }else{
             //判断当前订单是否为开通会员后的第一笔订单，如果是，则直接给与佣金奖励
             //查询当前用户最近一笔支付成功的会员充值记录
-            VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignClient.selectLastestPaid(dbMember.getId());
+            VipRechargeRecord vipRechargeRecord = vipRechargeRecordFeignApi.selectLastestPaid(dbMember.getId()).getData();
             List excludeStatusList = new ArrayList();
             excludeStatusList.add(1);
             excludeStatusList.add(10);

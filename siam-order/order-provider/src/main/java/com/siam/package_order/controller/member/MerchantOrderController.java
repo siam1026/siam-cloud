@@ -9,32 +9,32 @@ import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_common.service.AliyunSms;
-import com.siam.package_weixin_basic.service.WxNotifyService;
-import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
-import com.siam.package_common.util.DateUtilsPlus;
 import com.siam.package_common.util.DateUtilsExtend;
+import com.siam.package_common.util.DateUtilsPlus;
 import com.siam.package_common.util.GsonUtils;
 import com.siam.package_common.util.StringUtils;
-import com.siam.package_feign.mod_feign.goods.CouponsMemberRelationFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberBillingRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
+import com.siam.package_merchant.auth.cache.MerchantSessionManager;
+import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.entity.OrderRefund;
 import com.siam.package_order.entity.OrderRefundProcess;
-
 import com.siam.package_order.model.example.OrderExample;
 import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.service.OrderRefundGoodsService;
 import com.siam.package_order.service.OrderRefundProcessService;
 import com.siam.package_order.service.OrderRefundService;
 import com.siam.package_order.service.OrderService;
+import com.siam.package_promotion.feign.CouponsMemberRelationFeignApi;
 import com.siam.package_user.auth.cache.MemberSessionManager;
-import com.siam.package_user.auth.cache.MerchantSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
-import com.siam.package_user.entity.Merchant;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_user.model.example.MemberBillingRecordExample;
+import com.siam.package_user.model.param.MemberBillingRecordParam;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_weixin_basic.service.WxNotifyService;
+import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -65,9 +65,6 @@ public class MerchantOrderController {
     @Autowired
     private AliyunSms aliyunSms;
 
-//    @Autowired
-//    private MerchantFeignClient merchantFeignClient;
-
     @Autowired
     private OrderRefundService orderRefundService;
 
@@ -84,16 +81,16 @@ public class MerchantOrderController {
     private WxPublicPlatformNotifyService wxPublicPlatformNotifyService;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
     private WxPayService wxPayService;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     @Autowired
-    private CouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
+    private CouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     private Lock lock = new ReentrantLock();
 
@@ -169,7 +166,7 @@ public class MerchantOrderController {
         }
 
         //获取该订单的对应用户
-        Member orderMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+        Member orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
         int status = 0;
         switch (param.getFlag()){
@@ -498,7 +495,7 @@ public class MerchantOrderController {
         }
 
         //获取该订单的对应用户
-        Member orderMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+        Member orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
         if(orderParam.getStatus() == Quantity.INT_1){
             //审核通过
@@ -522,8 +519,8 @@ public class MerchantOrderController {
                 updateMember.setId(orderMember.getId());
                 updateMember.setBalance(orderMember.getBalance().add(dbOrderRefund.getRefundAmount()));
                 updateMember.setTotalConsumeBalance(orderMember.getTotalConsumeBalance().subtract(dbOrderRefund.getRefundAmount()));
-                memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                orderMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
                 //添加账单记录
                 MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -534,7 +531,7 @@ public class MerchantOrderController {
                 memberBillingRecord.setNumber(dbOrderRefund.getRefundAmount());
                 memberBillingRecord.setMessage("用户申请退款-余额退回");
                 memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                 //退款成功的操作
                 orderService.updateRefundStatus(dbOrder.getOrderNo());
@@ -550,7 +547,7 @@ public class MerchantOrderController {
                 //退回优惠卷
                 Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
                 if (couponsMemberRelationId != null) {
-                    couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,false);
+                    couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,false);
                 }
             }
 
@@ -570,23 +567,23 @@ public class MerchantOrderController {
             //发送服务通知
             wxNotifyService.sendOrderRefundSuccessMessage(orderMember.getOpenId(), dbOrder.getShopName(), dbOrder.getOrderNo(), dbOrder.getDescription(), dbOrderRefund.getRefundAmount(), new Date());
             //退回下单奖励积分
-            MemberBillingRecordExample example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeEqualTo(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS)
-                    .andOrderIdEqualTo(dbOrder.getId());
-            List<MemberBillingRecord> list = memberBillingRecordFeignClient.selectByExample(example);
+            MemberBillingRecordParam billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setType(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS);
+            billingRecordParam.setOrderId(dbOrder.getId());
+            List<MemberBillingRecord> list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if(!list.isEmpty()){
                 MemberBillingRecord dbMemberBillingRecord = list.get(0);
-                Member dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
                 //获取用户当前积分数 -- 未到账积分
                 BigDecimal unreceivedPointsNum = dbMember.getUnreceivedPoints().subtract(dbMemberBillingRecord.getNumber());
                 //修改用户的积分数
                 Member member = new Member();
                 member.setId(dbOrder.getMemberId());
                 member.setUnreceivedPoints(unreceivedPointsNum);
-                memberFeignClient.updateByPrimaryKeySelective(member);
-                dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                memberFeignApi.updateByPrimaryKeySelective(member);
+                dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
                 MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
                 memberBillingRecord.setMemberId(dbOrder.getMemberId());
@@ -597,13 +594,13 @@ public class MerchantOrderController {
                 memberBillingRecord.setMessage("订单退款-下单奖励积分退回");
                 memberBillingRecord.setOrderId(dbOrder.getId());
                 memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                 //之前的账单记录标注已退回
                 MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                 updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                 updateMemberBillingRecord.setIsReturn(true);
-                memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
             }
 
             //退回下单佣金奖励
@@ -611,12 +608,12 @@ public class MerchantOrderController {
             typeList.add(MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_OWN_COMMISSION);
-            example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeIn(typeList)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT)
-                    .andOrderIdEqualTo(dbOrder.getId());
-            list = memberBillingRecordFeignClient.selectByExample(example);
+            billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setTypeList(typeList);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
+            billingRecordParam.setOrderId(dbOrder.getId());
+            list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if(!list.isEmpty()){
                 for (MemberBillingRecord dbMemberBillingRecord : list) {
                     Integer type = null;
@@ -632,7 +629,7 @@ public class MerchantOrderController {
                         message = "订单退款-下单用户佣金奖励退回";
                     }
 
-                    Member dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    Member dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
                     //增加用户的邀请新用户注册奖励金额
                     BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
@@ -640,8 +637,8 @@ public class MerchantOrderController {
                     updateMember.setId(dbMember.getId());
                     updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
                     updateMember.setUpdateTime(new Date());
-                    memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                    dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                    dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
 
                     //增加用户账单记录
                     MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -653,13 +650,13 @@ public class MerchantOrderController {
                     memberBillingRecord.setMessage(message);
                     memberBillingRecord.setOrderId(dbOrder.getId());
                     memberBillingRecord.setCreateTime(new Date());
-                    memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                    memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                     //之前的账单记录标注已退回
                     MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                     updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                     updateMemberBillingRecord.setIsReturn(true);
-                    memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                    memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
                 }
             }
         }else if(orderParam.getStatus() == Quantity.INT_2){

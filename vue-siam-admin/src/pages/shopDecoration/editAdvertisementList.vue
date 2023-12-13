@@ -98,7 +98,7 @@ export default {
 
           // this.editLoading = true;
           if(param.id){
-            url = '/api-goods/rest/admin/advertisement/update';
+            url = '/api-promotion/rest/admin/advertisement/update';
             vue.$http.put(vue, url, param,
               (vue, data) => {
                 // this.editLoading = false;
@@ -121,7 +121,7 @@ export default {
               }
             )							
           }else{
-            url = '/api-goods/rest/admin/advertisement/insert';
+            url = '/api-promotion/rest/admin/advertisement/insert';
             vue.$http.post(vue, url, param,
               (vue, data) => {
                 // this.editLoading = false;
@@ -171,7 +171,7 @@ export default {
     },
     getDetail(id) { // 获取商品详情
 				let vue = this
-				vue.$http.post(vue, '/api-goods/rest/admin/advertisement/getById', {id},
+				vue.$http.post(vue, '/api-promotion/rest/admin/advertisement/getById', {id},
 					(vue, data) => {
             let obj = data.data
             obj.imagePathFile = vue.resetImg(obj, 'imagePath')
@@ -265,7 +265,7 @@ export default {
 		let formData = new FormData();
 		formData.append('file', value);    
 
-		vue.$http.postupload(vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+		vue.$http.postupload(vue, '/api-util/rest/admin/uploadSingleImage', formData,
 			function (vue, data) {
       option.onSuccess();
       //TODO(MARK)-编辑页面特殊配置

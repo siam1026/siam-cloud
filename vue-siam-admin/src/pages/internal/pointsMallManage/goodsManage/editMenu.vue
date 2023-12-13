@@ -240,7 +240,7 @@ export default {
 		let formData = new FormData();
 		formData.append('file', value);    
 
-		vue.$http.postupload(vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+		vue.$http.postupload(vue, '/api-util/rest/admin/uploadSingleImage', formData,
 			function (vue, data) {
       option.onSuccess();
       //TODO(MARK)-编辑页面特殊配置

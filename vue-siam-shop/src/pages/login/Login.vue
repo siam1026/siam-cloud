@@ -68,7 +68,7 @@
           //     username: vue.ruleForm.name,
           //     password: vue.$utils.Base64(vue.ruleForm.password)
           //   }
-          //   vue.$http.post(vue, '/api-user/rest/merchant/login', companyInfo,
+          //   vue.$http.post(vue, '/api-merchant/rest/merchant/login', companyInfo,
           //     (vue, data)=> {
           //       vue.logining = false;
           //       vue.$message({
@@ -96,7 +96,7 @@
               username: vue.ruleForm.name,
               password: vue.$utils.Base64(vue.ruleForm.password)
             }
-            vue.$http.post(vue, '/api-user/rest/merchant/login', user,
+            vue.$http.post(vue, '/api-merchant/rest/merchant/login', user,
               (vue, data)=> {
                 console.log("token="+data.data.token);
                 sessionStorage.setItem("token", data.data.token);
@@ -117,7 +117,7 @@
       },
       getUserInfo(token) {
         let vue = this
-        vue.$http.post(vue, '/api-user/rest/merchant/getLoginMerchantInfo', {"token" : token},
+        vue.$http.post(vue, '/api-merchant/rest/merchant/getLoginMerchantInfo', {"token" : token},
           (vue, data)=> {
             let user = data.data
             user.password = vue.ruleForm.password

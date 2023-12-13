@@ -3,6 +3,8 @@ package com.siam.package_user.model.param;
 import com.siam.package_user.entity.MemberBillingRecord;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 用户账单记录表
  *
@@ -16,4 +18,6 @@ public class MemberBillingRecordParam extends MemberBillingRecord {
 
     //页面大小
     private Integer pageSize = 20;
+
+    List typeList;
 }

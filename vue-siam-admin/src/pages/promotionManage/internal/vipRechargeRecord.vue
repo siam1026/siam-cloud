@@ -592,7 +592,7 @@
 					delete param.createTime;
 				}
 
-				vue.$http.post(vue, '/api-goods/rest/admin/vipRechargeRecord/list', param,
+				vue.$http.post(vue, '/api-user/rest/admin/vipRechargeRecord/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -607,7 +607,7 @@
 						});
 					}
 				)
-				vue.$http.post(vue, '/api-goods/rest/admin/vipRechargeRecord/statisticalAmount', param,
+				vue.$http.post(vue, '/api-user/rest/admin/vipRechargeRecord/statisticalAmount', param,
 					(vue, data) => {
 						//统计提现成功金额						
 						vue.todayList.rechargeSuccessfulAmount = Number(data.data.rechargeSuccessfulAmount).toFixed(2);
@@ -628,7 +628,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-goods/rest/admin/vipRechargeDenomination/delete', {"id" : id},
+					vue.$http.delete(vue, '/api-user/rest/admin/vipRechargeDenomination/delete', {"id" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -648,7 +648,7 @@
 			},
 			handleGiveCoupons (id) { // 派发优惠券
 					let vue = this;
-					vue.$http.post(vue, '/api-goods/rest/admin/couponsMemberRelation/giveCoupons', {"couponsId" : id},
+					vue.$http.post(vue, '/api-promotion/rest/admin/couponsMemberRelation/giveCoupons', {"couponsId" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -935,7 +935,7 @@
 						// this.editLoading = true;			
 
 						if(param.id){
-							url = '/api-goods/rest/admin/vipRechargeDenomination/update';
+							url = '/api-user/rest/admin/vipRechargeDenomination/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -957,7 +957,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/vipRechargeDenomination/insert';
+							url = '/api-user/rest/admin/vipRechargeDenomination/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -1128,7 +1128,7 @@
 						// this.editLoadingFullReduction = true;			
 
 						if(param.id){
-							url = '/api-goods/rest/admin/coupons/update';
+							url = '/api-promotion/rest/admin/coupons/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoadingFullReduction = false;
@@ -1150,7 +1150,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/coupons/insert';
+							url = '/api-promotion/rest/admin/coupons/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoadingFullReduction = false;
@@ -1183,7 +1183,7 @@
 				console.log("searchMsg="+JSON.stringify(vue.searchMsgShopTable));
 
 				vue.listLoadingShopTable = true;
-				vue.$http.post(vue, '/api-goods/rest/admin/coupons/list', param,
+				vue.$http.post(vue, '/api-promotion/rest/admin/coupons/list', param,
 					(vue, data) => {
 						vue.listShopTable = data.data.records
 						vue.totalShopTable = data.data.total
@@ -1212,7 +1212,7 @@
                 let param1 = Object.assign(vue.searchMsg);
 				param1.vipRechargeDenominationId=id
 				
-				vue.$http.post(vue, '/api-goods/rest/admin/coupons/list',param1,
+				vue.$http.post(vue, '/api-promotion/rest/admin/coupons/list',param1,
 					(vue, data) => {
 						let shopList = data.data.records				
 						//alert(shopList.length);
@@ -1297,7 +1297,7 @@
 				
 				// this.editLoadingShopTable = true;
 			
-				url = '/api-goods/rest/admin/vipRechargeDenominationCouponsRelation/insert';
+				url = '/api-user/rest/admin/vipRechargeDenominationCouponsRelation/insert';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						// this.editLoadingShopTable = false;

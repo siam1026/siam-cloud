@@ -9,7 +9,7 @@ docker stop siam-eureka
 docker rm siam-eureka
 
 ###运行镜像
-# docker run -d -p 9600:9600 -p 9610:9041 --name siam-eureka -v /home/dockerdata/oap/volume/siam-eureka/apache-skywalking-apm-bin/:/opt/apache-skywalking-apm-bin/ siam-eureka:v1.0
+# docker run -d -p 9600:9600 -p 9610:9041 -e JAVA_OPTS="-Xms128m -Xmx256m" -e JAVA_PROFILES_ACTIVE="-Dspring.profiles.active=test" --name siam-eureka -v /home/dockerdata/oap/volume/siam-eureka/apache-skywalking-apm-bin/:/opt/apache-skywalking-apm-bin/ siam-eureka:v1.0
 docker run -d -p 9600:9600 --name siam-eureka siam-eureka:v1.0
 
 ###推送至阿里云容器镜像

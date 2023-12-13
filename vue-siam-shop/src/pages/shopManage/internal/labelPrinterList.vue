@@ -174,7 +174,7 @@
 				param.type = 2;				
 
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-goods/rest/merchant/printer/list', param,
+				vue.$http.post(vue, '/api-util/rest/merchant/printer/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -197,7 +197,7 @@
 					// this.listLoading = true;
 				let vue = this;
 				
-				vue.$http.delete(vue, '/api-goods/rest/merchant/printer/delete', {"ids" : [id]},
+				vue.$http.delete(vue, '/api-util/rest/merchant/printer/delete', {"ids" : [id]},
 					function(vue, data) {
 						vue.$message({
 							showClose: true,
@@ -257,7 +257,7 @@
 
 						let url = '';
 						if(param.id){					
-							url = '/api-goods/rest/merchant/printer/update';
+							url = '/api-util/rest/merchant/printer/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -281,7 +281,7 @@
 						}else{
 							//设置打印机类型为标签打印机
 							param.type = 2;									
-							url = '/api-goods/rest/merchant/printer/insert';
+							url = '/api-util/rest/merchant/printer/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;

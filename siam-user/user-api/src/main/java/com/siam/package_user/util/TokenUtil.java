@@ -9,7 +9,6 @@ import com.siam.package_common.util.StringUtils;
 import com.siam.package_common.util.ToolUtil;
 import com.siam.package_user.entity.Admin;
 import com.siam.package_user.entity.Member;
-import com.siam.package_user.entity.Merchant;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -39,18 +38,6 @@ public class TokenUtil {
                 .withIssuedAt(new Date())
                 .withExpiresAt(expirationDate)
                 .sign(Algorithm.HMAC256(member.getPassword()));
-        return token;
-    }
-
-    /**
-     * 生成商家token
-     *
-     * @author 暹罗
-     */
-    public static String generateToken(Merchant merchant) {
-        String token = "";
-        token = JWT.create().withAudience(merchant.getId().toString())
-                .sign(Algorithm.HMAC256(merchant.getPassword()));
         return token;
     }
 

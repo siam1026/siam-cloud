@@ -71,19 +71,29 @@ zuul:
       ###公开路径，暴露给用户访问的路径
       path: /api-user/**
 
-    ###定义转发服务规则
+    api-merchant:
+      serviceId: merchant-siam
+      path: /api-merchant/**
+
+    api-rider:
+      serviceId: rider-siam
+      path: /api-rider/**
+
     api-goods:
-      ###服务别名
       serviceId: goods-siam
-      ###公开路径，暴露给用户访问的路径
       path: /api-goods/**
 
-    ###定义转发服务规则
     api-order:
-      ###服务别名
       serviceId: order-siam
-      ###公开路径，暴露给用户访问的路径
       path: /api-order/**
+
+    api-promotion:
+      serviceId: promotion-siam
+      path: /api-promotion/**
+
+    api-util:
+      serviceId: util-siam
+      path: /api-util/**
 
   ###配置Zuul超时时间
   host:

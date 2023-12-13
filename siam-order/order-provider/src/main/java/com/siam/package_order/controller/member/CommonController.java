@@ -38,10 +38,10 @@ public class CommonController {
     private DeliveryAddressService deliveryAddressService;
 
 //    @Autowired
-//    private SettingFeignClient settingFeignClient;
+//    private SettingFeignClient settingFeignApi;
 
 //    @Autowired
-//    private ShopFeignClient shopFeignClient;
+//    private ShopFeignClient shopFeignApi;
 
     @ApiOperation(value = "查询订单配送费")
     @ApiImplicitParams({
@@ -74,9 +74,9 @@ public class CommonController {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
         //获取默认门店
-        Setting setting = settingFeignClient.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent();
         int shopId = setting.getDefaultShopId();
-        Shop shop = shopFeignClient.selectByPrimaryKey(shopId);
+        Shop shop = shopFeignApi.selectByPrimaryKey(shopId);
 
         //返回是否营业时间
         Boolean result = false;

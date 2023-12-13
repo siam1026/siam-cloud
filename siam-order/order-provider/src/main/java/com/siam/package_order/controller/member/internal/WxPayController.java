@@ -4,21 +4,11 @@ import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_common.util.RedisUtils;
-import com.siam.package_weixin_pay.util.IpUtils;
-import com.siam.package_weixin_pay.util.PayUtil;
-import com.siam.package_weixin_pay.config.WxPayConfig;
-import com.siam.package_weixin_pay.entity.WxPayDto;
-import com.siam.package_feign.mod_feign.goods.ShopFeignClient;
-import com.siam.package_feign.mod_feign.goods.internal.VipRechargeDenominationFeignClient;
-import com.siam.package_feign.mod_feign.goods.internal.VipRechargeRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberTradeRecordFeignClient;
-import com.siam.package_goods.entity.Shop;
-import com.siam.package_goods.entity.internal.VipRechargeDenomination;
 import com.siam.package_common.util.GenerateNo;
+import com.siam.package_common.util.RedisUtils;
 import com.siam.package_common.util.StringUtils;
-import com.siam.package_weixin_pay.util.WxdecodeUtils;
-import com.siam.package_goods.entity.internal.VipRechargeRecord;
+import com.siam.package_merchant.entity.Shop;
+import com.siam.package_merchant.feign.ShopFeignApi;
 import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.entity.internal.PointsMallOrder;
@@ -29,8 +19,17 @@ import com.siam.package_order.service.internal.PointsMallOrderService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberTradeRecord;
-import com.siam.package_user.model.example.MemberTradeRecordExample;
+import com.siam.package_user.entity.internal.VipRechargeDenomination;
+import com.siam.package_user.entity.internal.VipRechargeRecord;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
+import com.siam.package_user.feign.internal.VipRechargeDenominationFeignApi;
+import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_weixin_pay.config.WxPayConfig;
+import com.siam.package_weixin_pay.entity.WxPayDto;
+import com.siam.package_weixin_basic.util.IpUtils;
+import com.siam.package_weixin_pay.util.PayUtil;
+import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +64,7 @@ public class WxPayController {
     private WxPayConfig wxPayConfig;
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
     private OrderService orderService;
@@ -77,16 +76,16 @@ public class WxPayController {
     private CommonService commonService;
 
     @Autowired
-    private ShopFeignClient shopFeignClient;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
     private WxdecodeUtils wxdecodeUtils;
 
     @Autowired
-    private VipRechargeDenominationFeignClient vipRechargeDenominationFeignClient;
+    private VipRechargeDenominationFeignApi vipRechargeDenominationFeignApi;
 
     @Autowired
-    private VipRechargeRecordFeignClient vipRechargeRecordFeignClient;
+    private VipRechargeRecordFeignApi vipRechargeRecordFeignApi;
 
     @Resource(name = "pointsMallOrderServiceImpl")
     private PointsMallOrderService pointsMallOrderService;
@@ -150,7 +149,7 @@ public class WxPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //修改订单信息：补填用户交易id
             Order updateOrder = new Order();
@@ -165,7 +164,7 @@ public class WxPayController {
             if(wxPayDto.getVipRechargeDenominationId() == null){
                 throw new StoneCustomerException("必须填写会员充值面额id");
             }
-            VipRechargeDenomination dbVipRechargeDenomination = vipRechargeDenominationFeignClient.selectByPrimaryKey(wxPayDto.getVipRechargeDenominationId());
+            VipRechargeDenomination dbVipRechargeDenomination = vipRechargeDenominationFeignApi.selectByPrimaryKey(wxPayDto.getVipRechargeDenominationId()).getData();
             if(dbVipRechargeDenomination == null){
                 throw new StoneCustomerException("该会员充值面额不存在");
             }
@@ -196,7 +195,7 @@ public class WxPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //添加会员充值记录
             VipRechargeRecord insertVipRechargeRecord = new VipRechargeRecord();
@@ -208,7 +207,7 @@ public class WxPayController {
             insertVipRechargeRecord.setTradeId(insertMemberTradeRecordId);
             insertVipRechargeRecord.setStatus(Quantity.INT_1);
             insertVipRechargeRecord.setCreateTime(new Date());
-            vipRechargeRecordFeignClient.insertSelective(insertVipRechargeRecord);
+            vipRechargeRecordFeignApi.insertSelective(insertVipRechargeRecord);
 
         }else if(wxPayDto.getType() == Quantity.INT_3){
             //原订单对象
@@ -231,7 +230,7 @@ public class WxPayController {
                 throw new StoneCustomerException("该笔订单状态错误，不允许操作");
             }
 
-            Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+            Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
 
             BigDecimal merchantDeliveryFee = BigDecimal.ZERO; //商家承担配送费
             //计算配送费是否正确
@@ -269,7 +268,7 @@ public class WxPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //修改订单信息：补填自取订单改为配送的用户交易id
             //配送费、收获地址id要持久化到数据库，回调时配送费从用户交易记录表中获取(考虑到有些地方无论订单类型都会将配送费展示出来)，收获地址id从订单表中获取
@@ -314,7 +313,7 @@ public class WxPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //修改订单信息：补填用户交易id
             PointsMallOrder updateOrder = new PointsMallOrder();
@@ -458,7 +457,7 @@ public class WxPayController {
             //out_trade_no_array暂不处理
             String outTradeNo = (String) map.get("out_trade_no");
 
-            MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignClient.selectByOutTradeNo(outTradeNo);
+            MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
             if(dbMemberTradeRecord == null){
                 log.error("该商户单号不存在，回调逻辑处理失败");
                 return;
@@ -476,7 +475,7 @@ public class WxPayController {
             updateMemberTradeRecord.setTradeNo(transactionId);
             updateMemberTradeRecord.setStatus(Quantity.INT_2);
             updateMemberTradeRecord.setUpdateTime(new Date());
-            memberTradeRecordFeignClient.updateByPrimaryKeySelective(updateMemberTradeRecord);
+            memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
 
             if(dbMemberTradeRecord.getType() == Quantity.INT_1){
                 //交易类型为订单付款
@@ -484,7 +483,7 @@ public class WxPayController {
 
             }else if(dbMemberTradeRecord.getType() == Quantity.INT_2){
                 //交易类型为会员充值
-                vipRechargeRecordFeignClient.updateByPayNotify(outTradeNo);
+                vipRechargeRecordFeignApi.updateByPayNotify(outTradeNo);
 
             }else if(dbMemberTradeRecord.getType() == Quantity.INT_3){
                 //交易类型为自取订单改为配送
@@ -556,7 +555,7 @@ public class WxPayController {
             //out_trade_no_array暂不处理
             String outTradeNo = (String) map.get("out_trade_no");
 
-            MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignClient.selectByOutTradeNo(outTradeNo);
+            MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
             if(dbMemberTradeRecord == null){
                 log.error("该商户单号不存在，回调逻辑处理失败");
                 return;
@@ -574,7 +573,7 @@ public class WxPayController {
             updateMemberTradeRecord.setTradeNo(transactionId);
             updateMemberTradeRecord.setStatus(Quantity.INT_2);
             updateMemberTradeRecord.setUpdateTime(new Date());
-            memberTradeRecordFeignClient.updateByPrimaryKeySelective(updateMemberTradeRecord);
+            memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
 
             //交易类型为订单付款
             if(dbMemberTradeRecord.getType() == Quantity.INT_1){
@@ -616,7 +615,7 @@ public class WxPayController {
             log.debug("\n获取商户单号...");
             MemberTradeRecordExample memberTradeRecordExample = new MemberTradeRecordExample();
             memberTradeRecordExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
-            int result = memberTradeRecordFeignClient.countByExample(memberTradeRecordExample);
+            int result = memberTradeRecordFeignApi.countByExample(memberTradeRecordExample);
             if(result > 0){
                 outTradeNo = GenerateNo.getOrderNo();
             }else{

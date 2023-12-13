@@ -7,7 +7,7 @@ import com.siam.package_common.constant.BaseCode;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.filter.StoneFilter;
 import com.siam.package_common.util.JsonUtils;
-import com.siam.package_feign.mod_feign.user.AdminFeignClient;
+import com.siam.package_user.feign.AdminFeignApi;
 import com.siam.package_user.auth.cache.AdminSessionManager;
 import com.siam.package_user.entity.Admin;
 import com.siam.package_user.util.TokenUtil;
@@ -33,7 +33,7 @@ public class AdminFilter extends ZuulFilter implements StoneFilter {
     private AdminSessionManager adminSessionManager;
 
     @Autowired
-    private AdminFeignClient adminFeignClient;
+    private AdminFeignApi adminFeignApi;
 
     @Autowired
     private WebMvcConfig webMvcConfig;

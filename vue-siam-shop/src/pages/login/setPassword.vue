@@ -163,7 +163,7 @@
               mobile: vue.ruleForm.mobile,
               mobileCode: vue.ruleForm.mobileCode
             }
-            vue.$http.post(vue, '/api-user/rest/merchant/forgetPassword/step1', companyInfo,
+            vue.$http.post(vue, '/api-merchant/rest/merchant/forgetPassword/step1', companyInfo,
               (vue, data)=> {
 
                 vue.logining = false;
@@ -197,7 +197,7 @@
               mobile: vue.ruleForm.mobile,
               password: vue.$utils.Base64(vue.ruleForm.password)
             }
-            vue.$http.post(vue, '/api-user/rest/merchant/forgetPassword/step2', companyInfo,
+            vue.$http.post(vue, '/api-merchant/rest/merchant/forgetPassword/step2', companyInfo,
               (vue, data)=> {
                 vue.logining = false;
                 vue.$message({

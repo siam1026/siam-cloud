@@ -137,7 +137,7 @@
             delete param.auditTime;
 
             let url = ''
-            param.id ? url = '/api-goods/rest/merchant/shop/update' : url = '/api-goods/rest/merchant/shop/insert'
+            param.id ? url = '/api-merchant/rest/merchant/shop/update' : url = '/api-merchant/rest/merchant/shop/insert'
             vue.$http.post( vue, url, param,
               (vue, data) => {
                 vue.$message({
@@ -159,7 +159,7 @@
       },
       getDetail(id) { // 获取商品详情
           let vue = this
-          vue.$http.post(vue, '/api-goods/rest/merchant/shop/getLoginMerchantShopInfo', {id},
+          vue.$http.post(vue, '/api-merchant/rest/merchant/shop/getLoginMerchantShopInfo', {id},
             (vue, data) => {
               let obj = data.data
               obj.shopLogoImgFile = vue.resetImg(obj, 'shopLogoImg')
@@ -266,7 +266,7 @@
         let formData = new FormData();
         formData.append('file', value);
           vue.$http.postupload(
-            vue, '/api-goods/rest/merchant/uploadSingleImage', formData,
+            vue, '/api-util/rest/merchant/uploadSingleImage', formData,
             function (vue, data) {
               option.onSuccess();
               let obj = {

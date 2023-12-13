@@ -5,13 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_weixin_pay.entity.TransfersDto;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.GenerateNo;
-import com.siam.package_feign.mod_feign.goods.SettingFeignClient;
-import com.siam.package_feign.mod_feign.order.WxPayFeignClient;
-import com.siam.package_goods.entity.Setting;
+import com.siam.package_order.feign.WxPayFeignApi;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
@@ -20,8 +17,14 @@ import com.siam.package_user.entity.MemberWithdrawRecord;
 import com.siam.package_user.mapper.MemberWithdrawRecordMapper;
 import com.siam.package_user.model.example.MemberWithdrawRecordExample;
 import com.siam.package_user.model.param.MemberWithdrawRecordParam;
-import com.siam.package_user.service.*;
+import com.siam.package_user.service.MemberBillingRecordService;
+import com.siam.package_user.service.MemberService;
+import com.siam.package_user.service.MemberTradeRecordService;
+import com.siam.package_user.service.MemberWithdrawRecordService;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_util.feign.SettingFeignApi;
+import com.siam.package_weixin_pay.entity.TransfersDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,7 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
     private MemberWithdrawRecordMapper memberWithdrawRecordMapper;
 
 //    @Autowired
-//    private SettingFeignClient settingFeignClient;
+//    private SettingFeignClient settingFeignApi;
 
     @Autowired
     private MemberService memberService;
@@ -50,10 +53,10 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
     private MemberTradeRecordService memberTradeRecordService;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
-    private WxPayFeignClient wxPayFeignClient;
+    private WxPayFeignApi wxPayFeignApi;
 
     @Autowired
     private MemberBillingRecordService memberBillingRecordService;
@@ -62,7 +65,7 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
     private MemberSessionManager memberSessionManager;
 
 //    @Autowired
-//    private SettingFeignClient settingFeignClient;
+//    private SettingFeignClient settingFeignApi;
 
     @Override
     public int countByExample(MemberWithdrawRecordExample example) {
@@ -95,7 +98,7 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
             throw new StoneCustomerException("提现金额必须大于0");
         }
 
-        Setting setting = settingFeignClient.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent().getData();
         if(dbMember.getInviteRewardAmount().compareTo(setting.getMemberWithdrawMeetAmount()) < 0){
             throw new StoneCustomerException("奖励金累计到(≥)" + setting.getMemberWithdrawMeetAmount() + "元才可以提现");
         }
@@ -211,7 +214,7 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
     @Override
     public void autoPayment() {
         //查询所有符合条件的用户提现记录，进行自动打款
-        Setting setting = settingFeignClient.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent().getData();
         List<MemberWithdrawRecord> memberWithdrawRecordList = memberWithdrawRecordMapper.selectByNeedAutoPayment(setting.getMemberWithdrawAuditThreshold());
         memberWithdrawRecordList.forEach(memberWithdrawRecord -> {
             Member dbMember = memberService.selectByPrimaryKey(memberWithdrawRecord.getMemberId());
@@ -224,7 +227,7 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
             transfersDto.setRe_user_name(dbMember.getRealName());
             transfersDto.setPartner_trade_no(orderNo);
             transfersDto.setDesc("暹罗外卖-用户提现到账");
-            boolean isPaySuccess = wxPayFeignClient.payToBalance(transfersDto);
+            boolean isPaySuccess = wxPayFeignApi.payToBalance(transfersDto).getData();
             if(!isPaySuccess){
                 throw new StoneCustomerException("打款失败，请联系管理员");
             }
@@ -276,7 +279,7 @@ public class MemberWithdrawRecordServiceImpl extends ServiceImpl<MemberWithdrawR
             transfersDto.setRe_user_name(dbMember.getRealName());
             transfersDto.setPartner_trade_no(orderNo);
             transfersDto.setDesc("暹罗外卖-用户提现到账");
-            boolean isPaySuccess = wxPayFeignClient.payToBalance(transfersDto);
+            boolean isPaySuccess = wxPayFeignApi.payToBalance(transfersDto).getData();
             if(!isPaySuccess){
                 throw new StoneCustomerException("打款失败，请联系管理员");
             }

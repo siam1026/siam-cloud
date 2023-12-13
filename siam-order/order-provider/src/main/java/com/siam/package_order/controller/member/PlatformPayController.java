@@ -4,16 +4,11 @@ import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_weixin_pay.config.WxPayConfig;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.GenerateNo;
-import com.siam.package_weixin_pay.util.WxdecodeUtils;
-import com.siam.package_feign.mod_feign.goods.ShopFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberBillingRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberTradeRecordFeignClient;
-import com.siam.package_goods.entity.Shop;
+import com.siam.package_merchant.entity.Shop;
+import com.siam.package_merchant.feign.ShopFeignApi;
 import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.service.CommonService;
@@ -23,8 +18,13 @@ import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
 import com.siam.package_user.entity.MemberTradeRecord;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_user.model.example.MemberTradeRecordExample;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_weixin_pay.config.WxPayConfig;
+import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,7 @@ public class PlatformPayController {
     private WxPayConfig wxPayConfig;
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
     private MemberSessionManager memberSessionManager;
@@ -70,16 +70,16 @@ public class PlatformPayController {
     private CommonService commonService;
 
     @Autowired
-    private ShopFeignClient shopFeignClient;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
     private WxdecodeUtils wxdecodeUtils;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     /**
      * 和微信支付的步骤一致
@@ -98,7 +98,7 @@ public class PlatformPayController {
         //TODO-之前都没有验证过该订单是否属于当前登录用户
         BasicData basicResult = new BasicData();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
-        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
 
         if(platformPayDto.getType()!=Quantity.INT_1 && platformPayDto.getType()!=Quantity.INT_3){
             throw new StoneCustomerException("交易类型错误");
@@ -143,7 +143,7 @@ public class PlatformPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //修改订单信息：补填用户交易id
             Order updateOrder = new Order();
@@ -172,7 +172,7 @@ public class PlatformPayController {
                 throw new StoneCustomerException("该笔订单状态错误，不允许操作");
             }
 
-            Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+            Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
 
             BigDecimal merchantDeliveryFee = BigDecimal.ZERO; //商家承担配送费
             //计算配送费是否正确
@@ -209,7 +209,7 @@ public class PlatformPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //修改订单信息：补填自取订单改为配送的用户交易id
             //配送费、收获地址id要持久化到数据库，回调时配送费从用户交易记录表中获取(考虑到有些地方无论订单类型都会将配送费展示出来)，收获地址id从订单表中获取
@@ -240,8 +240,8 @@ public class PlatformPayController {
         updateMember.setId(dbMember.getId());
         updateMember.setBalance(dbMember.getBalance().subtract(platformPayDto.getTotal_fee()));
         updateMember.setTotalConsumeBalance(dbMember.getTotalConsumeBalance().add(platformPayDto.getTotal_fee()));
-        memberFeignClient.updateByPrimaryKeySelective(updateMember);
-        dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        memberFeignApi.updateByPrimaryKeySelective(updateMember);
+        dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
         //添加账单记录
         MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
         memberBillingRecord.setMemberId(dbMember.getId());
@@ -251,9 +251,9 @@ public class PlatformPayController {
         memberBillingRecord.setNumber(platformPayDto.getTotal_fee());
         memberBillingRecord.setMessage("订单使用余额支付");
         memberBillingRecord.setCreateTime(new Date());
-        memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+        memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
-        MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignClient.selectByOutTradeNo(outTradeNo);
+        MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
         if(dbMemberTradeRecord == null){
             throw new StoneCustomerException("该商户单号不存在，回调逻辑处理失败");
         }
@@ -267,7 +267,7 @@ public class PlatformPayController {
         updateMemberTradeRecord.setId(dbMemberTradeRecord.getId());
         updateMemberTradeRecord.setStatus(Quantity.INT_2);
         updateMemberTradeRecord.setUpdateTime(new Date());
-        memberTradeRecordFeignClient.updateByPrimaryKeySelective(updateMemberTradeRecord);
+        memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
 
         if(dbMemberTradeRecord.getType() == Quantity.INT_1){
             //交易类型为订单付款
@@ -298,7 +298,7 @@ public class PlatformPayController {
             log.debug("\n获取商户单号...");
             MemberTradeRecordExample memberTradeRecordExample = new MemberTradeRecordExample();
             memberTradeRecordExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
-//            int result = memberTradeRecordFeignClient.countByExample(memberTradeRecordExample);
+//            int result = memberTradeRecordFeignApi.countByExample(memberTradeRecordExample);
 //            if(result > 0){
 //                outTradeNo = GenerateNo.getOrderNo();
 //            }else{

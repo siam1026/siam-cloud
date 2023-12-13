@@ -137,7 +137,7 @@
 				let vue = this
 				let param = Object.assign(vue.searchMsg);
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-goods/rest/admin/paperworkPush/list', param,
+				vue.$http.post(vue, '/api-promotion/rest/admin/paperworkPush/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -160,7 +160,7 @@
 					// this.listLoading = true;
 				let vue = this;
 			
-				vue.$http.put(vue, '/api-goods/rest/admin/paperworkPush/push', {"id" : id},
+				vue.$http.put(vue, '/api-promotion/rest/admin/paperworkPush/push', {"id" : id},
 					function(vue, data) {
 						vue.$message({
 							showClose: true,
@@ -185,7 +185,7 @@
 					// this.listLoading = true;
 				let vue = this;
 				
-				vue.$http.delete(vue, '/api-goods/rest/admin/paperworkPush/delete', {"ids" : [id]},
+				vue.$http.delete(vue, '/api-promotion/rest/admin/paperworkPush/delete', {"ids" : [id]},
 					function(vue, data) {
 						vue.$message({
 							showClose: true,
@@ -228,7 +228,7 @@
 						let param = Object.assign({}, this.editForm);
 						let url = '';
 						if(param.id){
-							url = '/api-goods/rest/admin/paperworkPush/update';
+							url = '/api-promotion/rest/admin/paperworkPush/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -250,7 +250,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/paperworkPush/insert';
+							url = '/api-promotion/rest/admin/paperworkPush/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;

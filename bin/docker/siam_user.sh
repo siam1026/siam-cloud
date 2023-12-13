@@ -9,7 +9,7 @@ docker stop siam-user
 docker rm siam-user
 
 ###运行镜像
-# docker run -d -p 9602:9602 -p 9612:9041 --name siam-user -v /home/dockerdata/oap/volume/siam-user/apache-skywalking-apm-bin/:/opt/apache-skywalking-apm-bin/ siam-user:v1.0
+# docker run -d -p 9602:9602 -p 9612:9041 -e JAVA_OPTS="-Xms128m -Xmx256m" -e JAVA_PROFILES_ACTIVE="-Dspring.profiles.active=test" --name siam-user -v /home/dockerdata/oap/volume/siam-user/apache-skywalking-apm-bin/:/opt/apache-skywalking-apm-bin/ siam-user:v1.0
 docker run -d -p 9602:9602 --name siam-user siam-user:v1.0
 
 ###推送至阿里云容器镜像

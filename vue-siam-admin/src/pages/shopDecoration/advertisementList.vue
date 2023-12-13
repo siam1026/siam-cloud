@@ -188,7 +188,7 @@
 				let param = Object.assign(vue.searchMsg);
 				vue.listLoading = true;
 
-				vue.$http.post(vue, '/api-goods/rest/admin/advertisement/list', param,
+				vue.$http.post(vue, '/api-promotion/rest/admin/advertisement/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -211,7 +211,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-goods/rest/admin/advertisement/delete', {"id" : id},
+					vue.$http.delete(vue, '/api-promotion/rest/admin/advertisement/delete', {"id" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -305,7 +305,7 @@
 
 						// this.editLoading = true;
 						if(param.id){
-							url = '/api-goods/rest/admin/advertisement/update';
+							url = '/api-promotion/rest/admin/advertisement/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -328,7 +328,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/advertisement/insert';
+							url = '/api-promotion/rest/admin/advertisement/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -380,7 +380,7 @@
 				let formData = new FormData();
 				formData.append('file', value);    
 
-				vue.$http.postupload(vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+				vue.$http.postupload(vue, '/api-util/rest/admin/uploadSingleImage', formData,
 					function (vue, data) {
 						option.onSuccess();
 						let obj = {

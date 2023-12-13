@@ -334,7 +334,7 @@ import { type } from 'os';
                    if(valid){
                         let vue = this;
                         let param = Object.assign({},vue.editForm2);
-                        vue.$http.post(vue,'/api-goods/rest/admin/vipRechargeRecord/updateVip' , param,
+                        vue.$http.post(vue,'/api-user/rest/admin/vipRechargeRecord/updateVip' , param,
                         (vue,data)=>{
                             vue.$message({
                                 showClose: true,

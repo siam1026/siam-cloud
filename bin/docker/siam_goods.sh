@@ -9,7 +9,7 @@ docker stop siam-goods
 docker rm siam-goods
 
 ###运行镜像
-# docker run -d -p 9603:9603 -p 9613:9041 --name siam-goods -v /home/dockerdata/oap/volume/siam-goods/apache-skywalking-apm-bin/:/opt/apache-skywalking-apm-bin/ siam-goods:v1.0
+# docker run -d -p 9603:9603 -p 9613:9041 -e JAVA_OPTS="-Xms128m -Xmx256m" -e JAVA_PROFILES_ACTIVE="-Dspring.profiles.active=test" --name siam-goods -v /home/dockerdata/oap/volume/siam-goods/apache-skywalking-apm-bin/:/opt/apache-skywalking-apm-bin/ siam-goods:v1.0
 docker run -d -p 9603:9603 --name siam-goods siam-goods:v1.0
 
 ###推送至阿里云容器镜像

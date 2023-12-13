@@ -2,20 +2,22 @@ package com.siam.package_goods.controller.admin.internal;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.annoation.AdminPermission;
+import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.BusinessType;
+import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
-import com.siam.package_common.constant.BasicResultCode;
-import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.OSSUtils;
-import com.siam.package_goods.entity.internal.PointsMallCoupons;
-import com.siam.package_goods.entity.internal.PointsMallCouponsGoodsRelation;
-import com.siam.package_goods.model.dto.internal.PointsMallGoodsMenuDto;
 import com.siam.package_goods.entity.internal.PointsMallGoods;
 import com.siam.package_goods.entity.internal.PointsMallMenuGoodsRelation;
+import com.siam.package_goods.model.dto.internal.PointsMallGoodsMenuDto;
 import com.siam.package_goods.model.example.internal.PointsMallMenuGoodsRelationExample;
 import com.siam.package_goods.service.internal.*;
+import com.siam.package_promotion.entity.internal.PointsMallCoupons;
+import com.siam.package_promotion.entity.internal.PointsMallCouponsGoodsRelation;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsGoodsRelationFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -60,10 +62,10 @@ public class AdminPointsMallGoodsController {
     private PointsMallShoppingCartService pointsMallShoppingCartService;
 
     @Autowired
-    private PointsMallCouponsService pointsMallCouponsService;
+    private PointsMallCouponsFeignApi pointsMallCouponsFeignApi;
 
     @Autowired
-    private PointsMallCouponsGoodsRelationService pointsMallCouponsGoodsRelationService;
+    private PointsMallCouponsGoodsRelationFeignApi pointsMallCouponsGoodsRelationFeignApi;
 
     @ApiOperation(value = "商品列表")
     @PostMapping(value = "/list")
@@ -110,7 +112,7 @@ public class AdminPointsMallGoodsController {
         pointsMallGoodsSpecificationService.insertPublicGoodsSpecification(goods.getId());
 
         //建立商品与系统默认优惠券ID-新人3折卷的关联关系
-        PointsMallCoupons dbPointsMallCoupons = pointsMallCouponsService.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID);
+        PointsMallCoupons dbPointsMallCoupons = pointsMallCouponsFeignApi.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID).getData();
         if(dbPointsMallCoupons == null){
             throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
         }
@@ -118,10 +120,10 @@ public class AdminPointsMallGoodsController {
         insertPointsMallCouponsGoodsRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
         insertPointsMallCouponsGoodsRelation.setGoodsId(goods.getId());
         insertPointsMallCouponsGoodsRelation.setCreateTime(new Date());
-        pointsMallCouponsGoodsRelationService.insertSelective(insertPointsMallCouponsGoodsRelation);
+        pointsMallCouponsGoodsRelationFeignApi.insertSelective(insertPointsMallCouponsGoodsRelation);
 
         //建立商品与系统默认优惠券ID-推荐新人3折卷的关联关系
-        PointsMallCoupons dbPointsMallCouponsInvite = pointsMallCouponsService.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+        PointsMallCoupons dbPointsMallCouponsInvite = pointsMallCouponsFeignApi.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID).getData();
         if(dbPointsMallCouponsInvite == null){
             throw new StoneCustomerException("系统默认优惠券ID-推荐新人3折卷不存在");
         }
@@ -129,7 +131,7 @@ public class AdminPointsMallGoodsController {
         insertPointsMallCouponsGoodsRelationInvite.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
         insertPointsMallCouponsGoodsRelationInvite.setGoodsId(goods.getId());
         insertPointsMallCouponsGoodsRelationInvite.setCreateTime(new Date());
-        pointsMallCouponsGoodsRelationService.insertSelective(insertPointsMallCouponsGoodsRelationInvite);
+        pointsMallCouponsGoodsRelationFeignApi.insertSelective(insertPointsMallCouponsGoodsRelationInvite);
 
         basicResult.setSuccess(true);
         basicResult.setCode(BasicResultCode.SUCCESS);
@@ -207,7 +209,7 @@ public class AdminPointsMallGoodsController {
         pointsMallShoppingCartService.updateIsGoodsExistsTo0ByPointsMallGoodsId(dbPointsMallGoods.getId());
 
         //级联删除商品与优惠券的关联关系
-        pointsMallCouponsGoodsRelationService.deleteByPointsMallGoodsId(dbPointsMallGoods.getId());
+        pointsMallCouponsGoodsRelationFeignApi.deleteByPointsMallGoodsId(dbPointsMallGoods.getId());
 
         //删除商品
         pointsMallGoodsService.deleteByPrimaryKey(dbPointsMallGoods.getId());

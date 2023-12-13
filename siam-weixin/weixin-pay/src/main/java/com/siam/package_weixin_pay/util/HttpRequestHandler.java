@@ -1,16 +1,5 @@
 package com.siam.package_weixin_pay.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-
-import javax.net.ssl.SSLContext;
-
 import com.siam.package_weixin_pay.entity.TransfersDto;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,6 +14,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.springframework.core.io.ClassPathResource;
+
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketTimeoutException;
+import java.security.*;
 /*import org.apache.commons.cli.oss.KeyStores;*/
 
 public class HttpRequestHandler

@@ -2,12 +2,12 @@ package com.siam.package_order.controller.merchant;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_order.service.AppraiseService;
-import com.siam.package_user.auth.cache.MerchantSessionManager;
+import com.siam.package_merchant.auth.cache.MerchantSessionManager;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_order.entity.Appraise;
-import com.siam.package_user.entity.Merchant;
+import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_user.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

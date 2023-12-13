@@ -9,11 +9,11 @@ package com.siam.package_order.mq_consumer;
 //public class OrderConsumer {
 //    /*@Autowired*/
 //    @Reference
-//    private GoodsFeignClient goodsFeignClient;
+//    private GoodsFeignClient goodsFeignApi;
 //
 //    /*@Autowired*/
 //    @Reference
-//    private GoodsSpecificationFeignClient goodsSpecificationFeignClient;
+//    private GoodsSpecificationFeignClient goodsSpecificationFeignApi;
 //
 //    @Autowired
 //    private OrderDetailService orderDetailService;
@@ -40,11 +40,11 @@ package com.siam.package_order.mq_consumer;
 //            // 减少商品库存
 //            Integer number = orderDetail.getNumber();
 //            String goodsId = orderDetail.getGoodsId();
-//            goodsFeignClient.decreaseStock(goodsId, number);
+//            goodsFeignApi.decreaseStock(goodsId, number);
 //
 //            // 减少商品规格组合库存
 //            String goodsSpecificationId = orderDetail.getGoodsSpecificationId();
-//            goodsSpecificationFeignClient.decreaseStock(goodsSpecificationId, number);
+//            goodsSpecificationFeignApi.decreaseStock(goodsSpecificationId, number);
 //        }
 //    }
 //}

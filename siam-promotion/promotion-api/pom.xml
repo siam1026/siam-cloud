@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>siam-promotion</artifactId>
+        <groupId>com.siam</groupId>
+        <version>1.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>promotion-api</artifactId>
+
+    <name>promotion-api</name>
+    <url>https://www.siamit.cn</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- 整合spring-data-elasticsearch -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <version>2.1.4.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 此处jar包不需要被任何人调用，是api模块供人调用
+                springboot打包插件 exec这种形式打出的两个jar包，带exec名称的
+                是具有BOOT-INFO目录的可执行jar，另一个为普通jar，是用来被别人调用的-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <classifier>exec</classifier>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

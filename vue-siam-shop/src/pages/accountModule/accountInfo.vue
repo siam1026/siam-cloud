@@ -138,7 +138,7 @@
             delete param.createTime
             delete param.updateTime
 
-            let url = '/api-user/rest/merchant/update'
+            let url = '/api-merchant/rest/merchant/update'
             vue.$http.post( vue, url, param,
               (vue, data) => {
                 vue.$message({
@@ -241,7 +241,7 @@
               type: 'warning'
             }).then(() => {
 							// this.editLoading_second = true;
-              url = '/api-user/rest/merchant/merchantWithdrawRecord/insert';
+              url = '/api-merchant/rest/merchant/merchantWithdrawRecord/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading_second = false;
@@ -269,7 +269,7 @@
 			},      
       getDetail() { // 获取商品详情
           let vue = this
-          vue.$http.post(vue, '/api-user/rest/merchant/getLoginMerchantInfo', {},
+          vue.$http.post(vue, '/api-merchant/rest/merchant/getLoginMerchantInfo', {},
             (vue, data) => {
               let obj = data.data
               vue.editForm = Object.assign({}, obj)

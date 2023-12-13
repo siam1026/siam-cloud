@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>siam-parent</artifactId>
+        <groupId>com.siam</groupId>
+        <version>1.1</version>
+        <relativePath>../siam-parent/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>siam-merchant</artifactId>
+    <packaging>pom</packaging>
+
+    <name>siam-merchant</name>
+    <url>https://www.siamit.cn</url>
+
+    <modules>
+        <module>merchant-api</module>
+        <module>merchant-provider</module>
+    </modules>
+
+    <dependencies>
+        <!-- 引入公共配置模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>siam-common</artifactId>
+            <version>1.1</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+</project>

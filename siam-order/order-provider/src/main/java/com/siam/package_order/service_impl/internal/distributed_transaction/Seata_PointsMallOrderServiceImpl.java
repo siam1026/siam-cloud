@@ -6,18 +6,14 @@ import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.constant.RocketMQConst;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_weixin_basic.service.WxNotifyService;
-import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
-import com.siam.package_feign.mod_feign.goods.*;
-import com.siam.package_feign.mod_feign.goods.internal.*;
-import com.siam.package_feign.mod_feign.user.MemberBillingRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberInviteRelationFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberTradeRecordFeignClient;
-import com.siam.package_goods.entity.internal.PointsMallCoupons;
-import com.siam.package_goods.entity.internal.PointsMallCouponsMemberRelation;
-import com.siam.package_goods.entity.internal.PointsMallFullReductionRule;
+import com.siam.package_common.util.DateUtilsPlus;
+import com.siam.package_common.util.GenerateNo;
+import com.siam.package_common.util.GsonUtils;
+import com.siam.package_common.util.RedisUtils;
 import com.siam.package_goods.entity.internal.PointsMallGoods;
+import com.siam.package_goods.feign.internal.PointsMallGoodsFeignApi;
+import com.siam.package_goods.feign.internal.PointsMallGoodsSpecificationOptionFeignApi;
+import com.siam.package_goods.feign.internal.PointsMallShoppingCartFeignApi;
 import com.siam.package_order.controller.member.WxPayService;
 import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.internal.PointsMallOrder;
@@ -27,14 +23,27 @@ import com.siam.package_order.model.example.internal.PointsMallOrderExample;
 import com.siam.package_order.model.param.internal.PointsMallOrderParam;
 import com.siam.package_order.model.result.internal.PointsMallOrderResult;
 import com.siam.package_order.model.vo.internal.PointsMallOrderVo;
-import com.siam.package_order.service.*;
+import com.siam.package_order.service.CommonService;
+import com.siam.package_order.service.DeliveryAddressService;
+import com.siam.package_order.service.OrderService;
 import com.siam.package_order.service.internal.*;
+import com.siam.package_promotion.entity.internal.PointsMallCoupons;
+import com.siam.package_promotion.entity.internal.PointsMallCouponsMemberRelation;
+import com.siam.package_promotion.entity.internal.PointsMallFullReductionRule;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsGoodsRelationFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallCouponsMemberRelationFeignApi;
+import com.siam.package_promotion.feign.internal.PointsMallFullReductionRuleFeignApi;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
-import com.siam.package_common.util.DateUtilsPlus;
-import com.siam.package_common.util.GenerateNo;
-import com.siam.package_common.util.GsonUtils;
-import com.siam.package_common.util.RedisUtils;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberInviteRelationFeignApi;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
+import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
+import com.siam.package_util.feign.SettingFeignApi;
+import com.siam.package_weixin_basic.service.WxNotifyService;
+import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import io.seata.core.context.RootContext;
 import io.seata.core.exception.TransactionException;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -76,16 +85,16 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
     private PointsMallOrderDetailService orderDetailService;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
     private DeliveryAddressService deliveryAddressService;
@@ -100,7 +109,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
     private PointsMallOrderRefundService orderRefundService;
 
     @Autowired
-    private MemberInviteRelationFeignClient memberInviteRelationFeignClient;
+    private MemberInviteRelationFeignApi memberInviteRelationFeignApi;
 
     @Autowired
     private PointsMallOrderLogisticsService orderLogisticsService;
@@ -109,7 +118,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
     private OrderService orderService;
 
     @Autowired
-    private VipRechargeRecordFeignClient vipRechargeRecordFeignClient;
+    private VipRechargeRecordFeignApi vipRechargeRecordFeignApi;
 
     @Autowired
     private PointsMallOrderRefundGoodsService orderRefundGoodsService;
@@ -127,25 +136,25 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
     private CommonService commonService;
 
     @Autowired
-    private PointsMallShoppingCartFeignClient shoppingCartFeignClient;
+    private PointsMallShoppingCartFeignApi shoppingCartFeignApi;
 
     @Autowired
-    private PointsMallGoodsFeignClient goodsFeignClient;
+    private PointsMallGoodsFeignApi goodsFeignApi;
 
     @Autowired
-    private PointsMallGoodsSpecificationOptionFeignClient goodsSpecificationOptionFeignClient;
+    private PointsMallGoodsSpecificationOptionFeignApi goodsSpecificationOptionFeignApi;
 
     @Autowired
-    private PointsMallCouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
+    private PointsMallCouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     @Autowired
-    private PointsMallCouponsFeignClient couponsFeignClient;
+    private PointsMallCouponsFeignApi couponsFeignApi;
 
     @Autowired
-    private PointsMallCouponsGoodsRelationFeignClient couponsGoodsRelationFeignClient;
+    private PointsMallCouponsGoodsRelationFeignApi couponsGoodsRelationFeignApi;
 
     @Autowired
-    private PointsMallFullReductionRuleFeignClient fullReductionRuleFeignClient;
+    private PointsMallFullReductionRuleFeignApi fullReductionRuleFeignApi;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
@@ -181,9 +190,9 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
         log.info("开始全局事务，XID = " + RootContext.getXID());
 
 //        Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
-//        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+//        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId());
 
-        Member dbMember = memberFeignClient.selectByPrimaryKey(2);
+        Member dbMember = memberFeignApi.selectByPrimaryKey(2).getData();
 
 
 //        //校验防重令牌是否正确 -- 保证该接口的幂等性
@@ -195,7 +204,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
 
         //校验：如果是从购物车下单的 那么需要校验购物车数据是否存在 以及购物车数据是否属于当前登录用户
         if(param.getShoppingCartIdList()!=null && !param.getShoppingCartIdList().isEmpty()){
-            int count = shoppingCartFeignClient.countByIdListAndMemberId(param.getShoppingCartIdList(), dbMember.getId());
+            int count = shoppingCartFeignApi.countByIdListAndMemberId(param.getShoppingCartIdList(), dbMember.getId()).getData();
             if(count != param.getShoppingCartIdList().size()){
                 throw new StoneCustomerException("购物车数据异常，请刷新页面重新下单");
             }
@@ -300,12 +309,12 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
             orderDetailService.insertSelective(insertDetail);
 
             //TODO - 减少商品库存 (规格的库存该怎么去变化)
-            /*goodsFeignClient.decreaseStock(goodsId, number);*/
+            /*goodsFeignApi.decreaseStock(goodsId, number);*/
         }
 
         //4、如果是从购物车下单的 那么下单成功后需要删除购物车数据  注意用批量删除
         if(param.getShoppingCartIdList()!=null && param.getShoppingCartIdList().size()>0){
-            BasicResult basicResult = shoppingCartFeignClient.batchDeleteByIdList(param.getShoppingCartIdList());
+            BasicResult basicResult = shoppingCartFeignApi.batchDeleteByIdList(param.getShoppingCartIdList());
             if(!basicResult.getSuccess()){
                 try {
                     GlobalTransactionContext.reload(RootContext.getXID()).rollback();
@@ -320,7 +329,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
         if(dbMember.getIsNewPeople()){
             dbMember.setIsNewPeople(false);
             dbMember.setIsRemindNewPeople(false);
-            BasicResult basicResult = memberFeignClient.updateByPrimaryKeySelective(dbMember);
+            BasicResult basicResult = memberFeignApi.updateByPrimaryKeySelective(dbMember);
             if(!basicResult.getSuccess()){
                 try {
                     GlobalTransactionContext.reload(RootContext.getXID()).rollback();
@@ -336,7 +345,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
 
         //6、更新优惠卷的使用状态
         if (param.getCouponsMemberRelationId() != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(param.getCouponsMemberRelationId(),true);
+            couponsMemberRelationFeignApi.updateCouponsUsed(param.getCouponsMemberRelationId(),true);
         }
 
         //加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
@@ -367,7 +376,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
         //商品总数量
         int goodsTotalQuantity = 0;
         for (PointsMallOrderDetail orderDetail : param.getOrderDetailList()) {
-            PointsMallGoods dbGoods = goodsFeignClient.selectByPrimaryKey(orderDetail.getGoodsId());
+            PointsMallGoods dbGoods = goodsFeignApi.selectByPrimaryKey(orderDetail.getGoodsId()).getData();
             if (dbGoods == null){
                 throw new StoneCustomerException("订单商品数据异常，请稍后重试");
             }
@@ -392,7 +401,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
             }
             //正常情况下nameList不能为空，为空也要做特殊处理
             if(!nameList.isEmpty()){
-                specOptionPrice = goodsSpecificationOptionFeignClient.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList);
+                specOptionPrice = goodsSpecificationOptionFeignApi.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList).getData();
             }
             //计算单品的总价
             BigDecimal price = dbGoods.getPrice().add(specOptionPrice);
@@ -424,8 +433,8 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
         BigDecimal subtractPrice = BigDecimal.ZERO;
         if (couponsMemberRelationId != null) {
             //查询出使用的优惠券信息
-            PointsMallCouponsMemberRelation dbPointsMallCouponsMemberRelation = couponsMemberRelationFeignClient.selectPointsMallCouponsMemberRelationByPrimaryKey(couponsMemberRelationId);
-            Map couponsMap = couponsFeignClient.selectCouponsAndGoodsByPrimaryKey(dbPointsMallCouponsMemberRelation.getCouponsId());
+            PointsMallCouponsMemberRelation dbPointsMallCouponsMemberRelation = couponsMemberRelationFeignApi.selectPointsMallCouponsMemberRelationByPrimaryKey(couponsMemberRelationId).getData();
+            Map couponsMap = couponsFeignApi.selectCouponsAndGoodsByPrimaryKey(dbPointsMallCouponsMemberRelation.getCouponsId()).getData();
             PointsMallCoupons dbPointsMallCoupons = (PointsMallCoupons) couponsMap.get("coupons");
             if(PointsMallCoupons.TYPE_DISCOUNT.equals(dbPointsMallCoupons.getPreferentialType())){
                 //折扣优惠券
@@ -438,7 +447,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
                 PointsMallOrderDetail couponsDiscountOrderDetail = null;
 
                 //查询出优惠券关联的所有商品
-                List<Integer> goodsIdList = couponsGoodsRelationFeignClient.getGoodsIdByCouponsId(dbPointsMallCouponsMemberRelation.getCouponsId());
+                List<Integer> goodsIdList = couponsGoodsRelationFeignApi.getGoodsIdByCouponsId(dbPointsMallCouponsMemberRelation.getCouponsId()).getData();
                 for (PointsMallOrderDetail orderDetail : param.getOrderDetailList()) {
                     //判断商品是否能够使用此优惠卷 且 是否应用于最高价格的商品(不包括包装费)
                     if (goodsIdList.contains(orderDetail.getGoodsId())) {
@@ -489,7 +498,7 @@ public class Seata_PointsMallOrderServiceImpl implements PointsMallOrderService 
         //3、判断满减规则是否满足使用条件
         //TODO-后端不判断订单应使用哪个满减规则，只对前端传递的满减规则进行是否满足使用条件判断
         if (param.getFullReductionRuleId() != null) {
-            PointsMallFullReductionRule dbFullReductionRule = fullReductionRuleFeignClient.selectByPrimaryKey(param.getFullReductionRuleId());
+            PointsMallFullReductionRule dbFullReductionRule = fullReductionRuleFeignApi.selectByPrimaryKey(param.getFullReductionRuleId()).getData();
             if(finalPrice.compareTo(dbFullReductionRule.getLimitedPrice()) >= 0){
                 finalPrice = finalPrice.subtract(dbFullReductionRule.getReducedPrice());
                 param.setFullReductionRuleId(dbFullReductionRule.getId());

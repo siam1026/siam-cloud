@@ -7,7 +7,7 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_weixin_basic.config.WxCode;
 import com.siam.package_weixin_basic.config.WxEncrypted;
 import com.siam.package_weixin_basic.config.WxSession;
-import com.siam.package_weixin_pay.util.WxdecodeUtils;
+import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;

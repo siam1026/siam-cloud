@@ -1,27 +1,22 @@
 package com.siam.package_goods.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siam.package_common.entity.BasicData;
-import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.constant.Quantity;
+import com.siam.package_common.entity.BasicData;
+import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.OSSUtils;
-import com.siam.package_goods.entity.Coupons;
-import com.siam.package_goods.service.CouponsService;
-import com.siam.package_goods.entity.CouponsGoodsRelation;
-import com.siam.package_goods.service.CouponsGoodsRelationService;
 import com.siam.package_goods.entity.Goods;
-import com.siam.package_goods.model.dto.GoodsMenuDto;
-import com.siam.package_goods.service.GoodsService;
-import com.siam.package_goods.service.GoodsRawmaterialRelationService;
-import com.siam.package_goods.service.GoodsSpecificationService;
-import com.siam.package_goods.service.GoodsSpecificationOptionService;
 import com.siam.package_goods.entity.MenuGoodsRelation;
+import com.siam.package_goods.model.dto.GoodsMenuDto;
 import com.siam.package_goods.model.example.MenuGoodsRelationExample;
-import com.siam.package_goods.service.MenuGoodsRelationService;
-import com.siam.package_goods.service.ShoppingCartService;
+import com.siam.package_goods.service.*;
+import com.siam.package_promotion.entity.Coupons;
+import com.siam.package_promotion.entity.CouponsGoodsRelation;
+import com.siam.package_promotion.feign.CouponsFeignApi;
+import com.siam.package_promotion.feign.CouponsGoodsRelationFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -69,10 +64,10 @@ public class AdminGoodsController {
     private GoodsRawmaterialRelationService goodsRawmaterialRelationService;
 
     @Autowired
-    private CouponsService couponsService;
+    private CouponsFeignApi couponsFeignApi;
 
     @Autowired
-    private CouponsGoodsRelationService couponsGoodsRelationService;
+    private CouponsGoodsRelationFeignApi couponsGoodsRelationFeignApi;
 
     @ApiOperation(value = "商品列表")
     @PostMapping(value = "/list")
@@ -119,7 +114,7 @@ public class AdminGoodsController {
         goodsSpecificationService.insertPublicGoodsSpecification(param.getId());
 
         //建立商品与系统默认优惠券ID-新人3折卷的关联关系
-        Coupons dbCoupons = couponsService.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID);
+        Coupons dbCoupons = couponsFeignApi.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID).getData();
         if(dbCoupons == null){
             throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
         }
@@ -127,10 +122,10 @@ public class AdminGoodsController {
         insertCouponsGoodsRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
         insertCouponsGoodsRelation.setGoodsId(param.getId());
         insertCouponsGoodsRelation.setCreateTime(new Date());
-        couponsGoodsRelationService.insertSelective(insertCouponsGoodsRelation);
+        couponsGoodsRelationFeignApi.insertSelective(insertCouponsGoodsRelation);
 
         //建立商品与系统默认优惠券ID-推荐新人3折卷的关联关系
-        Coupons dbCouponsInvite = couponsService.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+        Coupons dbCouponsInvite = couponsFeignApi.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID).getData();
         if(dbCouponsInvite == null){
             throw new StoneCustomerException("系统默认优惠券ID-推荐新人3折卷不存在");
         }
@@ -138,7 +133,7 @@ public class AdminGoodsController {
         insertCouponsGoodsRelationInvite.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
         insertCouponsGoodsRelationInvite.setGoodsId(param.getId());
         insertCouponsGoodsRelationInvite.setCreateTime(new Date());
-        couponsGoodsRelationService.insertSelective(insertCouponsGoodsRelationInvite);
+        couponsGoodsRelationFeignApi.insertSelective(insertCouponsGoodsRelationInvite);
 
         basicResult.setSuccess(true);
         basicResult.setCode(BasicResultCode.SUCCESS);
@@ -217,7 +212,7 @@ public class AdminGoodsController {
         goodsRawmaterialRelationService.deleteByGoodsId(dbGoods.getId());
 
         //级联删除商品与优惠券的关联关系
-        couponsGoodsRelationService.deleteByGoodsId(dbGoods.getId());
+        couponsGoodsRelationFeignApi.deleteByGoodsId(dbGoods.getId());
 
         //删除商品
         goodsService.deleteByPrimaryKey(dbGoods.getId());

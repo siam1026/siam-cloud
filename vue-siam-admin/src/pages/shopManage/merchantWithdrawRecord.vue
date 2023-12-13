@@ -289,7 +289,7 @@
 					delete param.createTime;
 				}
 				
-				vue.$http.post(vue, '/api-user/rest/admin/merchantWithdrawRecord/list', param,
+				vue.$http.post(vue, '/api-merchant/rest/admin/merchantWithdrawRecord/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -313,7 +313,7 @@
 					let param = {};
 					param.id = id;
 					param.status = 1;	
-					let url = '/api-user/rest/admin/merchantWithdrawRecord/auditApplyWithdraw';
+					let url = '/api-merchant/rest/admin/merchantWithdrawRecord/auditApplyWithdraw';
 					vue.$http.post(vue, url, param,
 						(vue, data) => {
 							// // this.editLoading = false;
@@ -344,7 +344,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-user/rest/admin/merchantWithdrawRecord/delete', {"ids" : [id]},
+					vue.$http.delete(vue, '/api-merchant/rest/admin/merchantWithdrawRecord/delete', {"ids" : [id]},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -399,7 +399,7 @@
 					});		
 					return false;
 				}
-				let url = '/api-user/rest/admin/merchantWithdrawRecord/auditApplyWithdraw';
+				let url = '/api-merchant/rest/admin/merchantWithdrawRecord/auditApplyWithdraw';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						// // this.editLoading = false;
@@ -425,7 +425,7 @@
 			editSubmit: function () { // 编辑
                 let vue = this;
 				let param = Object.assign({},this.editForm);			
-				// let url = '/api-user/rest/admin/merchantWithdrawRecord/auditApplyWithdraw';
+				// let url = '/api-merchant/rest/admin/merchantWithdrawRecord/auditApplyWithdraw';
 				// vue.$http.post(vue, url, param,
 				// 	(vue, data) => {
 				// 		// // this.editLoading = false;

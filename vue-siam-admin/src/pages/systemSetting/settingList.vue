@@ -308,7 +308,7 @@
 				let formData = new FormData();
 				formData.append('file', value);    
 
-				vue.$http.postupload(vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+				vue.$http.postupload(vue, '/api-util/rest/admin/uploadSingleImage', formData,
 					function (vue, data) {
 						option.onSuccess();
 						let obj = {
@@ -368,7 +368,7 @@
 				let param = Object.assign(vue.searchMsg);
 				vue.listLoading = true;
 
-				vue.$http.post(vue, '/api-goods/rest/admin/setting/list', param,
+				vue.$http.post(vue, '/api-util/rest/admin/setting/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -391,7 +391,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-goods/rest/admin/setting/delete', {"id" : id},
+					vue.$http.delete(vue, '/api-util/rest/admin/setting/delete', {"id" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -438,7 +438,7 @@
 			},
 			getDetail() { // 获取商品详情
 				let vue = this
-				vue.$http.post(vue, '/api-goods/rest/admin/setting/selectCurrent', {},
+				vue.$http.post(vue, '/api-util/rest/admin/setting/selectCurrent', {},
 					(vue, data) => {
 					let obj = data.data
 					obj.customerServiceWechatQrcodeFile = vue.resetImg(obj, 'customerServiceWechatQrcode')
@@ -483,7 +483,7 @@
 						let url = '';
 						
 						if(param.id){
-							url = '/api-goods/rest/admin/setting/update';
+							url = '/api-util/rest/admin/setting/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -501,7 +501,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/setting/insert';
+							url = '/api-util/rest/admin/setting/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;

@@ -4,12 +4,12 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.BaiduMapUtils;
-import com.siam.package_feign.mod_feign.goods.SettingFeignClient;
-import com.siam.package_feign.mod_feign.goods.ShopFeignClient;
-import com.siam.package_goods.entity.Shop;
+import com.siam.package_merchant.entity.Shop;
+import com.siam.package_merchant.feign.ShopFeignApi;
 import com.siam.package_order.entity.TravelingDistanceVo;
 import com.siam.package_order.service.CommonService;
 import com.siam.package_order.service.DeliveryAddressService;
+import com.siam.package_util.feign.SettingFeignApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,21 +24,21 @@ public class CommonServiceImpl implements CommonService {
     private DeliveryAddressService deliveryAddressService;
 
     @Autowired
-    private ShopFeignClient shopFeignClient;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
     private BaiduMapUtils baiduMapUtils;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Override
     public BigDecimal selectDeliveryFee(BigDecimal lngA, BigDecimal latA, Integer shopId) {
         //系统默认匹配最近的门店接单(目前只有一家门店，所以先设个默认值)
-        /*Shop dbShop = shopFeignClient.selectByName(BusinessType.DEFAULT_SHOP_NAME);*/
-        /*Setting setting = settingFeignClient.selectCurrent();
+        /*Shop dbShop = shopFeignApi.selectByName(BusinessType.DEFAULT_SHOP_NAME);*/
+        /*Setting setting = settingFeignApi.selectCurrent();
         int shopId = setting.getDefaultShopId();*/
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(shopId);
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(shopId).getData();
         if(dbShop == null){
             throw new StoneCustomerException("门店数据异常");
         }
@@ -107,7 +107,7 @@ public class CommonServiceImpl implements CommonService {
 
     @Override
     public Boolean selectIsOperatingOfShop(Integer shopId) {
-        Shop shop = shopFeignClient.selectByPrimaryKey(shopId);
+        Shop shop = shopFeignApi.selectByPrimaryKey(shopId).getData();
         if(shop == null) throw new StoneCustomerException("该店铺不存在");
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");

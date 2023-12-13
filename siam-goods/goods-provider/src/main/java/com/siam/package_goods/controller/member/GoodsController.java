@@ -1,24 +1,24 @@
 package com.siam.package_goods.controller.member;
 
+import cn.hutool.core.convert.Convert;
+import com.alibaba.druid.support.json.JSONUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
-import com.siam.package_feign.mod_feign.order.CommonFeignClient;
-import com.siam.package_goods.entity.Setting;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_goods.service.SettingService;
-import com.siam.package_common.util.BaiduMapUtils;
-import com.siam.package_common.util.BeanUtils;
-import com.siam.package_common.util.DateUtilsPlus;
+import com.siam.package_common.util.*;
 import com.siam.package_goods.entity.Goods;
-import com.siam.package_goods.entity.Shop;
 import com.siam.package_goods.model.dto.GoodsMenuDto;
 import com.siam.package_goods.service.GoodsService;
-import com.siam.package_goods.service.ShopService;
+import com.siam.package_merchant.entity.Shop;
+import com.siam.package_merchant.feign.ShopFeignApi;
 import com.siam.package_order.entity.TravelingDistanceVo;
+import com.siam.package_order.feign.CommonFeignApi;
 import com.siam.package_user.model.param.AdminParam;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_util.feign.SettingFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -44,13 +47,13 @@ public class GoodsController {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private ShopService shopService;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
-    private CommonFeignClient commonFeignClient;
+    private CommonFeignApi commonFeignApi;
 
     @Autowired
-    private SettingService settingService;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
     private BaiduMapUtils baiduMapUtils;
@@ -110,7 +113,7 @@ public class GoodsController {
         Goods dbGoods = goodsService.selectByPrimaryKey(param.getId());
         if(dbGoods == null) throw new StoneCustomerException("该商品不存在");
 
-        Shop dbShop = shopService.selectByPrimaryKey(dbGoods.getShopId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbGoods.getShopId()).getData();
         if(dbShop == null) throw new StoneCustomerException("该店铺不存在");
         if(dbShop.getStatus() != Quantity.INT_2) throw new StoneCustomerException("该店铺待上架或已下架，不能查看该商品");
 
@@ -121,9 +124,9 @@ public class GoodsController {
         //如果返回值小于等于0，则代表当前位置超出配送范围 或 当前位置不合法 -- 需要将该店铺从列表中移除
         //计算配送时长、距离公里数
         /*String addressB = dbShop.getProvince() + dbShop.getCity() + dbShop.getArea() + dbShop.getStreet();*/
-        TravelingDistanceVo travelingDistanceVo = commonFeignClient.selectTravelingDistance(coordinateMap.get("lng"), coordinateMap.get("lat"), dbShop.getLongitude(), dbShop.getLatitude());
+        TravelingDistanceVo travelingDistanceVo = commonFeignApi.selectTravelingDistance(coordinateMap.get("lng"), coordinateMap.get("lat"), dbShop.getLongitude(), dbShop.getLatitude()).getData();
         System.out.println("\n\n" + dbShop.getName() + "'travelingDistanceVo.getDistanceValue() : " + travelingDistanceVo.getDistanceValue());
-        Setting setting = settingService.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent().getData();
         if(travelingDistanceVo.getDistanceValue().compareTo(BigDecimal.ZERO) == 0){
             //如果距离为0，则代表百度地图没有计算结果
             //还有一种情况会造成距离为0，那就是起点和终点相等--这种情况也算作地址填写错误
@@ -137,7 +140,7 @@ public class GoodsController {
         System.out.println("\n\n" + dbShop.getName() + "'isOutofDeliveryRange : " + resultMap.get("isOutofDeliveryRange"));
 
         //查询当前门店是否营业
-        Boolean isOperatingOfShop = commonFeignClient.selectIsOperatingOfShop(dbShop.getId());
+        Boolean isOperatingOfShop = commonFeignApi.selectIsOperatingOfShop(dbShop.getId()).getData();
         resultMap.put("isOperatingOfShop", isOperatingOfShop);
 
         basicResult.setData(resultMap);
@@ -335,14 +338,22 @@ public class GoodsController {
 
         //按照定位地址来查询前6个店铺
         //sql算出来的距离是米，所以这里要乘以1000进行换算
-        Setting currentSetting = settingService.selectCurrent();
-        Page<Shop> shopPage = shopService.selectByDistance(1, 2, coordinateMap.get("lng"), coordinateMap.get("lat"), currentSetting.getDeliveryDistanceLimit().multiply(BigDecimal.valueOf(1000)));
-        for (Shop shop : shopPage.getRecords()) {
-            List<Map<String, Object>> goodsList = goodsService.getListByLatelyMonthlySalesTopNumber(startTime, endTime, Quantity.INT_1, shop.getId());
+        Setting currentSetting = settingFeignApi.selectCurrent().getData();
+        //TODO BUG - 类型转化问题
+        Page<Shop> shopPage = shopFeignApi.selectByDistance(1, 2, coordinateMap.get("lng"), coordinateMap.get("lat"), currentSetting.getDeliveryDistanceLimit().multiply(BigDecimal.valueOf(1000))).getData();
+        for (Object shop : shopPage.getRecords()) {
+            Map shopMap = (Map) shop;
+            List<Map<String, Object>> goodsList = goodsService.getListByLatelyMonthlySalesTopNumber(startTime, endTime, Quantity.INT_1, Convert.toInt(shopMap.get("id")));
             if (!goodsList.isEmpty()){
                 resultList.add(goodsList.get(0));
             }
         }
+        /*for (Shop shop : shopPage.getRecords()) {
+            List<Map<String, Object>> goodsList = goodsService.getListByLatelyMonthlySalesTopNumber(startTime, endTime, Quantity.INT_1, shop.getId());
+            if (!goodsList.isEmpty()){
+                resultList.add(goodsList.get(0));
+            }
+        }*/
         //如果不足6个店铺，则从平台列表中补齐
         int num = Quantity.INT_2 - shopPage.getRecords().size();
         if (num > 0){

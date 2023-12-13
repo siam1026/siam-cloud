@@ -458,7 +458,7 @@
 				let formData = new FormData();
 				formData.append('file', value);
 				vue.$http.postupload(
-					vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+					vue, '/api-util/rest/admin/uploadSingleImage', formData,
 					function (vue, data) {
 					option.onSuccess();
 					let obj = {
@@ -538,7 +538,7 @@
                 // param.city = city
                 // param.area = area
 
-				vue.$http.post(vue, '/api-goods/rest/admin/shop/list', param,
+				vue.$http.post(vue, '/api-merchant/rest/admin/shop/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -561,7 +561,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-goods/rest/admin/shop/delete', {"ids" : [id]},
+					vue.$http.delete(vue, '/api-merchant/rest/admin/shop/delete', {"ids" : [id]},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -586,7 +586,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.put(vue, '/api-goods/rest/admin/shop/update', {"id" : id, "status" : 2},
+					vue.$http.put(vue, '/api-merchant/rest/admin/shop/update', {"id" : id, "status" : 2},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -611,7 +611,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.put(vue, '/api-goods/rest/admin/shop/update', {"id" : id, "status" : 3},
+					vue.$http.put(vue, '/api-merchant/rest/admin/shop/update', {"id" : id, "status" : 3},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -680,7 +680,7 @@
 						// this.editLoading = true;
 						let vue = this
 						let param = Object.assign({}, this.editFormSecond);
-						let url = '/api-goods/rest/admin/shop/update';
+						let url = '/api-merchant/rest/admin/shop/update';
 						vue.$http.put(vue, url, param,
 							(vue, data) => {
 								// this.editLoading = false;

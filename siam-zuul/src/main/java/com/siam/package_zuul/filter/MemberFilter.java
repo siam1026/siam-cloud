@@ -7,7 +7,7 @@ import com.siam.package_common.constant.BaseCode;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.filter.StoneFilter;
 import com.siam.package_common.util.JsonUtils;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
+import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.util.TokenUtil;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 用户过滤器
@@ -34,7 +33,7 @@ public class MemberFilter extends ZuulFilter implements StoneFilter {
     private MemberSessionManager memberSessionManager;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
     private WebMvcConfig webMvcConfig;

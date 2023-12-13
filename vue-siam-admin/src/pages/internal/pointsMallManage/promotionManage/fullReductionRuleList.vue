@@ -157,7 +157,7 @@
 				let param = Object.assign(vue.searchMsg);
 				vue.listLoading = true;
 
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/fullReductionRule/list', param,
+				vue.$http.post(vue, '/api-promotion/rest/admin/pointsMall/fullReductionRule/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -180,7 +180,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-goods/rest/admin/pointsMall/fullReductionRule/delete', {"id" : id},
+					vue.$http.delete(vue, '/api-promotion/rest/admin/pointsMall/fullReductionRule/delete', {"id" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -248,7 +248,7 @@
 						param.status = (param.status == '开启') ? 1 : 2;
 
 						if(param.id){
-							url = '/api-goods/rest/admin/pointsMall/fullReductionRule/update';
+							url = '/api-promotion/rest/admin/pointsMall/fullReductionRule/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									this.editLoading = false;
@@ -270,7 +270,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/pointsMall/fullReductionRule/insert';
+							url = '/api-promotion/rest/admin/pointsMall/fullReductionRule/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									this.editLoading = false;

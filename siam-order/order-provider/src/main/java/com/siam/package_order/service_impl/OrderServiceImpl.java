@@ -1,27 +1,30 @@
 package com.siam.package_order.service_impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSON;
-import com.alipay.api.domain.Coupon;
-import com.alipay.api.domain.Person;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.constant.Quantity;
-import com.siam.package_common.constant.RocketMQConst;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.mod_websocket.WebSocketService;
 import com.siam.package_common.service.AliyunSms;
 import com.siam.package_common.util.*;
-import com.siam.package_weixin_basic.service.WxNotifyService;
-import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
-import com.siam.package_weixin_pay.util.*;
-import com.siam.package_feign.mod_feign.goods.*;
-import com.siam.package_feign.mod_feign.user.*;
-import com.siam.package_goods.entity.*;
-import com.siam.package_goods.model.example.ShopExample;
+import com.siam.package_goods.entity.Goods;
+import com.siam.package_goods.feign.GoodsFeignApi;
+import com.siam.package_goods.feign.GoodsSpecificationOptionFeignApi;
+import com.siam.package_goods.feign.ShoppingCartFeignApi;
+import com.siam.package_merchant.entity.Merchant;
+import com.siam.package_merchant.entity.MerchantBillingRecord;
+import com.siam.package_merchant.entity.Shop;
+import com.siam.package_merchant.feign.MerchantBillingRecordFeignApi;
+import com.siam.package_merchant.feign.MerchantFeignApi;
+import com.siam.package_merchant.feign.ShopFeignApi;
+import com.siam.package_merchant.model.example.MerchantExample;
+import com.siam.package_merchant.model.example.ShopExample;
+import com.siam.package_merchant.model.param.MerchantParam;
+import com.siam.package_merchant.model.param.ShopParam;
 import com.siam.package_order.controller.member.WxPayService;
 import com.siam.package_order.entity.*;
 import com.siam.package_order.mapper.OrderMapper;
@@ -30,16 +33,29 @@ import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.model.vo.OrderVo;
 import com.siam.package_order.model.vo.OrderVo2;
 import com.siam.package_order.service.*;
+import com.siam.package_promotion.entity.Coupons;
+import com.siam.package_promotion.entity.CouponsMemberRelation;
+import com.siam.package_promotion.entity.FullReductionRule;
+import com.siam.package_promotion.feign.*;
 import com.siam.package_user.auth.cache.MemberSessionManager;
-import com.siam.package_user.entity.*;
+import com.siam.package_user.entity.Member;
+import com.siam.package_user.entity.MemberBillingRecord;
+import com.siam.package_user.entity.MemberTradeRecord;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberInviteRelationFeignApi;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_user.model.example.MemberBillingRecordExample;
-import com.siam.package_user.model.example.MerchantExample;
+import com.siam.package_user.model.param.MemberBillingRecordParam;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_util.feign.SettingFeignApi;
+import com.siam.package_weixin_basic.service.WxNotifyService;
+import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +63,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
@@ -60,37 +75,37 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private OrderMapper orderMapper;
 
     @Autowired
-    private GoodsFeignClient goodsFeignClient;
+    private GoodsFeignApi goodsFeignApi;
 
     @Autowired
     private OrderDetailService orderDetailService;
 
     @Autowired
-    private SettingFeignClient settingFeignClient;
+    private SettingFeignApi settingFeignApi;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
-    private CouponsMemberRelationFeignClient couponsMemberRelationFeignClient;
+    private CouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
     private DeliveryAddressService deliveryAddressService;
 
     @Autowired
-    private ShopFeignClient shopFeignClient;
+    private ShopFeignApi shopFeignApi;
 
     @Autowired
-    private MerchantBillingRecordFeignClient merchantBillingRecordFeignClient;
+    private MerchantBillingRecordFeignApi merchantBillingRecordFeignApi;
 
     @Autowired
-    private MerchantFeignClient merchantFeignClient;
+    private MerchantFeignApi merchantFeignApi;
 
     @Autowired
     private WxNotifyService wxNotifyService;
@@ -105,7 +120,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private WebSocketService webSocketService;
 
     @Autowired
-    private MemberInviteRelationFeignClient memberInviteRelationFeignClient;
+    private MemberInviteRelationFeignApi memberInviteRelationFeignApi;
 
     @Resource(name = "rewardServiceImpl")
     private RewardService rewardService;
@@ -114,25 +129,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private MemberSessionManager memberSessionManager;
 
     @Autowired
-    private GoodsSpecificationOptionFeignClient goodsSpecificationOptionFeignClient;
+    private GoodsSpecificationOptionFeignApi goodsSpecificationOptionFeignApi;
 
     @Autowired
-    private ShoppingCartFeignClient shoppingCartFeignClient;
+    private ShoppingCartFeignApi shoppingCartFeignApi;
 
     @Autowired
-    private FullReductionRuleFeignClient fullReductionRuleFeignClient;
+    private FullReductionRuleFeignApi fullReductionRuleFeignApi;
 
     @Autowired
-    private CouponsFeignClient couponsFeignClient;
+    private CouponsFeignApi couponsFeignApi;
 
     @Autowired
-    private CouponsGoodsRelationFeignClient couponsGoodsRelationFeignClient;
+    private CouponsGoodsRelationFeignApi couponsGoodsRelationFeignApi;
 
     @Autowired
     private CommonService commonService;
 
     @Autowired
-    private CouponsShopRelationFeignClient couponsShopRelationFeignClient;
+    private CouponsShopRelationFeignApi couponsShopRelationFeignApi;
 
     @Autowired
     private AppraiseService appraiseService;
@@ -183,13 +198,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         //如果是从购物车下单的 那么需要校验购物车数据是否存在 以及购物车数据是否属于当前登录用户
         if(param.getShoppingCartIdList()!=null && !param.getShoppingCartIdList().isEmpty()){
-            int result = shoppingCartFeignClient.countByIdListAndMemberId(param.getShoppingCartIdList(), loginMember.getId());
+            int result = shoppingCartFeignApi.countByIdListAndMemberId(param.getShoppingCartIdList(), loginMember.getId()).getData();
             if(result != param.getShoppingCartIdList().size()){
                 throw new StoneCustomerException("购物车数据异常，请刷新页面重新下单");
             }
         }
 
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(param.getShopId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(param.getShopId()).getData();
         if(dbShop == null){
             throw new StoneCustomerException("该门店信息不存在");
         }
@@ -200,7 +215,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String shopAddress = dbShop.getProvince() + dbShop.getCity() + dbShop.getArea() + dbShop.getStreet() + dbShop.getHouseNumber();
         param.setShopAddress(shopAddress);
 
-        Setting setting = settingFeignClient.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent().getData();
         if(param.getShoppingWay() == Quantity.INT_1){
             //自提订单
             //根据用户信息回写联系人姓名、联系电话、联系人性别
@@ -236,7 +251,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BigDecimal packingTotalPrice = BigDecimal.ZERO; //包装费
         int goodsTotalQuantity = 0; //商品总数量
         for (OrderDetail orderDetail : orderDetailList) {
-            Goods dbGoods = goodsFeignClient.selectByPrimaryKey(orderDetail.getGoodsId());
+            Goods dbGoods = goodsFeignApi.selectByPrimaryKey(orderDetail.getGoodsId()).getData();
             if (dbGoods == null) throw new StoneCustomerException("订单商品数据异常，请稍后重试");
             //判断商品状态是否正确
             if(dbGoods.getStatus() == Quantity.INT_2) {
@@ -262,7 +277,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             //正常情况下nameList不能为空，为空也要做特殊处理
             BigDecimal specOptionPrice = BigDecimal.ZERO;
             if(nameList.size() > 0){
-                specOptionPrice = goodsSpecificationOptionFeignClient.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList);
+                specOptionPrice = goodsSpecificationOptionFeignApi.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList).getData();
             }
 
             //单品的总价
@@ -286,9 +301,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BigDecimal subtractPrice = BigDecimal.ZERO; //使用优惠券时优惠的金额
         if (couponsMemberRelationId != null) {
         //查询出使用的优惠券信息
-            CouponsMemberRelation dbCouponsMemberRelation = couponsMemberRelationFeignClient.selectCouponsMemberRelationByPrimaryKey(couponsMemberRelationId);
+            CouponsMemberRelation dbCouponsMemberRelation = couponsMemberRelationFeignApi.selectCouponsMemberRelationByPrimaryKey(couponsMemberRelationId).getData();
             Integer couponsId = dbCouponsMemberRelation.getCouponsId();
-            Map couponsMap = couponsFeignClient.selectCouponsAndGoodsByPrimaryKey(couponsId);
+            Map couponsMap = couponsFeignApi.selectCouponsAndGoodsByPrimaryKey(couponsId).getData();
             Coupons dbCoupons = BeanUtil.mapToBean((Map) couponsMap.get("coupons"), Coupons.class, false);
             if(Coupons.TYPE_DISCOUNT.equals(dbCoupons.getPreferentialType())){
                 //折扣优惠券
@@ -300,16 +315,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 OrderDetail couponsDiscountOrderDetail = null; //优惠券选择优惠的商品
 
                 //判断该优惠券能否在这家店铺使用
-                List<Integer> shopIdList = couponsShopRelationFeignClient.getShopIdByCouponsId(couponsId);
+                List<Integer> shopIdList = couponsShopRelationFeignApi.getShopIdByCouponsId(couponsId).getData();
                 if(!shopIdList.contains(param.getShopId())){
                     throw new StoneCustomerException("当前店铺不能使用所选优惠券，请重新下单");
                 }
 
                 //查询出优惠券关联的所有商品
-                List<Integer> goodsIdList = couponsGoodsRelationFeignClient.getGoodsIdByCouponsId(couponsId);
+                List<Integer> goodsIdList = couponsGoodsRelationFeignApi.getGoodsIdByCouponsId(couponsId).getData();
                 for (OrderDetail orderDetail : orderDetailList) {
                     //获取商品详情
-                    Goods goods = goodsFeignClient.selectByPrimaryKey(orderDetail.getGoodsId());
+                    Goods goods = goodsFeignApi.selectByPrimaryKey(orderDetail.getGoodsId()).getData();
                     //判断商品是否能够使用此优惠卷 且 是否应用于最高价格的商品(不包括包装费)
                     if (goodsIdList.contains(goods.getId()) || dbCoupons.getSource() == Quantity.INT_2) {
                         //标记此优惠券满足使用条件
@@ -326,7 +341,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                         //正常情况下nameList不能为空，为空也要做特殊处理
                         BigDecimal specOptionPrice = BigDecimal.ZERO;
                         if(nameList.size() > 0){
-                            specOptionPrice = goodsSpecificationOptionFeignClient.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList);
+                            specOptionPrice = goodsSpecificationOptionFeignApi.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList).getData();
                         }
                         //计算出商品单价+规格单价的价格
                         BigDecimal price = goods.getPrice().add(specOptionPrice);
@@ -378,7 +393,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //判断满减规则是否满足使用条件
         Integer fullReductionRuleId = param.getFullReductionRuleId();
         if (fullReductionRuleId != null) {
-            FullReductionRule dbFullReductionRule = fullReductionRuleFeignClient.selectByPrimaryKey(fullReductionRuleId);
+            FullReductionRule dbFullReductionRule = fullReductionRuleFeignApi.selectByPrimaryKey(fullReductionRuleId).getData();
             if(finalPrice.compareTo(dbFullReductionRule.getLimitedPrice()) >= 0){
                 finalPrice = finalPrice.subtract(dbFullReductionRule.getReducedPrice());
                 param.setFullReductionRuleId(dbFullReductionRule.getId());
@@ -548,7 +563,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             String goodsSpecification = orderDetail.getSpecList();
             int number = orderDetail.getNumber();
             // 获取商品信息
-            Goods dbGoods = goodsFeignClient.selectByPrimaryKey(Integer.valueOf(goodsId));
+            Goods dbGoods = goodsFeignApi.selectByPrimaryKey(Integer.valueOf(goodsId)).getData();
             //商品规格选项值列表
             List<String> nameList = new ArrayList<>();
             //计算单品对应规格的价格
@@ -560,7 +575,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             //正常情况下nameList不能为空，为空也要做特殊处理
             BigDecimal specOptionPrice = BigDecimal.ZERO;
             if(nameList.size() > 0){
-                specOptionPrice = goodsSpecificationOptionFeignClient.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList);
+                specOptionPrice = goodsSpecificationOptionFeignApi.selectSumPriceByGoodsIdAndName(orderDetail.getGoodsId(), nameList).getData();
             }
 
             //单品的总价
@@ -586,12 +601,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderDetailService.insertSelective(insertOrderDetail);
 
             // 减少商品库存 (规格的库存该怎么去变化)
-            /*goodsFeignClient.decreaseStock(goodsId, number);*/
+            /*goodsFeignApi.decreaseStock(goodsId, number);*/
         }
 
         //如果是从购物车下单的 那么下单成功后需要删除购物车数据  注意用批量删除
         if(param.getShoppingCartIdList()!=null && !param.getShoppingCartIdList().isEmpty()){
-            shoppingCartFeignClient.batchDeleteByIdList(param.getShoppingCartIdList());
+            shoppingCartFeignApi.batchDeleteByIdList(param.getShoppingCartIdList());
         }
 
         //修改新用户
@@ -601,13 +616,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMember.setId(loginMember.getId());
             updateMember.setIsNewPeople(false);
             updateMember.setIsRemindNewPeople(false);
-            memberFeignClient.updateByPrimaryKeySelective(updateMember);
-            dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+            memberFeignApi.updateByPrimaryKeySelective(updateMember);
+            dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
         }
 
         //使用优惠卷
         if (couponsMemberRelationId != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,true);
+            couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,true);
         }
 
         /*//加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
@@ -648,13 +663,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-            /*goodsFeignClient.increaseStock(goodsId, number);*/
+            /*goodsFeignApi.increaseStock(goodsId, number);*/
         }
 
         //退回优惠卷
         Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
         if (couponsMemberRelationId != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,false);
+            couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,false);
         }
     }
 
@@ -693,17 +708,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             int goodsId = orderDetail.getGoodsId();
             int number = orderDetail.getNumber();
             //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+//            goodsFeignApi.increaseStock(goodsId, number);
         }*/
 
         //退回优惠卷
         Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
         if (couponsMemberRelationId != null) {
-            couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId, false);
+            couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId, false);
         }
 
         //查找该订单对应的交易记录
-        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbOrder.getTradeId());
+        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignApi.selectByPrimaryKey(dbOrder.getTradeId()).getData();
         int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
                 ? Quantity.INT_1 :
                 (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
@@ -768,14 +783,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         } else if (dbOrder.getPaymentMode().equals(Quantity.INT_2)) {
             //余额支付
-            Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+            Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
             //增加用户的余额
             Member updateMember = new Member();
             updateMember.setId(dbMember.getId());
             updateMember.setBalance(dbMember.getBalance().add(insertOrderRefund.getRefundAmount()));
             updateMember.setTotalConsumeBalance(dbMember.getTotalConsumeBalance().subtract(insertOrderRefund.getRefundAmount()));
-            memberFeignClient.updateByPrimaryKeySelective(updateMember);
-            dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+            memberFeignApi.updateByPrimaryKeySelective(updateMember);
+            dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
             //添加账单记录
             MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
             memberBillingRecord.setMemberId(dbMember.getId());
@@ -785,7 +800,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             memberBillingRecord.setNumber(insertOrderRefund.getRefundAmount());
             memberBillingRecord.setMessage("一分钟内取消订单-余额退回");
             memberBillingRecord.setCreateTime(new Date());
-            memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+            memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
             //退款成功的操作
             this.updateRefundStatus(dbOrder.getOrderNo());
@@ -807,23 +822,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderRefundProcessService.insertSelective(orderRefundProcess_second);
 
             //退回下单奖励积分
-            MemberBillingRecordExample example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeEqualTo(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS)
-                    .andOrderIdEqualTo(dbOrder.getId());
-            List<MemberBillingRecord> list = memberBillingRecordFeignClient.selectByExample(example);
+            MemberBillingRecordParam billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setType(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS);
+            billingRecordParam.setOrderId(dbOrder.getId());
+            List<MemberBillingRecord> list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if (!list.isEmpty()) {
                 MemberBillingRecord dbMemberBillingRecord = list.get(0);
-                Member dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
                 //获取用户当前积分数 -- 未到账积分
                 BigDecimal unreceivedPointsNum = dbMember.getUnreceivedPoints().subtract(dbMemberBillingRecord.getNumber());
                 //修改用户的积分数
                 Member member = new Member();
                 member.setId(dbOrder.getMemberId());
                 member.setUnreceivedPoints(unreceivedPointsNum);
-                memberFeignClient.updateByPrimaryKeySelective(member);
-                dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                memberFeignApi.updateByPrimaryKeySelective(member);
+                dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
                 MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
                 memberBillingRecord.setMemberId(dbOrder.getMemberId());
@@ -834,13 +849,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 memberBillingRecord.setMessage("订单退款-下单奖励积分退回");
                 memberBillingRecord.setOrderId(dbOrder.getId());
                 memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                 //之前的账单记录标注已退回
                 MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                 updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                 updateMemberBillingRecord.setIsReturn(true);
-                memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
             }
 
             //退回下单佣金奖励
@@ -848,12 +863,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             typeList.add(MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_OWN_COMMISSION);
-            example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeIn(typeList)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT)
-                    .andOrderIdEqualTo(dbOrder.getId());
-            list = memberBillingRecordFeignClient.selectByExample(example);
+            billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setTypeList(typeList);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
+            billingRecordParam.setOrderId(dbOrder.getId());
+            list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if (!list.isEmpty()) {
                 for (MemberBillingRecord dbMemberBillingRecord : list) {
                     Integer type = null;
@@ -869,7 +884,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                         message = "订单退款-下单用户佣金奖励退回";
                     }
 
-                    Member dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    Member dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
                     //增加用户的邀请新用户注册奖励金额
                     BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
@@ -877,8 +892,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     updateMember.setId(dbMember.getId());
                     updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
                     updateMember.setUpdateTime(new Date());
-                    memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                    dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                    dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
 
                     //增加用户账单记录
                     MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -890,21 +905,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     memberBillingRecord.setMessage(message);
                     memberBillingRecord.setOrderId(dbOrder.getId());
                     memberBillingRecord.setCreateTime(new Date());
-                    memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                    memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                     //之前的账单记录标注已退回
                     MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                     updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                     updateMemberBillingRecord.setIsReturn(true);
-                    memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                    memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
                 }
                 }
             }
 
         //获取该订单对应的商家信息
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
-        Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
-        Member bindMember = memberFeignClient.selectByPrimaryKey(dbMerchant.getMemberId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
+        Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
+        Member bindMember = memberFeignApi.selectByPrimaryKey(dbMerchant.getMemberId()).getData();
         if (bindMember != null) {
             //发送微信公众号消息通知商家
             String title = "尊敬的商家，您有一个订单已被用户取消，为避免损失，请不要继续备货哦 - 取餐号" + dbOrder.getQueueNo();
@@ -1110,11 +1125,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 //            int goodsId = orderDetail.getGoodsId();
 //            int number = orderDetail.getNumber();
 //            //增加商品库存
-//            goodsFeignClient.increaseStock(goodsId, number);
+//            goodsFeignApi.increaseStock(goodsId, number);
 //        }
 
         //查找该订单对应的交易记录
-        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbOrder.getTradeId());
+        MemberTradeRecord memberTradeRecord = memberTradeRecordFeignApi.selectByPrimaryKey(dbOrder.getTradeId()).getData();
         int refundAccount = memberTradeRecord.getPaymentMode() == Quantity.INT_1
                 ? Quantity.INT_1 :
                 (memberTradeRecord.getPaymentMode() == Quantity.INT_2 ? Quantity.INT_2
@@ -1168,9 +1183,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         orderRefundProcessService.insertSelective(orderRefundProcess_second);
 
         //获取该订单对应的商家信息
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
-        Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
-        Member bindMember = memberFeignClient.selectByPrimaryKey(dbMerchant.getMemberId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
+        Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
+        Member bindMember = memberFeignApi.selectByPrimaryKey(dbMerchant.getMemberId()).getData();
         if(bindMember != null){
             //如果商品明细内容过长，则需要分多次发送公众号消息
             //字数：38*4=152 -> 112
@@ -1367,7 +1382,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             //退回使用的优惠卷
             Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
             if (couponsMemberRelationId != null) {
-                couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId, false);
+                couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId, false);
             }
         }
     }
@@ -1464,7 +1479,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 //        rawmaterialRelationService.updateRawmaterialConsumedQuantityByOrderDetailList(orderDetailList);
 
         // 获取下单积分量
-        Setting setting= settingFeignClient.selectCurrent();
+        Setting setting= settingFeignApi.selectCurrent().getData();
         BigDecimal settingNum = setting.getPurchaseRewardPoints();
         settingNum = settingNum == null ? BigDecimal.ZERO : settingNum;
 
@@ -1473,7 +1488,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         goodsNum = goodsNum == null ? 0 : goodsNum;
         BigDecimal givePoints = settingNum.multiply(BigDecimal.valueOf(goodsNum).setScale(Quantity.INT_2, BigDecimal.ROUND_HALF_UP));
 
-        Member dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
         //生成积分账单 -- 未到账积分
         if(givePoints.compareTo(BigDecimal.ZERO) > 0){
             //获取用户当前积分数 -- 未到账积分
@@ -1482,8 +1497,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             Member member = new Member();
             member.setId(dbOrder.getMemberId());
             member.setUnreceivedPoints(unreceivedPointsNum);
-            memberFeignClient.updateByPrimaryKeySelective(member);
-            dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+            memberFeignApi.updateByPrimaryKeySelective(member);
+            dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
             MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
             memberBillingRecord.setMemberId(dbOrder.getMemberId());
@@ -1494,20 +1509,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             memberBillingRecord.setMessage("下单奖励积分");
             memberBillingRecord.setOrderId(dbOrder.getId());
             memberBillingRecord.setCreateTime(new Date());
-            memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+            memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
         }
 
         //商品月销量和总销量修改
         for (OrderDetail orderDetail : orderDetailList) {
             Integer num = orderDetail.getNumber();
             Integer goodsId = orderDetail.getGoodsId();
-            goodsFeignClient.updateSales(goodsId, num);
+            goodsFeignApi.updateSales(goodsId, num);
         }
 
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
 
         //增加商家-用户下单冻结资金
-        Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+        Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
         if(dbMerchant == null){
             throw new StoneCustomerException("该商家信息不存在");
         }
@@ -1516,7 +1531,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         updateMerchant.setId(dbMerchant.getId());
         updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
         updateMerchant.setUpdateTime(new Date());
-        merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+        merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
         //增加商家账单记录
         MerchantBillingRecord merchantBillingRecord = new MerchantBillingRecord();
@@ -1527,12 +1542,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         merchantBillingRecord.setNumber(dbOrder.getMerchantIncome());
         merchantBillingRecord.setMessage("订单收入 -- 订单号" + dbOrder.getOrderNo());
         merchantBillingRecord.setCreateTime(new Date());
-        merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+        merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
 
         //TODO-插入骑手配送费账单记录，由于目前是商家自配送，所以配送费要打到商家余额中
         if(dbOrder.getShoppingWay()==Quantity.INT_2 && dbOrder.getDeliveryWay()==Quantity.INT_1){
             //增加商家-用户下单冻结资金
-            dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
             if(dbMerchant == null){
                 throw new StoneCustomerException("该商家信息不存在");
             }
@@ -1541,7 +1556,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //增加商家账单记录
             merchantBillingRecord = new MerchantBillingRecord();
@@ -1552,7 +1567,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             merchantBillingRecord.setNumber(dbOrder.getCourierIncome());
             merchantBillingRecord.setMessage("商家自配送-配送费收入 -- 订单号" + dbOrder.getOrderNo());
             merchantBillingRecord.setCreateTime(new Date());
-            merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+            merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
         }else{
 
         }
@@ -1560,8 +1575,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //TODO-是否需要插入平台抽佣账单记录
 
       //获取该订单对应的商家信息
-        Merchant merchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
-        Member bindMember = memberFeignClient.selectByPrimaryKey(merchant.getMemberId());
+        Merchant merchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
+        Member bindMember = memberFeignApi.selectByPrimaryKey(merchant.getMemberId()).getData();
         if(bindMember != null){
             //如果商品明细内容过长，则需要分多次发送公众号消息
             //字数：38*4=152 -> 112
@@ -1665,7 +1680,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BigDecimal inviterCommissionPercent, commissionAmount;
         String message;
         //给下单用户的邀请人发放佣金
-        Map<String, Integer> inviterMap = memberInviteRelationFeignClient.selectInviter(dbOrder.getMemberId());
+        Map<String, Integer> inviterMap = memberInviteRelationFeignApi.selectInviter(dbOrder.getMemberId()).getData();
         if(inviterMap.containsKey("secondLevelInviter")){
             //有2个上级邀请人
             //发放下单用户佣金奖励
@@ -1728,13 +1743,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return;
         }
 
-        MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignClient.selectByPrimaryKey(dbOrder.getChangeToDeliveryTradeId());
+        MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByPrimaryKey(dbOrder.getChangeToDeliveryTradeId()).getData();
         if(dbMemberTradeRecord == null){
             log.error("用户交易记录不存在，回调逻辑处理失败");
             return;
         }
 
-        Setting setting = settingFeignClient.selectCurrent();
+        Setting setting = settingFeignApi.selectCurrent().getData();
 
         //修改订单信息：配送信息、订单基本信息、是否由自取订单改为配送->是
         //接单门店不能进行变动(是否需要考虑某些门店不支持配送的情况)，小票需要重新打印(显示自取订单改为配送标识)
@@ -1795,12 +1810,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         updateOrder.setUpdateTime(new Date());
         orderMapper.updateByPrimaryKeySelective(updateOrder);
 
-        Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
 
         if(dbOrder.getMerchantIncome().compareTo(updateOrder.getMerchantIncome()) > 0){
             //当前商家收入 低于 之前商家收入
             //减少商家的用户下单冻结资金
-            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
             if(dbMerchant == null){
                 throw new StoneCustomerException("该商家信息不存在");
             }
@@ -1810,7 +1825,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //增加商家账单记录
             MerchantBillingRecord merchantBillingRecord = new MerchantBillingRecord();
@@ -1821,13 +1836,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             merchantBillingRecord.setNumber(number);
             merchantBillingRecord.setMessage("自取订单改为配送，收入减少 -- 订单号" + dbOrder.getOrderNo());
             merchantBillingRecord.setCreateTime(new Date());
-            merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+            merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
 
 
         }else if(dbOrder.getMerchantIncome().compareTo(updateOrder.getMerchantIncome()) < 0){
             //当前商家收入 高于 之前商家收入
             //增加商家的用户下单冻结资金
-            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
             if(dbMerchant == null){
                 throw new StoneCustomerException("该商家信息不存在");
             }
@@ -1837,7 +1852,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //增加商家账单记录
             MerchantBillingRecord merchantBillingRecord = new MerchantBillingRecord();
@@ -1848,7 +1863,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             merchantBillingRecord.setNumber(number);
             merchantBillingRecord.setMessage("自取订单改为配送，收入增加 -- 订单号" + dbOrder.getOrderNo());
             merchantBillingRecord.setCreateTime(new Date());
-            merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+            merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
         }
     }
 
@@ -1917,8 +1932,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 }
             }
 
-            Shop dbShop = shopFeignClient.selectByPrimaryKey(order.getShopId());
-            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            Shop dbShop = shopFeignApi.selectByPrimaryKey(order.getShopId()).getData();
+            Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
 
             //增加商家的余额、可提现余额，减少商家的用户下单冻结资金
             BigDecimal updateBalance = dbMerchant.getBalance().add(amount).setScale(2, BigDecimal.ROUND_HALF_UP);;
@@ -1930,7 +1945,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setWithdrawableBalance(updateWithdrawableBalance);
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //修改订单的用户下单资金是否已转入商家余额状态
             Order updateOrder = new Order();
@@ -1948,13 +1963,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return;
         }
 
-        ShopExample shopExample = new ShopExample();
-        shopExample.createCriteria().andIdIn(shopIdList);
-        List<Shop> shopList = shopFeignClient.selectByExample(shopExample);
+        ShopParam shopParam = new ShopParam();
+        shopParam.setShopIdList(shopIdList);
+        List<Shop> shopList = shopFeignApi.selectByExample(shopParam).getData();
 
-        MerchantExample merchantExample = new MerchantExample();
-        merchantExample.createCriteria().andShopIdIn(shopIdList);
-        List<Merchant> merchantList = merchantFeignClient.selectByExample(merchantExample);
+        MerchantParam merchantParam = new MerchantParam();
+        merchantParam.setShopIdList(shopIdList);
+        List<Merchant> merchantList = merchantFeignApi.selectByExample(merchantParam).getData();
 
         Map<Integer, Shop> filterMap = new HashMap<>();
         for (Merchant merchant : merchantList) {
@@ -2020,8 +2035,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if(dbOrderRefund.getRefundWay()==Quantity.INT_1 && dbOrderRefund.getIsRefundDeliveryFee()){
             //退还配送费 / 全额退款
             //减少商家-用户下单冻结资金
-            Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
-            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
+            Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
             if(dbMerchant == null){
                 throw new StoneCustomerException("该商家信息不存在");
             }
@@ -2030,7 +2045,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //增加商家账单记录
             MerchantBillingRecord merchantBillingRecord = new MerchantBillingRecord();
@@ -2041,10 +2056,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             merchantBillingRecord.setNumber(dbOrder.getMerchantIncome());
             merchantBillingRecord.setMessage((dbOrderRefund.getType() == 1 ? "用户一分钟内取消订单" : "用户申请退款") + " -- 订单号" + dbOrder.getOrderNo());
             merchantBillingRecord.setCreateTime(new Date());
-            merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+            merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
 
             //减少商家-用户下单冻结资金 配送费退回
-            dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
             if(dbMerchant == null){
                 throw new StoneCustomerException("该商家信息不存在");
             }
@@ -2053,7 +2068,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //增加商家账单记录
             merchantBillingRecord = new MerchantBillingRecord();
@@ -2064,13 +2079,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             merchantBillingRecord.setNumber(dbOrder.getCourierIncome());
             merchantBillingRecord.setMessage((dbOrderRefund.getType() == 1 ? "用户一分钟内取消订单-配送费退回" : "用户申请退款-配送费退回") + " -- 订单号" + dbOrder.getOrderNo());
             merchantBillingRecord.setCreateTime(new Date());
-            merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+            merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
 
         }else{
             //不退还配送费 / 部分退款
             //减少商家-用户下单冻结资金
-            Shop dbShop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
-            Merchant dbMerchant = merchantFeignClient.selectByPrimaryKey(dbShop.getMerchantId());
+            Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
+            Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
             if(dbMerchant == null){
                 throw new StoneCustomerException("该商家信息不存在");
             }
@@ -2079,7 +2094,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setOrderFrozenBalance(updateOrderFrozenBalance);
             updateMerchant.setUpdateTime(new Date());
-            merchantFeignClient.updateByPrimaryKeySelective(updateMerchant);
+            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
 
             //增加商家账单记录
             MerchantBillingRecord merchantBillingRecord = new MerchantBillingRecord();
@@ -2090,7 +2105,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             merchantBillingRecord.setNumber(dbOrderRefund.getRefundAmount());
             merchantBillingRecord.setMessage((dbOrderRefund.getType() == 1 ? "用户一分钟内取消订单" : "用户申请退款") + " -- 订单号" + dbOrder.getOrderNo());
             merchantBillingRecord.setCreateTime(new Date());
-            merchantBillingRecordFeignClient.insertSelective(merchantBillingRecord);
+            merchantBillingRecordFeignApi.insertSelective(merchantBillingRecord);
         }
     }
 
@@ -2165,7 +2180,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
         //返回商家电话
-        Shop shop = shopFeignClient.selectByPrimaryKey(dbOrder.getShopId());
+        Shop shop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
         dbOrderMap.put("shopContactPhone", shop.getContactPhone());
 
         orderVo.setOrder(dbOrderMap);
@@ -2324,7 +2339,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
         //获取该订单的对应用户
-        Member orderMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+        Member orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
         if(param.getStatus() == Quantity.INT_1){
             //审核通过
@@ -2348,8 +2363,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 updateMember.setId(orderMember.getId());
                 updateMember.setBalance(orderMember.getBalance().add(dbOrderRefund.getRefundAmount()));
                 updateMember.setTotalConsumeBalance(orderMember.getTotalConsumeBalance().subtract(dbOrderRefund.getRefundAmount()));
-                memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                orderMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
                 //添加账单记录
                 MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
                 memberBillingRecord.setMemberId(orderMember.getId());
@@ -2359,7 +2374,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 memberBillingRecord.setNumber(dbOrderRefund.getRefundAmount());
                 memberBillingRecord.setMessage("用户申请退款-余额退回");
                 memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                 //退款成功的操作
                 updateRefundStatus(dbOrder.getOrderNo());
@@ -2375,7 +2390,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 //退回优惠卷
                 Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
                 if (couponsMemberRelationId != null) {
-                    couponsMemberRelationFeignClient.updateCouponsUsed(couponsMemberRelationId,false);
+                    couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,false);
                 }
             }
 
@@ -2403,23 +2418,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             wxNotifyService.sendOrderRefundSuccessMessage(orderMember.getOpenId(), dbOrder.getShopName(), dbOrder.getOrderNo(), dbOrder.getDescription(), dbOrderRefund.getRefundAmount(), new Date());
 
             //退回下单奖励积分
-            MemberBillingRecordExample example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeEqualTo(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS)
-                    .andOrderIdEqualTo(dbOrder.getId());
-            List<MemberBillingRecord> list = memberBillingRecordFeignClient.selectByExample(example);
+            MemberBillingRecordParam billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setType(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS);
+            billingRecordParam.setOrderId(dbOrder.getId());
+            List<MemberBillingRecord> list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if(!list.isEmpty()){
                 MemberBillingRecord dbMemberBillingRecord = list.get(0);
-                Member dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
                 //获取用户当前积分数 -- 未到账积分
                 BigDecimal unreceivedPointsNum = dbMember.getUnreceivedPoints().subtract(dbMemberBillingRecord.getNumber());
                 //修改用户的积分数
                 Member member = new Member();
                 member.setId(dbOrder.getMemberId());
                 member.setUnreceivedPoints(unreceivedPointsNum);
-                memberFeignClient.updateByPrimaryKeySelective(member);
-                dbMember = memberFeignClient.selectByPrimaryKey(dbOrder.getMemberId());
+                memberFeignApi.updateByPrimaryKeySelective(member);
+                dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
 
                 MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
                 memberBillingRecord.setMemberId(dbOrder.getMemberId());
@@ -2430,13 +2445,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 memberBillingRecord.setMessage("订单退款-下单奖励积分退回");
                 memberBillingRecord.setOrderId(dbOrder.getId());
                 memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                 //之前的账单记录标注已退回
                 MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                 updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                 updateMemberBillingRecord.setIsReturn(true);
-                memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
             }
 
             //退回下单佣金奖励
@@ -2444,12 +2459,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             typeList.add(MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION);
             typeList.add(MemberBillingRecord.TYPE_OWN_COMMISSION);
-            example = new MemberBillingRecordExample();
-            example.createCriteria().andTypeIn(typeList)
-                    .andOperateTypeEqualTo(MemberBillingRecord.OPERATE_TYPE_ADD)
-                    .andCoinTypeEqualTo(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT)
-                    .andOrderIdEqualTo(dbOrder.getId());
-            list = memberBillingRecordFeignClient.selectByExample(example);
+            billingRecordParam = new MemberBillingRecordParam();
+            billingRecordParam.setTypeList(typeList);
+            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
+            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
+            billingRecordParam.setOrderId(dbOrder.getId());
+            list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
             if(!list.isEmpty()){
                 for (MemberBillingRecord dbMemberBillingRecord : list) {
                     Integer type = null;
@@ -2465,7 +2480,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                         message = "订单退款-下单用户佣金奖励退回";
                     }
 
-                    Member dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    Member dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
                     //增加用户的邀请新用户注册奖励金额
                     BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
 
@@ -2473,8 +2488,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     updateMember.setId(dbMember.getId());
                     updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
                     updateMember.setUpdateTime(new Date());
-                    memberFeignClient.updateByPrimaryKeySelective(updateMember);
-                    dbMember = memberFeignClient.selectByPrimaryKey(dbMemberBillingRecord.getMemberId());
+                    memberFeignApi.updateByPrimaryKeySelective(updateMember);
+                    dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
 
                     //增加用户账单记录
                     MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
@@ -2486,13 +2501,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     memberBillingRecord.setMessage(message);
                     memberBillingRecord.setOrderId(dbOrder.getId());
                     memberBillingRecord.setCreateTime(new Date());
-                    memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+                    memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
                     //之前的账单记录标注已退回
                     MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
                     updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
                     updateMemberBillingRecord.setIsReturn(true);
-                    memberBillingRecordFeignClient.updateByPrimaryKeySelective(updateMemberBillingRecord);
+                    memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
                 }
             }
         }else if(param.getStatus() == Quantity.INT_2){

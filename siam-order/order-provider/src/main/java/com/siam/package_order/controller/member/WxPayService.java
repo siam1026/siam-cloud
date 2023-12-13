@@ -64,13 +64,13 @@ public class WxPayService {
     private AliyunSms aliyunSms;
 
 //    @Autowired
-//    private ShopFeignClient shopFeignClient;
+//    private ShopFeignClient shopFeignApi;
 
 //    @Autowired
 //    private MerchantBillingRecordService merchantBillingRecordService;
 
 //    @Autowired
-//    private MerchantFeignClient merchantFeignClient;
+//    private MerchantFeignClient merchantFeignApi;
 
     @Autowired
     private WxPublicPlatformNotifyService wxPublicPlatformNotifyService;

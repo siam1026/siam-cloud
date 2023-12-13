@@ -94,7 +94,7 @@ export default {
 
 				// this.editLoading = true;
 				if(param.id){
-					url = '/api-goods/rest/admin/advertisement/update';
+					url = '/api-promotion/rest/admin/advertisement/update';
 					vue.$http.put(vue, url, param,
 						(vue, data) => {
 							// this.editLoading = false;
@@ -117,7 +117,7 @@ export default {
 						}
 					)							
 				}else{
-					url = '/api-goods/rest/admin/advertisement/insert';
+					url = '/api-promotion/rest/admin/advertisement/insert';
 					vue.$http.post(vue, url, param,
 						(vue, data) => {
 							// this.editLoading = false;
@@ -219,7 +219,7 @@ export default {
 		let formData = new FormData();
 		formData.append('file', value);    
 
-		vue.$http.postupload(vue, '/api-goods/rest/admin/uploadSingleImage', formData,
+		vue.$http.postupload(vue, '/api-util/rest/admin/uploadSingleImage', formData,
 			function (vue, data) {
 				option.onSuccess();
 				let obj = {

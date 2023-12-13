@@ -7,9 +7,9 @@ import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.GenerateNo;
-import com.siam.package_feign.mod_feign.user.MemberBillingRecordFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberFeignClient;
-import com.siam.package_feign.mod_feign.user.MemberTradeRecordFeignClient;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_order.controller.member.PlatformPayDto;
 import com.siam.package_order.entity.internal.PointsMallOrder;
 import com.siam.package_order.service.internal.PointsMallOrderService;
@@ -42,16 +42,16 @@ import java.util.Date;
 public class PointsMallPlatformPayController {
 
     @Autowired
-    private MemberTradeRecordFeignClient memberTradeRecordFeignClient;
+    private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
     private MemberSessionManager memberSessionManager;
 
     @Autowired
-    private MemberFeignClient memberFeignClient;
+    private MemberFeignApi memberFeignApi;
 
     @Autowired
-    private MemberBillingRecordFeignClient memberBillingRecordFeignClient;
+    private MemberBillingRecordFeignApi memberBillingRecordFeignApi;
 
     @Resource(name = "pointsMallOrderServiceImpl")
     private PointsMallOrderService pointsMallOrderService;
@@ -73,7 +73,7 @@ public class PointsMallPlatformPayController {
         //TODO-之前都没有验证过该订单是否属于当前登录用户
         BasicData basicResult = new BasicData();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
-        Member dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
 
         if(platformPayDto.getType()!=Quantity.INT_4){
             throw new StoneCustomerException("交易类型错误");
@@ -117,7 +117,7 @@ public class PointsMallPlatformPayController {
             insertMemberTradeRecord.setStatus(Quantity.INT_1);
             insertMemberTradeRecord.setCreateTime(new Date());
             insertMemberTradeRecord.setUpdateTime(new Date());
-            int insertMemberTradeRecordId = memberTradeRecordFeignClient.insertSelective(insertMemberTradeRecord);
+            int insertMemberTradeRecordId = memberTradeRecordFeignApi.insertSelective(insertMemberTradeRecord).getData();
 
             //修改订单信息：补填用户交易id
             PointsMallOrder updateOrder = new PointsMallOrder();
@@ -146,8 +146,8 @@ public class PointsMallPlatformPayController {
         updateMember.setId(dbMember.getId());
         updateMember.setPoints(dbMember.getPoints().subtract(platformPayDto.getTotal_fee()));
         updateMember.setTotalConsumePoints(dbMember.getTotalConsumePoints().add(platformPayDto.getTotal_fee()));
-        memberFeignClient.updateByPrimaryKeySelective(updateMember);
-        dbMember = memberFeignClient.selectByPrimaryKey(loginMember.getId());
+        memberFeignApi.updateByPrimaryKeySelective(updateMember);
+        dbMember = memberFeignApi.selectByPrimaryKey(loginMember.getId()).getData();
         //添加账单记录
         MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
         memberBillingRecord.setMemberId(dbMember.getId());
@@ -157,9 +157,9 @@ public class PointsMallPlatformPayController {
         memberBillingRecord.setNumber(platformPayDto.getTotal_fee());
         memberBillingRecord.setMessage("积分商城订单使用积分支付");
         memberBillingRecord.setCreateTime(new Date());
-        memberBillingRecordFeignClient.insertSelective(memberBillingRecord);
+        memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
 
-        MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignClient.selectByOutTradeNo(outTradeNo);
+        MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
         if(dbMemberTradeRecord == null){
             throw new StoneCustomerException("该商户单号不存在，回调逻辑处理失败");
         }
@@ -173,7 +173,7 @@ public class PointsMallPlatformPayController {
         updateMemberTradeRecord.setId(dbMemberTradeRecord.getId());
         updateMemberTradeRecord.setStatus(Quantity.INT_2);
         updateMemberTradeRecord.setUpdateTime(new Date());
-        memberTradeRecordFeignClient.updateByPrimaryKeySelective(updateMemberTradeRecord);
+        memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
 
         if(dbMemberTradeRecord.getType() == Quantity.INT_6){
             //交易类型为积分商城订单付款
@@ -200,7 +200,7 @@ public class PointsMallPlatformPayController {
             log.debug("\n获取商户单号...");
             MemberTradeRecordExample memberTradeRecordExample = new MemberTradeRecordExample();
             memberTradeRecordExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
-//            int result = memberTradeRecordFeignClient.countByExample(memberTradeRecordExample);
+//            int result = memberTradeRecordFeignApi.countByExample(memberTradeRecordExample);
 //            if(result > 0){
 //                outTradeNo = GenerateNo.getOrderNo();
 //            }else{

@@ -6,13 +6,14 @@ import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_goods.service.SettingService;
+
 import com.siam.package_common.util.BeanUtils;
 import com.siam.package_common.util.DateUtilsPlus;
 import com.siam.package_goods.entity.internal.PointsMallGoods;
 import com.siam.package_goods.model.dto.internal.PointsMallGoodsMenuDto;
 import com.siam.package_goods.service.internal.PointsMallGoodsService;
 import com.siam.package_user.model.param.AdminParam;
+import com.siam.package_util.feign.SettingFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class PointsMallGoodsController {
 //    private CommonService commonService;
 
     @Autowired
-    private SettingService settingService;
+    private SettingFeignApi settingFeignApi;
 
     /*@ApiOperation(value = "商品列表")
     @ApiImplicitParams({

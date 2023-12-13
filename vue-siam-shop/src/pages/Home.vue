@@ -210,7 +210,7 @@
 				param.id = user.shopId;
 				param.isOperating = vue.isOperating;
 
-				let url = '/api-goods/rest/merchant/shop/update';
+				let url = '/api-merchant/rest/merchant/shop/update';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						vue.$message({
@@ -237,7 +237,7 @@
 				param.id = user.shopId;
 				param.isOpenOrderAudio = vue.isOpenOrderAudio;
 
-				let url = '/api-goods/rest/merchant/shop/update';
+				let url = '/api-merchant/rest/merchant/shop/update';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						vue.$message({
@@ -264,7 +264,7 @@
 				param.id = user.shopId;
 				param.isOpenLocalPrint = vue.isOpenLocalPrint;
 
-				let url = '/api-goods/rest/merchant/shop/update';
+				let url = '/api-merchant/rest/merchant/shop/update';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						vue.$message({
@@ -291,7 +291,7 @@
 				param.id = user.shopId;
 				param.isOpenCloudPrint = vue.isOpenCloudPrint;
 
-				let url = '/api-goods/rest/merchant/shop/update';
+				let url = '/api-merchant/rest/merchant/shop/update';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						vue.$message({
@@ -312,7 +312,7 @@
 			refreshUserInfo() {
 				let vue = this
 				var token = sessionStorage.getItem('token');
-				vue.$http.post(vue, '/api-user/rest/merchant/getLoginMerchantInfo', {"token" : token},
+				vue.$http.post(vue, '/api-merchant/rest/merchant/getLoginMerchantInfo', {"token" : token},
 				(vue, data)=> {
 					let user = data.data
 					sessionStorage.setItem('user', JSON.stringify(user));
@@ -344,7 +344,7 @@
                             oldPassword: vue.$utils.Base64(vue.passwordForm.oldPassword),
                             newPassword: vue.$utils.Base64(vue.passwordForm.newPassword)
                         }
-                        vue.$http.post(vue, '/api-user/rest/merchant/updatePassword', param,
+                        vue.$http.post(vue, '/api-merchant/rest/merchant/updatePassword', param,
                             (vue, data)=> {
                                 vue.logining = false;
                                 vue.$message({
@@ -386,7 +386,7 @@
 				this.$confirm('确认退出吗?', '提示', {
 					//type: 'warning'
 				}).then(() => {
-					vue.$http.post(vue, '/api-user/rest/merchant/logout', {},
+					vue.$http.post(vue, '/api-merchant/rest/merchant/logout', {},
 						function(vue, data) {
 							sessionStorage.removeItem('user');
 							vue.$router.push('/login');
@@ -429,7 +429,7 @@
 			}
 			//获取开关设置
 			var vue = this;
-			vue.$http.post(vue, '/api-goods/rest/merchant/shop/getLoginMerchantShopInfo', {},
+			vue.$http.post(vue, '/api-merchant/rest/merchant/shop/getLoginMerchantShopInfo', {},
 				(vue, data) => {
 					let shop = data.data
 					this.isOperating = shop.isOperating;

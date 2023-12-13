@@ -35,16 +35,16 @@ public class MemberInviteRelationServiceImpl implements MemberInviteRelationServ
     private MemberService memberService;
 
 //    @Autowired
-//    private SettingFeignClient settingFeignClient;
+//    private SettingFeignClient settingFeignApi;
 
     @Autowired
     private MemberBillingRecordService memberBillingRecordService;
 
 //    @Autowired
-//    private CouponsService couponsService;
+//    private CouponsFeignApi couponsService;
 //
 //    @Autowired
-//    private CouponsMemberRelationService couponsMemberRelationService;
+//    private CouponsMemberRelationFeignApi couponsMemberRelationService;
 
     @Autowired
     private MemberSessionManager memberSessionManager;
@@ -108,7 +108,7 @@ public class MemberInviteRelationServiceImpl implements MemberInviteRelationServ
 //        String vipNo = memberService.generateVipNo();
 //
 //        //获取积分设置
-//        Setting setting = settingFeignClient.selectCurrent();
+//        Setting setting = settingFeignApi.selectCurrent();
 //        BigDecimal registrationRewardPoints = setting.getRegistrationRewardPoints();
 //        registrationRewardPoints = registrationRewardPoints == null ? BigDecimal.ZERO : registrationRewardPoints;
 //

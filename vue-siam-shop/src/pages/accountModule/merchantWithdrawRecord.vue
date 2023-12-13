@@ -247,7 +247,7 @@
 				}
 
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-user/rest/merchant/merchantWithdrawRecord/list', param,
+				vue.$http.post(vue, '/api-merchant/rest/merchant/merchantWithdrawRecord/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -262,7 +262,7 @@
 						});
 					}
 				)
-				vue.$http.post(vue, '/api-user/rest/merchant/merchantWithdrawRecord/statisticalAmount', param,
+				vue.$http.post(vue, '/api-merchant/rest/merchant/merchantWithdrawRecord/statisticalAmount', param,
 					(vue, data) => {
 						//统计提现成功金额						
 						vue.todayList.withdrawalSuccessfulAmount = Number(data.data.withdrawalSuccessfulAmount).toFixed(2);
@@ -283,7 +283,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-user/rest/merchant/merchantWithdrawRecord/delete', {"id" : id},
+					vue.$http.delete(vue, '/api-merchant/rest/merchant/merchantWithdrawRecord/delete', {"id" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -331,7 +331,7 @@
 						let url = '';
 
 						if(param.id){
-							url = '/api-user/rest/merchant/merchantWithdrawRecord/update';
+							url = '/api-merchant/rest/merchant/merchantWithdrawRecord/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;
@@ -353,7 +353,7 @@
 								}
 							)							
 						}else{
-							url = '/api-user/rest/merchant/merchantWithdrawRecord/insert';
+							url = '/api-merchant/rest/merchant/merchantWithdrawRecord/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									// this.editLoading = false;

@@ -656,7 +656,7 @@ export default {
           param.shopId = param.id;
           delete param.id;
 
-          let url = "/api-goods/rest/merchant/shop/applyChangeImportantData";
+          let url = "/api-merchant/rest/merchant/shop/applyChangeImportantData";
           vue.$http.post(
             vue,
             url,
@@ -685,7 +685,7 @@ export default {
       let vue = this;
       vue.$http.post(
         vue,
-        "/api-goods/rest/merchant/shop/getLoginMerchantShopInfo",
+        "/api-merchant/rest/merchant/shop/getLoginMerchantShopInfo",
         { id },
         (vue, data) => {
           let obj = data.data;
@@ -806,7 +806,7 @@ export default {
       formData.append("file", value);
       vue.$http.postupload(
         vue,
-        "/api-goods/rest/merchant/uploadSingleImage",
+        "/api-util/rest/merchant/uploadSingleImage",
         formData,
         function (vue, data) {
           option.onSuccess();

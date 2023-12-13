@@ -79,7 +79,7 @@ export default {
                 attachType:'photo',//附件类型
             },
             fileName:'C:\Users\root\Documents\WeChat Files\All Users',//本机文件地址
-            uploadImgRelaPath:'/api-goods/rest/admin/uploadSingleImage',//上传后图片地址
+            uploadImgRelaPath:'/api-util/rest/admin/uploadSingleImage',//上传后图片地址
         }
     },
     methods:{
@@ -133,7 +133,7 @@ export default {
                 formData.append("file",res);
                  debugger
                  console.log(formData)
-                this.$http.post(formData,'/api-goods/rest/admin/uploadSingleImage',
+                this.$http.post(formData,'/api-util/rest/admin/uploadSingleImage',
                     {contentType: false, processData: false, headers:{'Content-Type': 'multipart/form-data'}}
                 ).then(res=>{
 

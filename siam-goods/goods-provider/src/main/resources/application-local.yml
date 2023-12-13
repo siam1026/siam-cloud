@@ -1,6 +1,6 @@
 #端口配置
 server:
-  port: 9201
+  port: 9203
 
 spring:
   #mysql
