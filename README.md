@@ -85,7 +85,8 @@ com.siam
 ├── siam-goods              // 商品服务 [9203]
 ├── siam-order              // 订单服务 [9204]
 ├── siam-promotion          // 促销服务 [9205]
-├── siam-util               // 工具服务 [9206]
+├── siam-mall               // 商城服务 [9206]
+├── siam-util               // 工具服务 [9207]
 ├── siam-monitor            // 监控服务 [9100]
 ├── siam-common             // 通用模块
 ├── siam-weixin             // 微信模块
