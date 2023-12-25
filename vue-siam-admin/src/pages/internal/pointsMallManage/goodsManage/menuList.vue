@@ -192,7 +192,7 @@
 				let vue = this
 				let param = Object.assign(vue.searchMsg);
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/menu/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/menu/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -215,7 +215,7 @@
 					// this.listLoading = true;
 				let vue = this;
 				
-				vue.$http.delete(vue, '/api-goods/rest/admin/pointsMall/menu/delete', {"ids" : [id]},
+				vue.$http.delete(vue, '/api-mall/rest/admin/pointsMall/menu/delete', {"ids" : [id]},
 					function(vue, data) {
 						vue.$message({
 							showClose: true,
@@ -286,7 +286,7 @@
 
 						let url = '';
 						if(param.id){
-							url = '/api-goods/rest/admin/pointsMall/menu/update';
+							url = '/api-mall/rest/admin/pointsMall/menu/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									this.editLoading = false;
@@ -308,7 +308,7 @@
 								}
 							)							
 						}else{
-							url = '/api-goods/rest/admin/pointsMall/menu/insert';
+							url = '/api-mall/rest/admin/pointsMall/menu/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									this.editLoading = false;

@@ -2,27 +2,25 @@ package com.siam.package_goods.service_impl.internal;
 
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.util.DateUtilsExtend;
-import com.siam.package_goods.model.example.internal.PointsMallGoodsExample;
 import com.siam.package_goods.model.param.StatisticsParam;
-import com.siam.package_goods.service.internal.PointsMallGoodsService;
-import com.siam.package_goods.service.internal.PointsMallShoppingCartService;
 import com.siam.package_goods.service.internal.PointsMallStatisticsService;
+import com.siam.package_mall.entity.PointsMallOrderRefund;
+import com.siam.package_mall.feign.PointsMallGoodsFeignApi;
+import com.siam.package_mall.feign.PointsMallOrderFeignApi;
+import com.siam.package_mall.feign.PointsMallOrderRefundFeignApi;
+import com.siam.package_mall.feign.PointsMallShoppingCartFeignApi;
+import com.siam.package_mall.model.example.PointsMallGoodsExample;
+import com.siam.package_mall.model.param.PointsMallGoodsParam;
+import com.siam.package_mall.model.param.PointsMallOrderParam;
 import com.siam.package_merchant.feign.MerchantWithdrawRecordFeignApi;
 import com.siam.package_merchant.feign.ShopChangeRecordFeignApi;
 import com.siam.package_merchant.feign.ShopFeignApi;
-import com.siam.package_merchant.model.example.ShopChangeRecordExample;
-import com.siam.package_merchant.model.example.ShopExample;
 import com.siam.package_merchant.model.param.ShopChangeRecordParam;
 import com.siam.package_merchant.model.param.ShopParam;
 import com.siam.package_order.entity.OrderRefund;
-import com.siam.package_order.entity.internal.PointsMallOrder;
-import com.siam.package_order.entity.internal.PointsMallOrderRefund;
 import com.siam.package_order.feign.OrderFeignApi;
 import com.siam.package_order.feign.OrderRefundFeignApi;
-import com.siam.package_order.feign.internal.PointsMallOrderFeignApi;
-import com.siam.package_order.feign.internal.PointsMallOrderRefundFeignApi;
 import com.siam.package_order.model.param.OrderParam;
-import com.siam.package_order.model.param.internal.PointsMallOrderParam;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberTradeRecord;
 import com.siam.package_user.feign.MemberFeignApi;
@@ -66,10 +64,10 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
     private PointsMallOrderRefundFeignApi pointsMallOrderRefundFeignApi;
 
     @Autowired
-    private PointsMallShoppingCartService pointsMallShoppingCartService;
+    private PointsMallShoppingCartFeignApi pointsMallShoppingCartFeignApi;
 
     @Autowired
-    private PointsMallGoodsService pointsMallGoodsService;
+    private PointsMallGoodsFeignApi pointsMallGoodsFeignApi;
 
     @Autowired
     private MerchantWithdrawRecordFeignApi merchantWithdrawRecordFeignApi;
@@ -274,7 +272,7 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         int dayCountPaid = pointsMallOrderFeignApi.selectCountCompleted(order).getData();
         BigDecimal daySumMerchantIncome = pointsMallOrderFeignApi.selectSumActualPrice(order).getData();
         int todayCountIntoShop = systemUsageRecordFeignApi.selectCountIntoPointsMall(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
-        int todayCountShoppingCartGoodsNumber = pointsMallShoppingCartService.selectCountGoodsNumber(null, DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd());
+        int todayCountShoppingCartGoodsNumber = pointsMallShoppingCartFeignApi.selectCountGoodsNumber(null, DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
 
         //待配送订单(外卖)、已完成订单、待处理退款申请
         PointsMallOrderParam pointsMallOrderParam = new PointsMallOrderParam();
@@ -288,21 +286,20 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         int handleOrderRefundCount = pointsMallOrderFeignApi.countByExample(pointsMallOrderParam).getData();
 
         //商品总览：已下架、已上架、库存售罄、全部商品
-        PointsMallGoodsExample goodsExample = new PointsMallGoodsExample();
-        goodsExample.createCriteria().andStatusEqualTo(Quantity.INT_3);
-        int underShelfGoodsCount = pointsMallGoodsService.countByExample(goodsExample);
+        PointsMallGoodsParam goodsExample = new PointsMallGoodsParam();
+        goodsExample.setStatus(Quantity.INT_3);
+        int underShelfGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
 
-        goodsExample = new PointsMallGoodsExample();
-        goodsExample.createCriteria().andStatusEqualTo(Quantity.INT_2);
-        int onShelfGoodsCount = pointsMallGoodsService.countByExample(goodsExample);
+        goodsExample = new PointsMallGoodsParam();
+        goodsExample.setStatus(Quantity.INT_2);
+        int onShelfGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
 
-        goodsExample = new PointsMallGoodsExample();
-        goodsExample.createCriteria().andStatusEqualTo(Quantity.INT_4);
-        int sellOutGoodsCount = pointsMallGoodsService.countByExample(goodsExample);
+        goodsExample = new PointsMallGoodsParam();
+        goodsExample.setStatus(Quantity.INT_4);
+        int sellOutGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
 
-        goodsExample = new PointsMallGoodsExample();
-        goodsExample.createCriteria();
-        int allGoodsCount = pointsMallGoodsService.countByExample(goodsExample);
+        goodsExample = new PointsMallGoodsParam();
+        int allGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
 
         //指数总览：客单价(成交金额/成交订单数)、下单转化率(下单人数/访问人数)、下单-支付转化率(支付人数/下单人数)、支付转化率(支付人数/访问人数)
         Date startDate = new Date("1970/1/1 00:00:00");

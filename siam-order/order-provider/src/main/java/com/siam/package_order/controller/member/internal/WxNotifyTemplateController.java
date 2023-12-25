@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Slf4j
@@ -21,7 +22,7 @@ import java.util.*;
 @Api(tags = "微信服务通知模板模块相关接口", description = "WxNotifyTemplateController")
 public class WxNotifyTemplateController {
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     /**

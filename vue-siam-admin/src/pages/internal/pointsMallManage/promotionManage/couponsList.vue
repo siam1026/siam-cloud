@@ -385,7 +385,7 @@
 				//查询未被删除的商品
 				param.isDelete = 0;
 
-				vue.$http.post(vue, '/api-promotion/rest/admin/pointsMall/coupons/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/coupons/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -408,7 +408,7 @@
 					// this.listLoading = true;
 					let vue = this;
 				
-					vue.$http.delete(vue, '/api-promotion/rest/admin/pointsMall/coupons/delete', {"id" : id},
+					vue.$http.delete(vue, '/api-mall/rest/admin/pointsMall/coupons/delete', {"id" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -429,7 +429,7 @@
 			            handleGiveCoupons (id) { // 派发优惠券
 
 					let vue = this;
-					vue.$http.post(vue, '/api-promotion/rest/admin/pointsMall/couponsMemberRelation/giveCoupons', {"couponsId" : id},
+					vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/couponsMemberRelation/giveCoupons', {"couponsId" : id},
 						function(vue, data) {
 							vue.$message({
 								showClose: true,
@@ -701,7 +701,7 @@
 						this.editLoading = true;			
 
 						if(param.id){
-							url = '/api-promotion/rest/admin/pointsMall/coupons/update';
+							url = '/api-mall/rest/admin/pointsMall/coupons/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									this.editLoading = false;
@@ -723,7 +723,7 @@
 								}
 							)							
 						}else{
-							url = '/api-promotion/rest/admin/pointsMall/coupons/insert';
+							url = '/api-mall/rest/admin/pointsMall/coupons/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									this.editLoading = false;
@@ -891,7 +891,7 @@
 						this.editLoadingFullReduction = true;			
 
 						if(param.id){
-							url = '/api-promotion/rest/admin/pointsMall/coupons/update';
+							url = '/api-mall/rest/admin/pointsMall/coupons/update';
 							vue.$http.put(vue, url, param,
 								(vue, data) => {
 									this.editLoadingFullReduction = false;
@@ -913,7 +913,7 @@
 								}
 							)							
 						}else{
-							url = '/api-promotion/rest/admin/pointsMall/coupons/insert';
+							url = '/api-mall/rest/admin/pointsMall/coupons/insert';
 							vue.$http.post(vue, url, param,
 								(vue, data) => {
 									this.editLoadingFullReduction = false;
@@ -946,7 +946,7 @@
 				console.log("searchMsg="+JSON.stringify(vue.searchMsgGoodsTable));
 
 				vue.listLoadingGoodsTable = true;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/goods/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/goods/list', param,
 					(vue, data) => {
 						vue.listGoodsTable = data.data.records
 						vue.totalGoodsTable = data.data.total
@@ -971,7 +971,7 @@
 				this.editFormVisibleGoodsTable = true;
 				this.couponsIdGoodsTable = id;
 				let vue = this
-				vue.$http.post(vue, '/api-promotion/rest/admin/pointsMall/coupons/selectById', {"id" : id},
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/coupons/selectById', {"id" : id},
 					(vue, data) => {
 						let goodsList = data.data.goodsList
 						//alert(goodsList.length);
@@ -1031,7 +1031,7 @@
 				
 				this.editLoadingGoodsTable = true;
 			
-				url = '/api-promotion/rest/admin/pointsMall/couponsGoodsRelation/insert';
+				url = '/api-mall/rest/admin/pointsMall/couponsGoodsRelation/insert';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						this.editLoadingGoodsTable = false;

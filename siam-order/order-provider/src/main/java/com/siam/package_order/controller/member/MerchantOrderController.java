@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -59,7 +60,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @Transactional(rollbackFor = Exception.class)
 @Api(tags = "商家端订单模块相关接口", description = "MerchantOrderController")
 public class MerchantOrderController {
-    @Autowired
+
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     @Autowired

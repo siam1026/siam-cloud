@@ -416,7 +416,7 @@
       )
 
       //查询订单统计数据
-      vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/statistic', {},
+      vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/statistic', {},
         (vue, data) => {
           DATA_FROM_BACKEND.rows = data.data.resultList;
           vue.todayList.thisMonthCountPaid = data.data.thisMonthCountPaid;

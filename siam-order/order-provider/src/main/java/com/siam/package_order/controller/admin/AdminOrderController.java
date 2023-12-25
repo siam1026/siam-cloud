@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.*;
 
@@ -25,7 +26,7 @@ import java.util.*;
 @Api(tags = "后台订单模块相关接口", description = "AdminOrderController")
 public class AdminOrderController {
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     @ApiOperation(value = "订单列表")

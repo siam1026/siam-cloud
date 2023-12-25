@@ -9,22 +9,23 @@ import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.GenerateNo;
 import com.siam.package_merchant.entity.Shop;
 import com.siam.package_merchant.feign.ShopFeignApi;
-import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.Order;
+import com.siam.package_order.model.dto.PlatformPayDto;
 import com.siam.package_order.service.CommonService;
-import com.siam.package_order.service.DeliveryAddressService;
 import com.siam.package_order.service.OrderService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.entity.DeliveryAddress;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
 import com.siam.package_user.entity.MemberTradeRecord;
+import com.siam.package_user.feign.DeliveryAddressFeignApi;
 import com.siam.package_user.feign.MemberBillingRecordFeignApi;
 import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_user.model.example.MemberTradeRecordExample;
 import com.siam.package_user.util.TokenUtil;
-import com.siam.package_weixin_pay.config.WxPayConfig;
 import com.siam.package_weixin_basic.util.WxdecodeUtils;
+import com.siam.package_weixin_pay.config.WxPayConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -60,11 +62,11 @@ public class PlatformPayController {
     @Autowired
     private MemberSessionManager memberSessionManager;
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     @Autowired
-    private DeliveryAddressService deliveryAddressService;
+    private DeliveryAddressFeignApi deliveryAddressFeignApi;
 
     @Autowired
     private CommonService commonService;
@@ -176,7 +178,7 @@ public class PlatformPayController {
 
             BigDecimal merchantDeliveryFee = BigDecimal.ZERO; //商家承担配送费
             //计算配送费是否正确
-            DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(platformPayDto.getDeliveryAddressId());
+            DeliveryAddress dbDeliveryAddress = deliveryAddressFeignApi.selectByPrimaryKey(platformPayDto.getDeliveryAddressId()).getData();
             if(dbDeliveryAddress == null) throw new StoneCustomerException("收货地址不存在");
             /*String addressStr = dbDeliveryAddress.getProvince() + dbDeliveryAddress.getCity() + dbDeliveryAddress.getArea() + dbDeliveryAddress.getStreet();*/
             BigDecimal deliveryFee = commonService.selectDeliveryFee(dbDeliveryAddress.getLongitude(), dbDeliveryAddress.getLatitude(), dbOrder.getShopId());

@@ -63,6 +63,13 @@
             <version>1.1</version>
         </dependency>
 
+        <!-- 引入商城模块API -->
+        <dependency>
+            <groupId>com.siam</groupId>
+            <artifactId>mall-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
         <!-- 引入工具模块API -->
         <dependency>
             <groupId>com.siam</groupId>

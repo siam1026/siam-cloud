@@ -68,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private MemberMapper memberMapper;
 
-//    @Autowired
+//    @Resource(name = "orderServiceImpl")
 //    private OrderService orderService;
 
     @Autowired

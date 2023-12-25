@@ -18,7 +18,7 @@ package com.siam.package_order.mq_consumer;
 //    @Autowired
 //    private OrderDetailService orderDetailService;
 //
-//    @Autowired
+//    @Resource(name = "orderServiceImpl")
 //    private OrderService orderService;
 //
 //    @RabbitListener(queues = {QueueConfig.QUEUE_NAME1})

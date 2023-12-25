@@ -30,7 +30,7 @@ import java.util.*;
 @Api(tags = "订单模块相关接口", description = "OrderController")
 public class OrderController {
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     @Resource(name = "rewardServiceImpl")

@@ -17,6 +17,7 @@
         <module>../siam-goods</module>
         <module>../siam-order</module>
         <module>../siam-promotion</module>
+        <module>../siam-mall</module>
         <module>../siam-util</module>
         <module>../siam-monitor</module>
         <module>../siam-eureka</module>

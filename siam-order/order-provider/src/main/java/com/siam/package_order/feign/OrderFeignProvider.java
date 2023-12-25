@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.Map;
 @RestController
 public class OrderFeignProvider implements OrderFeignApi {
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     /**
@@ -99,6 +100,12 @@ public class OrderFeignProvider implements OrderFeignApi {
         }
         if(order.getStatus() != null){
             criteria.andStatusEqualTo(order.getStatus());
+        }
+        if(order.getCreateTimeGreaterThan() != null){
+            criteria.andCreateTimeGreaterThan(order.getCreateTimeGreaterThan());
+        }
+        if(order.getExcludeStatusList() != null){
+            criteria.andStatusNotIn(order.getExcludeStatusList());
         }
         return BasicResult.success(orderService.countByExample(example));
     }

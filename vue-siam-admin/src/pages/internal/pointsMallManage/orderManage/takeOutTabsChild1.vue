@@ -380,7 +380,7 @@
 					});		
 					return false;
 				}
-				let url = '/api-order/rest/admin/pointsMall/order/deliver';
+				let url = '/api-mall/rest/admin/pointsMall/order/deliver';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						// this.editLoading = false;
@@ -443,7 +443,7 @@
 					});		
 					return false;
 				}
-				let url = '/api-order/rest/admin/pointsMall/order/update';
+				let url = '/api-mall/rest/admin/pointsMall/order/update';
 				vue.$http.post(vue, url, param,
 					(vue, data) => {
 						// this.editLoading = false;
@@ -487,7 +487,7 @@
           id: vue.dealId,
           dealadvise: vue.editForm.dealadvise
         }
-        vue.dealtype ? url = '/api-order/rest/admin/pointsMall/order/updateOrderByBack' : url = '/api-order/rest/admin/pointsMall/order/updateByDealadvise'
+        vue.dealtype ? url = '/api-mall/rest/admin/pointsMall/order/updateOrderByBack' : url = '/api-mall/rest/admin/pointsMall/order/updateByDealadvise'
         vue.$http.post( vue, url, param,
           (vue, data) => {
             vue.$message({
@@ -535,7 +535,7 @@
           });
           return false
         }
-        vue.$http.post( vue, '/api-goods/rest/admin/pointsMall/stand/update', param,
+        vue.$http.post( vue, '/api-mall/rest/admin/pointsMall/stand/update', param,
           (vue, data) => {
             vue.$message({
               showClose: true,
@@ -649,7 +649,7 @@
         param.status=4;
 
         vue.listLoading = true;
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/listWithDetail', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/listWithDetail', param,
 					(vue, data) => {
             vue.list = data.data.records
             let  listWithDetail = data.data.records
@@ -693,7 +693,7 @@
 				}).then(() => {
 					// this.listLoading = true;
 				let vue = this;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/stand/deleteById', {id},
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/stand/deleteById', {id},
 					function(vue, data) {
             vue.$message({
               showClose: true,
@@ -718,7 +718,7 @@
           id: row.id,
           flag: 3
         }
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/updateStatus', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/updateStatus', param,
 					function(vue, data) {
             vue.$message({
               showClose: true,

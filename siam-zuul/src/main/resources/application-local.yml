@@ -91,6 +91,10 @@ zuul:
       serviceId: promotion-siam
       path: /api-promotion/**
 
+    api-mall:
+      serviceId: mall-siam
+      path: /api-mall/**
+
     api-util:
       serviceId: util-siam
       path: /api-util/**

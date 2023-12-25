@@ -1,17 +1,16 @@
 package com.siam.package_order.controller.member;
 
-import com.siam.package_weixin_pay.util.Constants;
-import com.siam.package_weixin_pay.util.PayUtil;
-import com.siam.package_weixin_pay.config.WxPayConfig;
-import com.siam.package_weixin_pay.entity.TransfersDto;
 import com.siam.package_common.service.AliyunSms;
-import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
 import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.GenerateNo;
 import com.siam.package_order.service.OrderRefundProcessService;
 import com.siam.package_order.service.OrderRefundService;
 import com.siam.package_order.service.OrderService;
+import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
+import com.siam.package_weixin_pay.config.WxPayConfig;
+import com.siam.package_weixin_pay.entity.TransfersDto;
 import com.siam.package_weixin_pay.util.Constants;
+import com.siam.package_weixin_pay.util.PayUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public class WxPayService {
     @Autowired
     private WxPayConfig wxPayConfig;
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     @Autowired

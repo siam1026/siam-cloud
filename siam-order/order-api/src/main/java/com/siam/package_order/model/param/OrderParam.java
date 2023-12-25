@@ -76,4 +76,7 @@ public class OrderParam extends Order {
 
     private String orderRefundGoodsListStr;
 
+    private List excludeStatusList;
+
+    private Date createTimeGreaterThan;
 }

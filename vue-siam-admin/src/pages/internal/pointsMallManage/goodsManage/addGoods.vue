@@ -448,8 +448,8 @@ export default {
 
           let url = "";
           param.id
-            ? (url = "/api-goods/rest/admin/pointsMall/goods/update")
-            : (url = "/api-goods/rest/admin/pointsMall/goods/insert");
+            ? (url = "/api-mall/rest/admin/pointsMall/goods/update")
+            : (url = "/api-mall/rest/admin/pointsMall/goods/insert");
           vue.$http.post(
             vue,
             url,
@@ -506,7 +506,7 @@ export default {
       };
       vue.$http.post(
         vue,
-        "/api-goods/rest/admin/pointsMall/menu/list",
+        "/api-mall/rest/admin/pointsMall/menu/list",
         param,
         (vue, data) => {
           vue.menuList = data.data.records;

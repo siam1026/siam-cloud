@@ -87,7 +87,7 @@ import tabZujianChild5 from './takeOutTabsChild5.vue'
 				} // 查询所有订单标签页的待处理数量
 				let vue = this
         let param = {};        
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/selectAllTabWaitHandleNum', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/selectAllTabWaitHandleNum', param,
 					(vue, data) => {
             let waitDeliveryNum = data.data.waitDeliveryNum;
             let deliveredNum = data.data.deliveredNum;

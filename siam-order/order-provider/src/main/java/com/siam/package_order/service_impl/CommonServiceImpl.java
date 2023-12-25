@@ -8,7 +8,7 @@ import com.siam.package_merchant.entity.Shop;
 import com.siam.package_merchant.feign.ShopFeignApi;
 import com.siam.package_order.entity.TravelingDistanceVo;
 import com.siam.package_order.service.CommonService;
-import com.siam.package_order.service.DeliveryAddressService;
+import com.siam.package_user.feign.DeliveryAddressFeignApi;
 import com.siam.package_util.feign.SettingFeignApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.Date;
 public class CommonServiceImpl implements CommonService {
 
     @Autowired
-    private DeliveryAddressService deliveryAddressService;
+    private DeliveryAddressFeignApi deliveryAddressFeignApi;
 
     @Autowired
     private ShopFeignApi shopFeignApi;

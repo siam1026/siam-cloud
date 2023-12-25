@@ -3,29 +3,28 @@ package com.siam.package_order.service_impl.internal;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.util.DateUtilsExtend;
-import com.siam.package_util.feign.SettingFeignApi;
-import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
-import com.siam.package_user.feign.MemberBillingRecordFeignApi;
-import com.siam.package_user.feign.MemberFeignApi;
-import com.siam.package_user.feign.MemberInviteRelationFeignApi;
-import com.siam.package_util.entity.Setting;
-import com.siam.package_user.entity.internal.VipRechargeRecord;
+import com.siam.package_mall.feign.PointsMallOrderFeignApi;
+import com.siam.package_mall.model.example.PointsMallOrderExample;
+import com.siam.package_mall.model.param.PointsMallOrderParam;
 import com.siam.package_order.mapper.OrderMapper;
 import com.siam.package_order.model.example.OrderExample;
-import com.siam.package_order.model.example.internal.PointsMallOrderExample;
 import com.siam.package_order.model.param.OrderParam;
-import com.siam.package_order.model.param.internal.PointsMallOrderParam;
 import com.siam.package_order.service.RewardService;
-import com.siam.package_order.service.internal.PointsMallOrderService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
+import com.siam.package_user.entity.internal.VipRechargeRecord;
+import com.siam.package_user.feign.MemberBillingRecordFeignApi;
+import com.siam.package_user.feign.MemberFeignApi;
+import com.siam.package_user.feign.MemberInviteRelationFeignApi;
+import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_util.entity.Setting;
+import com.siam.package_util.feign.SettingFeignApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,8 +50,8 @@ public class RewardServiceImpl implements RewardService {
     @Autowired
     private MemberInviteRelationFeignApi memberInviteRelationFeignApi;
 
-    @Resource(name = "pointsMallOrderServiceImpl")
-    private PointsMallOrderService pointsMallOrderService;
+    @Autowired
+    private PointsMallOrderFeignApi pointsMallOrderFeignApi;
 
     @Autowired
     private VipRechargeRecordFeignApi vipRechargeRecordFeignApi;
@@ -88,9 +87,10 @@ public class RewardServiceImpl implements RewardService {
         orderExample.createCriteria().andIdNotEqualTo(orderId).andCreateTimeGreaterThan(vipRechargeRecord.getCreateTime()).andStatusNotIn(excludeStatusList);
         Integer count = orderMapper.countByExample(orderExample);
         //查询积分商城的符合订单数
-        PointsMallOrderExample pointsMallOrderExample = new PointsMallOrderExample();
-        pointsMallOrderExample.createCriteria().andCreateTimeGreaterThan(vipRechargeRecord.getCreateTime()).andStatusNotIn(excludeStatusList);
-        int count_pointsMall = pointsMallOrderService.countByExample(pointsMallOrderExample);
+        PointsMallOrderParam pointsMallOrderExample = new PointsMallOrderParam();
+        pointsMallOrderExample.setCreateTimeGreaterThan(vipRechargeRecord.getCreateTime());
+        pointsMallOrderExample.setExcludeStatusList(excludeStatusList);
+        int count_pointsMall = pointsMallOrderFeignApi.countByExample(pointsMallOrderExample).getData();
         int total_count = count + count_pointsMall;
         if(total_count > 0){
             //不是第一笔订单，进行近30天是否有消费的条件判断
@@ -106,7 +106,9 @@ public class RewardServiceImpl implements RewardService {
             //近30天积分商城支付成功的订单数
             PointsMallOrderParam pointsMallOrder = new PointsMallOrderParam();
             pointsMallOrder.setMemberId(inviterId);
-            count_pointsMall = this.pointsMallOrderService.selectCountPaid(pointsMallOrder, DateUtilsExtend.getFrontDay(DateUtilsExtend.getDayEnd(), 30), DateUtilsExtend.getDayEnd());
+            pointsMallOrder.setStartTime(DateUtilsExtend.getFrontDay(DateUtilsExtend.getDayEnd(), 30));
+            pointsMallOrder.setEndTime(DateUtilsExtend.getDayEnd());
+            count_pointsMall = this.pointsMallOrderFeignApi.selectCountPaid(pointsMallOrder).getData();
 
             total_count = count + count_pointsMall;
             if(total_count == 0){
@@ -212,9 +214,10 @@ public class RewardServiceImpl implements RewardService {
             orderExample.createCriteria().andCreateTimeGreaterThan(vipRechargeRecord.getCreateTime()).andStatusNotIn(excludeStatusList);
             int count = orderMapper.countByExample(orderExample);
             //查询积分商城的符合订单数
-            PointsMallOrderExample pointsMallOrderExample = new PointsMallOrderExample();
-            pointsMallOrderExample.createCriteria().andCreateTimeGreaterThan(vipRechargeRecord.getCreateTime()).andStatusNotIn(excludeStatusList);
-            int count_pointsMall = pointsMallOrderService.countByExample(pointsMallOrderExample);
+            PointsMallOrderParam pointsMallOrderExample = new PointsMallOrderParam();
+            pointsMallOrderExample.setCreateTimeGreaterThan(vipRechargeRecord.getCreateTime());
+            pointsMallOrderExample.setExcludeStatusList(excludeStatusList);
+            int count_pointsMall = pointsMallOrderFeignApi.countByExample(pointsMallOrderExample).getData();
             int total_count = count + count_pointsMall;
             if(total_count > 0){
                 //不是第一笔订单，进行近30天是否有消费的条件判断
@@ -227,7 +230,9 @@ public class RewardServiceImpl implements RewardService {
                 //近30天积分商城支付成功的订单数
                 PointsMallOrderParam pointsMallOrder = new PointsMallOrderParam();
                 pointsMallOrder.setMemberId(dbMember.getId());
-                count_pointsMall = this.pointsMallOrderService.selectCountPaid(pointsMallOrder, DateUtilsExtend.getFrontDay(DateUtilsExtend.getDayEnd(), 30), DateUtilsExtend.getDayEnd());
+                pointsMallOrder.setStartTime(DateUtilsExtend.getFrontDay(DateUtilsExtend.getDayEnd(), 30));
+                pointsMallOrder.setEndTime(DateUtilsExtend.getDayEnd());
+                count_pointsMall = this.pointsMallOrderFeignApi.selectCountPaid(pointsMallOrder).getData();
 
                 total_count = count + count_pointsMall;
                 if(total_count == 0){

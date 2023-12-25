@@ -7,29 +7,29 @@ import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.GenerateNo;
 import com.siam.package_common.util.RedisUtils;
 import com.siam.package_common.util.StringUtils;
+import com.siam.package_mall.entity.PointsMallOrder;
+import com.siam.package_mall.feign.PointsMallOrderFeignApi;
 import com.siam.package_merchant.entity.Shop;
 import com.siam.package_merchant.feign.ShopFeignApi;
-import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.entity.Order;
-import com.siam.package_order.entity.internal.PointsMallOrder;
 import com.siam.package_order.service.CommonService;
-import com.siam.package_order.service.DeliveryAddressService;
 import com.siam.package_order.service.OrderService;
-import com.siam.package_order.service.internal.PointsMallOrderService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.entity.DeliveryAddress;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberTradeRecord;
 import com.siam.package_user.entity.internal.VipRechargeDenomination;
 import com.siam.package_user.entity.internal.VipRechargeRecord;
+import com.siam.package_user.feign.DeliveryAddressFeignApi;
 import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_user.feign.internal.VipRechargeDenominationFeignApi;
 import com.siam.package_user.feign.internal.VipRechargeRecordFeignApi;
 import com.siam.package_user.util.TokenUtil;
+import com.siam.package_weixin_basic.util.IpUtils;
+import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import com.siam.package_weixin_pay.config.WxPayConfig;
 import com.siam.package_weixin_pay.entity.WxPayDto;
-import com.siam.package_weixin_basic.util.IpUtils;
 import com.siam.package_weixin_pay.util.PayUtil;
-import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -66,11 +66,11 @@ public class WxPayController {
     @Autowired
     private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
-    @Autowired
+    @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
     @Autowired
-    private DeliveryAddressService deliveryAddressService;
+    private DeliveryAddressFeignApi deliveryAddressFeignApi;
 
     @Autowired
     private CommonService commonService;
@@ -87,8 +87,8 @@ public class WxPayController {
     @Autowired
     private VipRechargeRecordFeignApi vipRechargeRecordFeignApi;
 
-    @Resource(name = "pointsMallOrderServiceImpl")
-    private PointsMallOrderService pointsMallOrderService;
+    @Autowired
+    private PointsMallOrderFeignApi pointsMallOrderFeignApi;
 
     @Autowired
     private MemberSessionManager memberSessionManager;
@@ -234,7 +234,7 @@ public class WxPayController {
 
             BigDecimal merchantDeliveryFee = BigDecimal.ZERO; //商家承担配送费
             //计算配送费是否正确
-            DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(wxPayDto.getDeliveryAddressId());
+            DeliveryAddress dbDeliveryAddress = deliveryAddressFeignApi.selectByPrimaryKey(wxPayDto.getDeliveryAddressId()).getData();
             if(dbDeliveryAddress == null) throw new StoneCustomerException("收货地址不存在");
             /*String addressStr = dbDeliveryAddress.getProvince() + dbDeliveryAddress.getCity() + dbDeliveryAddress.getArea() + dbDeliveryAddress.getStreet();*/
             BigDecimal deliveryFee = commonService.selectDeliveryFee(dbDeliveryAddress.getLongitude(), dbDeliveryAddress.getLatitude(), dbOrder.getShopId());
@@ -289,7 +289,7 @@ public class WxPayController {
             if(wxPayDto.getOut_trade_no() == null){
                 throw new StoneCustomerException("必须填写商户单号");
             }
-            dbOrder = pointsMallOrderService.selectByOrderNo(wxPayDto.getOut_trade_no());
+            dbOrder = pointsMallOrderFeignApi.selectByOrderNo(wxPayDto.getOut_trade_no()).getData();
             if(dbOrder == null){
                 throw new StoneCustomerException("该商户单号不存在");
             }
@@ -321,7 +321,7 @@ public class WxPayController {
             updateOrder.setTradeId(insertMemberTradeRecordId);
             updateOrder.setPaymentMode(Quantity.INT_1);
             updateOrder.setUpdateTime(new Date());
-            pointsMallOrderService.updateByPrimaryKeySelective(updateOrder);
+            pointsMallOrderFeignApi.updateByPrimaryKeySelective(updateOrder);
         }
 
         try {
@@ -491,7 +491,7 @@ public class WxPayController {
 
             }else if(dbMemberTradeRecord.getType() == Quantity.INT_6){
                 //交易类型为积分商城订单付款
-                pointsMallOrderService.paymentNotify(outTradeNo);
+                pointsMallOrderFeignApi.paymentNotify(outTradeNo);
             }
 
             //通知微信服务器已经支付成功

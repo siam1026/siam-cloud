@@ -1,13 +1,12 @@
 package com.siam.package_order.controller.member;
 
-import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
-import com.siam.package_order.entity.DeliveryAddress;
 import com.siam.package_order.model.param.CommonParam;
 import com.siam.package_order.service.CommonService;
-import com.siam.package_order.service.DeliveryAddressService;
+import com.siam.package_user.entity.DeliveryAddress;
+import com.siam.package_user.feign.DeliveryAddressFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 @Slf4j
@@ -35,7 +33,7 @@ public class CommonController {
     private CommonService commonService;
 
     @Autowired
-    private DeliveryAddressService deliveryAddressService;
+    private DeliveryAddressFeignApi deliveryAddressFeignApi;
 
 //    @Autowired
 //    private SettingFeignClient settingFeignApi;
@@ -51,7 +49,7 @@ public class CommonController {
     public BasicResult selectDeliveryFee(@RequestBody @Validated(value = {}) CommonParam param) {
         BasicData basicResult = new BasicData();
 
-        DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(param.getDeliveryAddressId());
+        DeliveryAddress dbDeliveryAddress = deliveryAddressFeignApi.selectByPrimaryKey(param.getDeliveryAddressId()).getData();
         if(dbDeliveryAddress == null){
             throw new StoneCustomerException("该收货地址不存在");
         }

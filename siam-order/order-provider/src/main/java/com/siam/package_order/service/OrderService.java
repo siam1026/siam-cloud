@@ -26,6 +26,16 @@ public interface OrderService extends IService<Order> {
 
     Order insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
 
+    /**
+     * [本地事务]
+     *
+     * @param param
+     * @param transId
+     * @return
+     * @author 暹罗
+     */
+    Order insertByMQ(OrderParam param, String transId) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
+
     void cancelOrder(OrderParam param);
 
     void cancelOrderNoReason(OrderParam param) throws IOException;

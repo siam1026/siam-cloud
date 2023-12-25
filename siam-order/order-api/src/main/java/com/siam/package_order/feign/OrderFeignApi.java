@@ -58,7 +58,7 @@ public interface OrderFeignApi {
      * 查询支付订单数量
      */
     @PostMapping(value = "/api/order/selectCountPaid")
-    BasicResult selectCountPaid(@RequestBody OrderParam order);
+    BasicResult<Integer> selectCountPaid(@RequestBody OrderParam order);
 
     @PostMapping(value = "/api/order/selectCountUnCompleted")
     BasicResult<Integer> selectCountUnCompleted(@RequestBody OrderParam order);

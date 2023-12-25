@@ -210,7 +210,7 @@
         let param = Object.assign({}, data);       
         delete param.createTime;
         delete param.updateTime;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/update', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/update', param,
 					function(vue, data) {
             vue.$message({
               showClose: true,
@@ -231,7 +231,7 @@
         let data = item  
         var index = this.editForm.indexOf(data)
         // alert(JSON.stringify(item));
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/delete', {"ids": [data.id]},
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/delete', {"ids": [data.id]},
 					function(vue, data) {
             vue.$message({
               showClose: true,
@@ -291,7 +291,7 @@
         let param = Object.assign({}, data);
         param.goodsId = vue.goodsId
         let url = ''
-        param.id ? url = '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/update' : url = '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/insert'
+        param.id ? url = '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/update' : url = '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/insert'
         vue.$http.post( vue, url, param,
           (vue, data) => {
             vue.$message({
@@ -370,7 +370,7 @@
 					this.listLoading = true;
           let vue = this;
           let param = {id: row.id, goodsstatus: status}
-          vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/goods/update', param,
+          vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/goods/update', param,
             function(vue, data) {
               vue.$message({
                 showClose: true,
@@ -400,7 +400,7 @@
         console.log("searchMsg="+JSON.stringify(vue.searchMsg));
 
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/goods/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/goods/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -517,7 +517,7 @@
 				}).then(() => {
 					// this.listLoading = true;
 				let vue = this;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/goods/delete', {"id":id},
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/goods/delete', {"id":id},
 					function(vue, data) {
             vue.$message({
               showClose: true,
@@ -545,7 +545,7 @@
       getspecificationList() {
         let vue = this   
         let param = { pageNo: -1, pageSize: 10 ,goodsId: vue.goodsId}
-        vue.$http.post( vue, '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/list', param,
+        vue.$http.post( vue, '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/list', param,
           (vue, data) => {
             let arr = data.data.records
             if(arr.length) {
@@ -567,7 +567,7 @@
 						let vue = this
 						let param = Object.assign({}, this.editForm);
 						let url = ''
-						param.id ? url = '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/update' : url = '/api-goods/rest/admin/pointsMall/goodsSpecificationOption/insert'
+						param.id ? url = '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/update' : url = '/api-mall/rest/admin/pointsMall/goodsSpecificationOption/insert'
 						vue.$http.post( vue, url, param,
 							(vue, data) => {
 								vue.$message({

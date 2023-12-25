@@ -323,7 +323,7 @@
 				let id = this.$route.query.id				
 				//获取订单信息
 				let vue = this
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/selectById', {"id" : id},
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/selectById', {"id" : id},
 					(vue, data) => {
 						let order = data.data;
 
@@ -354,7 +354,7 @@
 						
 						
 						//获取订单明细信息
-						vue.$http.post(vue, '/api-order/rest/admin/pointsMall/orderDetail/list', {"pageNo" : -1, "pageSize" : 20, "orderId" : id},
+						vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/orderDetail/list', {"pageNo" : -1, "pageSize" : 20, "orderId" : id},
 							(vue, data) => {
 								let orderDetailList = data.data.records
 								//累加商品信息
@@ -784,7 +784,7 @@
 				param.id = id;
 
 				vue.relatedListLoading = true;
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/list', param,
 					(vue, data) => {
 						vue.relatedList = data.data.records
 						vue.relatedListLoading = false;
@@ -807,7 +807,7 @@
 				delete param.id
 
 				vue.listLoading = true;
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/orderDetail/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/orderDetail/list', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -830,7 +830,7 @@
 					// this.listLoading = true;
 				let vue = this;
 				
-				vue.$http.delete(vue, '/api-order/rest/admin/pointsMall/orderDetail/delete', {"ids" : [id]},
+				vue.$http.delete(vue, '/api-mall/rest/admin/pointsMall/orderDetail/delete', {"ids" : [id]},
 					function(vue, data) {
 						vue.$message({
 							showClose: true,
@@ -881,9 +881,9 @@
 
 						let url = '';
 						if(param.id){
-							url = '/api-order/rest/admin/pointsMall/orderDetail/update';						
+							url = '/api-mall/rest/admin/pointsMall/orderDetail/update';						
 						}else{
-							url = '/api-order/rest/admin/pointsMall/orderDetail/insert';	
+							url = '/api-mall/rest/admin/pointsMall/orderDetail/insert';	
 							param.orderId = this.$route.query.id;		
 						}
 						vue.$http.post(vue, url, param,

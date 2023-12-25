@@ -2,9 +2,9 @@ package com.siam.package_order.internal;
 
 import com.siam.package_common.util.JsonUtils;
 import com.siam.package_order.OrderApplication;
-import com.siam.package_order.entity.internal.PointsMallOrder;
-import com.siam.package_order.model.param.internal.PointsMallOrderParam;
-import com.siam.package_order.service.internal.PointsMallOrderService;
+import com.siam.package_order.entity.Order;
+import com.siam.package_order.model.param.OrderParam;
+import com.siam.package_order.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -29,14 +29,14 @@ import javax.annotation.Resource;
 @EnableConfigurationProperties
 public class DistributedTransactionTest {
 
-    @Resource(name = "localMsg_PointsMallOrderServiceImpl")
-    private PointsMallOrderService localMsg_orderService;
+    @Resource(name = "localMsg_OrderServiceImpl")
+    private OrderService localMsg_orderService;
 
-    @Resource(name = "seata_PointsMallOrderServiceImpl")
-    private PointsMallOrderService seata_orderService;
+    @Resource(name = "seata_OrderServiceImpl")
+    private OrderService seata_orderService;
 
-    @Resource(name = "rocketMQ_PointsMallOrderServiceImpl")
-    private PointsMallOrderService rocketMQ_orderService;
+    @Resource(name = "rocketMQ_OrderServiceImpl")
+    private OrderService rocketMQ_orderService;
 
     /**
      * 本地消息表
@@ -54,8 +54,8 @@ public class DistributedTransactionTest {
         //TODO(MARK) - 本地消息表有很多问题，比如服务一多就容易出现套娃现象、回滚的问题，所以我觉得实现起来没啥太大意义，暂时先放弃实现了，理论搞懂就行；
 
         String json = "";
-        PointsMallOrderParam param = (PointsMallOrderParam) JsonUtils.toObject(json, PointsMallOrderParam.class);
-        PointsMallOrder pointsMallOrder = localMsg_orderService.insert(param);
+        OrderParam param = (OrderParam) JsonUtils.toObject(json, OrderParam.class);
+        Order order = localMsg_orderService.insert(param);
     }
 
     /**
@@ -68,8 +68,8 @@ public class DistributedTransactionTest {
     public void rocketMQTest() throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
         //TODO(MARK) - 大致看了下三四个示例，流程差不多，也没有回滚操作，说是回滚的成本太大了，只能人工干预；
         String json = "{\"deliveryAddressId\":592,\"deliveryFee\":0,\"shoppingCartIdList\":[124],\"orderDetailList\":[{\"goodsId\":7,\"goodsName\":\"舒缓新肌焕颜乳\",\"specList\":\"{}\",\"number\":1}],\"actualPrice\":138,\"remark\":\"\",\"shoppingWay\":1,\"orderToken\":\"df8f0549b3834b54809e89801cd5630b\"}";
-        PointsMallOrderParam param = (PointsMallOrderParam) JsonUtils.toObject(json, PointsMallOrderParam.class);
-        PointsMallOrder pointsMallOrder = rocketMQ_orderService.insert(param);
+        OrderParam param = (OrderParam) JsonUtils.toObject(json, OrderParam.class);
+        Order order = rocketMQ_orderService.insert(param);
         System.out.println(1);
     }
 
@@ -82,8 +82,8 @@ public class DistributedTransactionTest {
     @Test
     public void seataTest() throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
         String json = "{\"deliveryAddressId\":592,\"deliveryFee\":0,\"shoppingCartIdList\":[124],\"orderDetailList\":[{\"goodsId\":7,\"goodsName\":\"舒缓新肌焕颜乳\",\"specList\":\"{}\",\"number\":1}],\"actualPrice\":138,\"remark\":\"\",\"shoppingWay\":1,\"orderToken\":\"df8f0549b3834b54809e89801cd5630b\"}";
-        PointsMallOrderParam param = (PointsMallOrderParam) JsonUtils.toObject(json, PointsMallOrderParam.class);
-        PointsMallOrder pointsMallOrder = seata_orderService.insert(param);
+        OrderParam param = (OrderParam) JsonUtils.toObject(json, OrderParam.class);
+        Order order = seata_orderService.insert(param);
         System.out.println(1);
     }
 }

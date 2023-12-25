@@ -21,8 +21,6 @@ import com.siam.package_merchant.entity.Shop;
 import com.siam.package_merchant.feign.MerchantBillingRecordFeignApi;
 import com.siam.package_merchant.feign.MerchantFeignApi;
 import com.siam.package_merchant.feign.ShopFeignApi;
-import com.siam.package_merchant.model.example.MerchantExample;
-import com.siam.package_merchant.model.example.ShopExample;
 import com.siam.package_merchant.model.param.MerchantParam;
 import com.siam.package_merchant.model.param.ShopParam;
 import com.siam.package_order.controller.member.WxPayService;
@@ -38,14 +36,11 @@ import com.siam.package_promotion.entity.CouponsMemberRelation;
 import com.siam.package_promotion.entity.FullReductionRule;
 import com.siam.package_promotion.feign.*;
 import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.entity.DeliveryAddress;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
 import com.siam.package_user.entity.MemberTradeRecord;
-import com.siam.package_user.feign.MemberBillingRecordFeignApi;
-import com.siam.package_user.feign.MemberFeignApi;
-import com.siam.package_user.feign.MemberInviteRelationFeignApi;
-import com.siam.package_user.feign.MemberTradeRecordFeignApi;
-import com.siam.package_user.model.example.MemberBillingRecordExample;
+import com.siam.package_user.feign.*;
 import com.siam.package_user.model.param.MemberBillingRecordParam;
 import com.siam.package_user.util.TokenUtil;
 import com.siam.package_util.entity.Setting;
@@ -96,7 +91,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private MemberTradeRecordFeignApi memberTradeRecordFeignApi;
 
     @Autowired
-    private DeliveryAddressService deliveryAddressService;
+    private DeliveryAddressFeignApi deliveryAddressFeignApi;
 
     @Autowired
     private ShopFeignApi shopFeignApi;
@@ -228,7 +223,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             //配送订单
             //根据收货地址id回写联系人信息
             if(param.getDeliveryAddressId() == null) throw new StoneCustomerException("必须填写收货地址");
-            DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(param.getDeliveryAddressId());
+            DeliveryAddress dbDeliveryAddress = deliveryAddressFeignApi.selectByPrimaryKey(param.getDeliveryAddressId()).getData();
             if(dbDeliveryAddress == null) throw new StoneCustomerException("收货地址不存在");
 
             param.setContactRealname(dbDeliveryAddress.getRealname());
@@ -411,7 +406,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //配送费判断
         if(param.getShoppingWay() == Quantity.INT_2){
             Integer addressId = param.getDeliveryAddressId();
-            DeliveryAddress deliveryAddress = deliveryAddressService.selectByPrimaryKey(addressId);
+            DeliveryAddress deliveryAddress = deliveryAddressFeignApi.selectByPrimaryKey(addressId).getData();
             /*String addressStr = deliveryAddress.getProvince() + deliveryAddress.getCity() + deliveryAddress.getArea() + deliveryAddress.getStreet();*/
             BigDecimal deliveryFee = commonService.selectDeliveryFee(deliveryAddress.getLongitude(), deliveryAddress.getLatitude(), param.getShopId());
             param.setBeforeReducedDeliveryFee(deliveryFee);
@@ -631,6 +626,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         rocketMQTemplate.getProducer().send(message);*/
 
         return dbOrder;
+    }
+
+    @Override
+    public Order insertByMQ(OrderParam param, String transId) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
+        return null;
     }
 
     @Override
@@ -1767,7 +1767,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         updateOrder.setShoppingWay(Quantity.INT_2);
 
         //填写配送信息
-        DeliveryAddress dbDeliveryAddress = deliveryAddressService.selectByPrimaryKey(dbOrder.getDeliveryAddressId());
+        DeliveryAddress dbDeliveryAddress = deliveryAddressFeignApi.selectByPrimaryKey(dbOrder.getDeliveryAddressId()).getData();
         if(dbDeliveryAddress == null){
             log.error("收货地址不存在，回调逻辑处理失败");
             return;

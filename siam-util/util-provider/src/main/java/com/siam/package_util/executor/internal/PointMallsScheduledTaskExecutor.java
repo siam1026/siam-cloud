@@ -2,7 +2,7 @@ package com.siam.package_util.executor.internal;
 
 import com.siam.package_common.annoation.ScheduledTaskAnnotation;
 import com.siam.package_common.constant.ScheduledTaskConst;
-import com.siam.package_order.feign.internal.PointsMallOrderFeignApi;
+import com.siam.package_mall.feign.PointsMallOrderFeignApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

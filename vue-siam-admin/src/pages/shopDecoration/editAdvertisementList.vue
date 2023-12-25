@@ -218,7 +218,7 @@ export default {
           pageSize: 10,
           typestatus: 0
         }
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/menu/list', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/menu/list', param,
 					(vue, data) => {
 						vue.menuList = data.data.records
 					},(error, data)=> {

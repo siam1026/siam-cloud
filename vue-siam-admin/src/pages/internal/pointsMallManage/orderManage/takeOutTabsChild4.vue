@@ -243,7 +243,7 @@
           id: vue.dealId,
           dealadvise: vue.editForm.dealadvise
         }
-        vue.dealtype ? url = '/api-order/rest/admin/pointsMall/order/updateOrderByBack' : url = '/api-order/rest/admin/pointsMall/order/updateByDealadvise'
+        vue.dealtype ? url = '/api-mall/rest/admin/pointsMall/order/updateOrderByBack' : url = '/api-mall/rest/admin/pointsMall/order/updateByDealadvise'
         vue.$http.post( vue, url, param,
           (vue, data) => {
             vue.$message({
@@ -291,7 +291,7 @@
           });
           return false
         }
-        vue.$http.post( vue, '/api-goods/rest/admin/pointsMall/stand/update', param,
+        vue.$http.post( vue, '/api-mall/rest/admin/pointsMall/stand/update', param,
           (vue, data) => {
             vue.$message({
               showClose: true,
@@ -394,7 +394,7 @@
         param.status=10;
 
         vue.listLoading = true;
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/listWithDetail', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/listWithDetail', param,
 					(vue, data) => {
 						vue.list = data.data.records
 						vue.total = data.data.total
@@ -415,7 +415,7 @@
 				}).then(() => {
 					// this.listLoading = true;
 				let vue = this;
-				vue.$http.post(vue, '/api-goods/rest/admin/pointsMall/stand/deleteById', {id},
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/stand/deleteById', {id},
 					function(vue, data) {
             vue.$message({
               showClose: true,
@@ -440,7 +440,7 @@
           orderid: row.id,
           status: 1
         }
-				vue.$http.post(vue, '/api-order/rest/admin/pointsMall/order/updateOrderState', param,
+				vue.$http.post(vue, '/api-mall/rest/admin/pointsMall/order/updateOrderState', param,
 					function(vue, data) {
             vue.$message({
               showClose: true,
