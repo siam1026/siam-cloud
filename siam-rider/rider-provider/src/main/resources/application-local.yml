@@ -69,8 +69,8 @@ spring:
 aliyun:
   #OSS存储
   oss:
-    accessKeyId: LTAIMjh8ajqzM0XN
-    secret: d8kX5UnSgicDmx8RHBBsKuoztxMbOc
+    accessKeyId: siam1026@163.com
+    secret: siam1026@163.com
     endpoint: http://oss-cn-hangzhou.aliyuncs.com
     bucketName: siam-hangzhou
 
