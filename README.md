@@ -90,6 +90,7 @@ com.siam
 ├── siam-mall               // 商城服务 [9206]
 ├── siam-util               // 工具服务 [9207]
 ├── siam-monitor            // 监控服务 [9100]
+├── siam-generator          // 代码生成框架
 ├── siam-common             // 通用模块
 ├── siam-weixin             // 微信模块
 ├── siam-parent             // 父工程模块
