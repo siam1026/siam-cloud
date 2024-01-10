@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">暹罗外卖 v1.0</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">暹罗外卖 v1.1</h1>
 <h4 align="center">基于 Vue/Element UI 和 Spring Cloud & Alibaba 前后端分离的分布式微服务架构</h4>
 
 <p align="center">
