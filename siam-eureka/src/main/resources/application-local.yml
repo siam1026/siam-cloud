@@ -32,7 +32,7 @@ spring:
     admin:
       client:
         #连接监控服务端的地址，也就是actuator的服务端的运行ip 端口
-        url: http://127.0.0.1:9605
+        url: http://127.0.0.1:9100
         username: admin
         password: admin
         instance:
