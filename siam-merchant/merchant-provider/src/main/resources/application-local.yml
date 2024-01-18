@@ -94,7 +94,7 @@ mybatis-plus:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:9600/eureka/
+      defaultZone: http://127.0.0.1:9000/eureka/
     register-with-eureka: true
     fetch-registry: true
   instance:
@@ -121,7 +121,7 @@ seata:
   registry:
     type: eureka
     eureka:
-      service-url: http://127.0.0.1:9600/eureka/
+      service-url: http://127.0.0.1:9000/eureka/
       weight: 1
 
 #springboot admin相关配置
