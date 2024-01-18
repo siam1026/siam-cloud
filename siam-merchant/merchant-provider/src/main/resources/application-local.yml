@@ -7,12 +7,12 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/siam_cloud?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8
     username: root
-    password: siam1026@163.com
+    password: root
 
   #redis单例模式
   redis:
     host: 127.0.0.1
-    password: siam1026@163.com
+    password:
     port: 6379
     jedis:
       pool:
