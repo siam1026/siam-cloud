@@ -8,7 +8,7 @@ spring:
   #redis单例模式
   redis:
     host: 127.0.0.1
-    password: siam1026@163.com
+    password:
     port: 6379
     jedis:
       pool:
@@ -53,7 +53,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:9600/eureka/
+      defaultZone: http://127.0.0.1:9000/eureka/
     register-with-eureka: true
     fetch-registry: true
   instance:
