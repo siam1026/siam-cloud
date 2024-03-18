@@ -37,12 +37,8 @@ wxcomponents/
 
 ### Maven����Ŀ¼ ###
 target
-logs/debug.log
-logs/error.log
-logs/warn.log
-logs/info.log
 
-logs
+**/logs/**/*.log
 log.path_IS_UNDEFINED
 
 application-test.yml
