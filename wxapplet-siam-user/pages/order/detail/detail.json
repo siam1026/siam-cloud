@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "mp-halfScreenDialog": "../../../components/half-screen-dialog/half-screen-dialog",
+    "mp-dialog": "../../../components/dialog/dialog",
+    "mp-actionSheet": "../../../components/actionsheet/actionsheet"
+  },
+  "navigationBarTitleText": "订单详情"
+}

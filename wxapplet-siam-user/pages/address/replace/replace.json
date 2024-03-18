@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "is-show-tip": "../../../components/is-show-tip/is-show-tip"
+  },
+  "navigationBarTitleText": "选择地址"
+}

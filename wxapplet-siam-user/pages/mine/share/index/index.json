@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "mp-dialog": "../../../../components/dialog/dialog",
+    "mp-halfScreenDialog": "../../../../components/half-screen-dialog/half-screen-dialog"
+  },
+  "navigationBarTitleText": "全民参与 · 邀请好友",
+  "navigationBarBackgroundColor":"#feefd0"
+}

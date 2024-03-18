@@ -1,0 +1,21 @@
+<wxs src="./index.wxs" module="computed" />
+
+<view 
+  class="weui-select-text" 
+  style="{{computed.containerStyle({showToolTip, showCopyBtn, activeBgColor})}}"
+  catch:tap="stopPropagation"
+>
+<view class="weui-mask init" wx:if="{{mask}}" bindtap="close" data-type="tap" catchtouchmove="return"></view>
+  <text 
+    selectable="{{!showCopyBtn}}" 
+    space="{{space}}" 
+    decode="{{decode}}" 
+    catch:longpress="handleLongPress"
+  >{{value}}</text>
+   <view wx:if="{{showToolTip}}" class="weui-tooltip weui-tooltip__{{placement}}"
+    style="z-index: {{zIndex}};" >
+  <block wx:for="{{selectTexts}}" wx:key="select">
+    <text class="weui-tooltip-btn-item {{(selectTexts.length-1)!=index?'right':''}}" catch:tap="{{item.bind?item.bind:'handleCurrencyTap'}}" data-type="{{item.type}}">{{item.name}}</text>
+  </block>
+  </view>
+</view>

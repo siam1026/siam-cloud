@@ -1,0 +1,330 @@
+page {
+  background: #f5f5f5;
+  width: 100%;
+  margin: 0;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background: white;
+}
+
+.index-bg-class {
+  width: 100%;
+}
+
+.userinfo {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  /* margin-top: 50px; */
+  width: 100%;
+}
+
+.notlogin {
+  display: flex;
+  align-items: center;
+  padding: 40rpx 20rpx;
+  border-radius: 5rpx;
+}
+
+.notlogin button{
+  width: 100%;
+  padding: inherit;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin-right: 20rpx;
+  border-radius: 50%;
+  box-shadow: -2px 0px 5px 0.5px rgba(0, 0, 0, 0), 0px -2px 5px 1px rgba(0, 0, 0, 0.1), 2px 0px 5px 1px rgba(0, 0, 0, 0), 0px 2px 5px 1px rgba(0, 0, 0, 0.1)
+}
+
+.userinfo-name-avatar {
+  width: 80%;
+}
+
+.userinfo-nickname {
+  color: white;
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.vip-class {
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.vip-image-view{
+  display: flex;
+  align-items: center;
+}
+
+.is-vip-class {
+  background: linear-gradient(to right, #d09650, #ba7c3f);
+  padding: 2rpx 8rpx;
+  border-radius: 10rpx;
+  text-align: center;
+}
+
+.not-vip-class {
+  background: #8f8f8f;
+  padding: 2rpx 8rpx;
+  border-radius: 10rpx;
+  text-align: center;
+}
+
+.nickname-class {
+  font-size: 32rpx;
+  margin-bottom: 10rpx;
+}
+
+.userinfo-view {
+  /* width: 80%; */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.button-view {
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx;
+}
+
+.userinfo-button {
+  /* width: 80%; */
+  display: flex;
+  justify-content: flex-start;
+}
+
+.my-order-box{
+  padding: 20rpx 20rpx 0 20rpx;
+  background-color: white;
+  margin: 0 20rpx 20rpx 20rpx;
+  border-radius: 10rpx;
+}
+
+
+
+.my-order-title{
+  font-size: 32rpx;
+}
+
+.my-order-title text{
+  font-size: 28rpx;
+}
+
+.my-order-all{
+  font-size: 32rpx;
+}
+
+.navigator-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.navigator-userinfo {
+  /* width: 100%; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40rpx 20rpx;
+  border-radius: 5rpx;
+}
+
+.navigator-box{
+  padding: 0 20rpx;
+  background: inherit;
+  padding-bottom: 20rpx;
+}
+
+.navigator-radius{
+  border-radius: 15rpx;
+  background: white;
+}
+
+.navigator-class {
+  padding: 15rpx 20rpx;
+  background: white;
+  border-radius: 10rpx;
+}
+
+button {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+button[plain] {
+  color: black;
+  border: 0px;
+  font-size: 30rpx;
+}
+
+/* 个人余额和钱包等样式 */
+.mine-blocking-view {
+  padding: 20rpx;
+}
+
+.mine-blocking {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  text-align: center;
+  border-radius: 10rpx;
+}
+
+.mine-navigator {
+  padding: 20rpx 0;
+  width: 24%;
+  border-radius: 10rpx;
+}
+
+.order-navigator{
+  padding: 10rpx 0;
+  width: 25%;
+  border-radius: 10rpx;
+}
+
+.order-navigator .iconfont{
+  font-size: 50rpx;
+}
+
+.order-title{
+  font-size: 32rpx;
+}
+
+.my-order-all{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-all{
+  font-size: 28rpx;
+  color:#8f8f8f;
+}
+
+.number-tip {
+  font-size: 33rpx;
+}
+
+.text-tip {
+  font-size: 28rpx;
+  color: #8f8f8f;
+}
+
+.line-tip {
+  color: #e3e3e3;
+}
+
+.is-vip-image{
+  width: 36rpx;
+  height: auto;
+  margin-right: 10rpx;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15rpx;
+}
+
+.share-button::after {
+  border: none;
+}
+
+.share-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10rpx;
+  /* font-size: 28rpx; */
+  width: 100%;
+}
+
+.invite-wrapper {
+  padding: 10rpx;
+}
+
+.invite-image {
+  width: 100%;
+  height: auto;
+}
+
+.ptyh-class{
+  background: #8f8f8f;
+  padding: 2rpx 10rpx;
+  color: #f5f5f5;
+  border-radius: 10rpx;
+}
+
+.cjhy-class{
+  background: linear-gradient(to right, #d09650, #ba7c3f);
+  padding: 2rpx 8rpx;
+  color: white;
+  border-radius: 10rpx;
+}
+
+.swiper-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.swiper-tab-item {
+  width: 50%;
+}
+
+.swiper-box {
+  /* height: 400rpx; */
+  border-radius: 0 0 15rpx 15rpx;
+}
+
+.swiper-tab{
+  text-align: center;
+  height: 88rpx;
+  line-height: 88rpx;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  background: #fff;
+  z-index: 1;
+}
+
+.swiper-tab-item{
+  width: 50%;
+  margin-right: 20rpx;
+}
+
+.swiper-box{
+  display: block; 
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden;
+}
+
+.swiper-items{
+  height: 100%;
+}
+
+.my-order-box .navigator-class{
+  padding: 20rpx 0;
+}

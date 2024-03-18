@@ -1,0 +1,100 @@
+<view class="modular-class">
+  <view class="list-class" bindtap="openDialog">
+    <text class="mode-title">提现至</text>
+    <view class="choose-mode">
+      <text class="iconfont iconwechat_pay"></text>
+      <text class="mode-name">微信零钱</text>
+      <!-- <text class="iconfont iconhtbArrowright02"></text> -->
+    </view>
+  </view>
+</view>
+
+<view class="modular-class bottom-class">
+  <view class="mode-title">
+		<view>
+			<text decode="true">提现金额&nbsp;</text><text class="iconfont iconwenhao" bindtap="selectCurrentSetting"></text>
+		</view>
+		<view class="txjl-view" bindtap="bindWithdrawRecord">
+			<text class="theme-color">提现记录</text>
+			<text class="iconfont iconhtbArrowright02"></text>
+		</view>
+	</view>
+  <view class="input-class">
+    <text class="money-title">￥</text>
+		<input class="money-input" type="digit" placeholder="  " placeholder-class="placeholder-class"
+		adjust-position="{{adjustPosition}}" bindinput="bindInputMoney" value="{{inputMoney}}"/>
+  </view>
+  <view class="view-line"></view>
+  <view class="tips-btn-class" wx:if="{{!isTip||inputMoney<=userInfo.inviteRewardAmount}}">
+    <text class="tip-class">可提现奖励金额￥{{userInfo.inviteRewardAmount}}，</text>
+    <text class="theme-color" bindtap="bindAllWithDrawal">全部提现</text>
+  </view>
+  <view class="tips-btn-class" wx:if="{{isTip&&inputMoney>userInfo.inviteRewardAmount}}">
+    <text class="errortip-class">输入金额超过奖励金额</text>
+  </view>
+  <button style="width:100%;" type="{{(inputMoney&&inputMoney>0&&inputMoney<=userInfo.inviteRewardAmount)&&isTip?'primary':'default'}}" bindtap="{{(inputMoney&&inputMoney>0&&inputMoney<=userInfo.inviteRewardAmount)&&isTip?'bindWithDrawalPWd':''}}">提现</button>
+  <!-- <button style="width:100%;" type="{{inputMoney&&!isTip?'primary':''}}" bindtap="bindWithDrawal">提现</button> -->
+</view>
+<!-- <view wx:if='{{showPayPwdInput}}' class="pay-all" catchtouchmove="true">
+    <view class='bg_layer' catchtouchmove="true"></view>
+    <view class='password_dialog_main'>
+			<view class='input_title'>
+					<view class='weui-icon-btn weui-icon-btn weui-icon-btn_close weui-icon-btn_close' catchtap='balancePayFail'><text></text></view>
+					<text>输入支付密码</text>
+					<text></text>
+			</view>
+			<view class='password_dialog_tip'><text>使用会员卡余额支付需要验证身份，验证通过后才可进行支付。</text></view>
+			<view class='password_dialog_row' catchtap='getFocus'>
+					<view class='password_dialog_item_input' wx:for='{{6}}' wx:key='item' wx:for-index='i'>
+							<text wx:if='{{pwdVal.length>i}}'></text>
+					</view>
+			</view>
+			<view class='theme-color password_dialog_forget_pwd' catchtap='forgetThePassword'>忘记密码</view>
+			<input class='password_dialog_input_control' password type='number' focus='{{payFocus}}' hold-keyboard="true" value="{{pwdVal}}" bindinput='inputPwd' maxlength='6'/>
+		</view>
+</view> -->
+<mp-halfScreenDialog show="{{showPayPwdInput}}" extClass="extClassPayPwd" bind:bindtouchend="bindtouchend"
+bind:close="balancePayFail" maskClosable="{{maskClosable}}">
+	<view slot="title">输入支付密码</view>
+	<view slot="desc">
+		<view class='password_dialog_tip'><text>使用会员卡余额支付需要验证身份，验证通过后才可进行支付。</text></view>
+		<view class='password_dialog_row' catchtap='getFocus'>
+			<view class='password_dialog_item_input' wx:for='{{6}}' wx:key='item' wx:for-index='i'>
+				<text wx:if='{{pwdVal.length>i}}'></text>
+			</view>
+		</view>
+		<view class='theme-color password_dialog_forget_pwd' catchtap='forgetThePassword'>忘记密码</view>
+		<input class='password_dialog_input_control' password type='number' focus='{{payFocus}}' hold-keyboard="{{holdKeyboard}}" value="{{pwdVal}}" bindinput='inputPwd'
+			maxlength='6' adjust-position="{{adjustPosition}}" always-embed="{{holdKeyboard}}"/>
+	</view>
+	<view slot="footer">
+	</view>
+</mp-halfScreenDialog>
+<mp-halfScreenDialog show="{{serverFeeDialog}}" extClass="extClassSpecifications">
+	<view slot="title">收费提示</view>
+	<view slot="desc">
+		<view wx:if="{{!isSatisfyFee}}" class="isSatisfyFee">余额不满足以支付服务费，实际到账金额如下</view>
+		<view class="memberWithdrawFee-desc">
+			<text>{{!isSatisfyFee?'到账':'提现'}}金额</text>
+			<text class="memberWithdrawFee-value {{!isSatisfyFee?'withdrawFeeAfter-satisfyFee':''}}">{{!isSatisfyFee?memberWithdrawFeeAfter:inputMoney}}元</text>
+		</view>
+		<view class="memberWithdrawFee-desc">
+			<text>本次服务费</text>
+			<text class="memberWithdrawFee-value">{{satisfyFee}}元</text>
+		</view>
+	</view>
+	<view slot="footer">
+			<view class="good-choice-btn theme-bg" bindtap="bindContinueWithDrawalPWd">继续提现</view>
+		</view>
+</mp-halfScreenDialog>
+<mp-halfScreenDialog show="{{selectCurrentDialog}}" extClass="extClassSelectCurrent">
+  <view slot="title">奖励规则</view>
+  <view slot="desc">
+    <view class="order-info-view">
+		<scroll-view style="height: 55vh;" scroll-y>
+			<text class="order-title">{{current.commissionRule}}</text>
+		</scroll-view>
+        
+    </view>
+  </view>
+</mp-halfScreenDialog>

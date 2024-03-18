@@ -1,0 +1,139 @@
+page {
+  background: #f5f5f5;
+  width: 100%;
+  margin: 0;
+}
+
+.modular-class{
+  margin: 20rpx;
+  background-color: white;
+  padding: 20rpx 40rpx;
+  font-size: 30rpx;
+  border-radius: 15rpx;
+}
+
+.list-class{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bottom-class{
+  padding-bottom: 40rpx;
+}
+
+.mode-title{
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.txjl-view{
+  font-weight: normal;
+  font-size: 30rpx;
+}
+
+.txjl-view .iconfont{
+  color: #9293a2;
+}
+
+.choose-mode{
+  color: #5c5c5c;
+}
+
+.mode-name{
+  margin: 0 10rpx;
+}
+
+.iconfont.iconwechat_pay{
+  font-size: 35rpx;
+  color: #09bb07;
+}
+
+.input-class{
+  display: flex;
+  align-items: center;
+  padding-top: 20rpx;
+}
+
+.money-title{
+  font-size: 56rpx;
+}
+
+.placeholder-class{
+  font-size: 78rpx;
+}
+
+.money-input{
+  height: 100%;
+  font-size: 78rpx;
+  margin-left: 10rpx;
+  padding: 10rpx 0 10rpx 0;
+  display: flex;
+  justify-content: center;
+}
+
+.tips-btn-class{
+  height: 108rpx;
+  line-height: 108rpx;
+  font-size: 28rpx;
+}
+
+.tip-button{
+  color: #7d839d;
+}
+
+.errortip-class{
+  color: red;
+}
+
+.good-choice-btn {
+  width: 100%;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 15rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  position: relative;
+  bottom: 0;
+}
+
+.extClassSpecifications .weui-half-screen-dialog__ft.weui-half-screen-dialog__ft{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.extClassSelectCurrent .weui-half-screen-dialog__ft.weui-half-screen-dialog__ft{
+  padding: 0;
+}
+
+.memberWithdrawFee-desc{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #787878;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+}
+
+.memberWithdrawFee-value{
+  color: black;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.isSatisfyFee{
+  font-size: 28rpx;
+  padding: 20rpx 0;
+}
+
+.withdrawFeeAfter-satisfyFee{
+  color: #e6575e;
+}
+
+.order-title{
+  font-size: 28rpx;
+  color: rgb(141, 141, 141);
+}

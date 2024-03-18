@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "multiple-rate": "/components/multiple-rate/multiple-rate"
+  },
+  "navigationBarTitleText": "评价"
+}

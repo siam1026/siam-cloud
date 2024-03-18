@@ -1,0 +1,163 @@
+<view class="status-to-greet">
+   <view class="unpaid-class" wx:if="{{order.status==1}}">
+      <view class="comfirm-tip">请在五分钟内完成支付，过时订单将会自动取消！</view>
+      <view class="pay-cancel-button">
+         <view class="cancel-button" hover-class="hover-class-public" bindtap="cancelOrder">取消订单</view>
+         <view class="pay-button theme-border theme-color" hover-class="hover-class-public" bindtap="openConfirm">立即支付
+         </view>
+      </view>
+   </view>
+   <view class="to-greet-view" wx:else>期待您再次光临。</view>
+   <view class="status-view">{{order.statusText}}</view>
+
+   <view class="caozuo-buttons">
+
+      <button size="mini" class="quxiao-shenqing-button pinglun-btn" hover-class="hover-class-public"
+         bindtap="isAllowCancelNoReason" wx:if="{{order.isAllowCancelNoReason}}" style="font-size: 28rpx;">取消订单</button>
+
+      <button size="mini" class="quxiao-shenqing-button pinglun-btn" hover-class="hover-class-public"
+         bindtap="applyRefund" wx:if="{{order.isAllowApplyRefund}}" style="font-size: 28rpx;">申请退款</button>
+
+      <button size="mini" class="pinglun-btn theme-color-border" hover-class="hover-class-public" bindtap="applyServer"
+         wx:if="{{order.isAllowApplyAfterSales}}" style="font-size: 28rpx;">申请售后</button>
+
+      <button size="mini" class="pinglun-btn theme-color-border" hover-class="hover-class-public" 
+      bindtap="selectLogistics" wx:if="{{order.isShowLogistics}}" style="font-size: 28rpx;">查看物流</button>
+
+      <button wx:if="{{order.isAllowAppraise}}" size="mini" class="pinglun-btn theme-bg" data-id="{{order.id}}"
+         data-shopId="{{order.shopId}}" bindtap="evaluateTip" style="font-size: 28rpx;">评论</button>
+
+      <button size="mini" class="pinglun-btn theme-bg" bindtap="contactBussinessTap"
+         style="font-size: 28rpx;">联系客服</button>
+   </view>
+</view>
+
+<view class="refund-process-view" bindtap="bindRefundProcess" wx:if="{{order.isRefundOrder}}">
+   <view class="refund-process-detail">
+      <text>退款进度</text>
+      <view class="refund-process-right">
+         <text class="theme-color">{{order.refundStatusText}}</text>
+         <text class="iconfont iconhtbArrowright02"></text>
+      </view>
+   </view>
+   <view class="wenxin-tip">
+      温馨提示：不同商品的退款可能会分多笔金额原路退回，请注意查收。
+   </view>
+</view>
+
+<view class="order-details-view">
+   <view class="order-number-time">
+      <text class="order-number-text">订单号：{{order.orderNo}}</text>
+      <text class="time-text">{{order.createTime}}</text>
+   </view>
+   <view class="view-line"></view>
+   <view class="commodity-details-view" wx:for="{{orderDetailList}}" wx:key="index">
+      <view class="commodity-name-specs">
+         <view class="commodity-name out_of_range one_row">{{item.goodsName}}</view>
+         <view class="commodity-specs">{{item.specListAnalysis}}</view>
+      </view>
+      <view class="commodity-number-money">
+         <text class="commodity-number">x{{item.number}}</text>
+         <text class="commodity-money">￥{{item.price}}</text>
+      </view>
+   </view>
+   <view class="distribution-fee-view">
+      <text>运费</text>
+      <text>￥{{order.deliveryFee}}</text>
+   </view>
+   <view class="distribution-fee-view" hidden="{{!order.fullReductionRuleId}}">
+      <text>使用满减</text>
+      <text>{{order.fullReductionRuleDescription}}</text>
+   </view>
+   <view class="distribution-fee-view" hidden="{{!order.couponsId}}">
+      <text>使用优惠券</text>
+      <text>{{order.couponsDescription}}</text>
+   </view>
+   <view class="view-line"></view>
+   <view class="actual-payment-view">
+      <text class="actual-payment-number" decode="true">{{order.description}}商品</text>
+      <view class="actual-payment-view">
+         <text class="actual-payment-title">实付</text>
+         <text class="actual-payment-money">￥{{order.actualPrice}}</text>
+      </view>
+   </view>
+</view>
+<view class="order-time-view">
+   <text>支付方式</text>
+   <text>{{order.paymentModeText}}</text>
+</view>
+<view class="receiving-address-view">
+   <text class="receiving-address-title">收货地址</text>
+   <view class="receiving-address-details">
+      <view class="receiving-address out_of_range one_row">
+         {{order.contactProvince}}{{order.contactCity}}{{order.contactArea}}{{order.contactStreet}}
+      </view>
+      <view class="username-phone">{{order.contactRealname}}{{order.contactSex==0?"先生":"女士"}} {{order.contactPhone}}
+      </view>
+   </view>
+</view>
+<mp-halfScreenDialog show="{{choiceReasonDialog}}" extClass="extClassShoppingCart">
+   <view slot="title">选择取消原因</view>
+   <view slot="desc">
+      <scroll-view style="height: 55vh;" scroll-y>
+         <radio-group class="choiceReason-radio-group" bindchange="radioChange">
+            <label wx:for="{{refundReasonRapidly}}" wx:key="key"
+               class="choiceReason-lable {{refundReasonRapidly.length-1!=index?'choiceReason-border':''}}">
+               {{item.name}}
+               <radio value="{{item.value}}"></radio>
+            </label>
+         </radio-group>
+      </scroll-view>
+   </view>
+   <view slot="footer">
+      <view class="good-choice-btn theme-bg" bindtap="cancelOrderNoReason">确定</view>
+   </view>
+</mp-halfScreenDialog>
+<mp-actionSheet bindactiontap="goToPay" show="{{dialogShow}}" actions="{{paymentModes}}" title="{{title}}">
+</mp-actionSheet>
+<mp-halfScreenDialog show="{{showPayPwdInput}}" extClass="extClassPayPwd" bind:bindtouchend="bindtouchend"
+   bind:close="balancePayFail" maskClosable="{{maskClosable}}">
+   <view slot="title">输入支付密码</view>
+   <view slot="desc">
+      <view class='password_dialog_tip'><text>使用会员卡余额支付需要验证身份，验证通过后才可进行支付。</text></view>
+      <view class='password_dialog_row' catchtap='getFocus'>
+         <view class='password_dialog_item_input' wx:for='{{6}}' wx:key='item' wx:for-index='i'>
+            <text wx:if='{{pwdVal.length>i}}'></text>
+         </view>
+      </view>
+      <view class='theme-color password_dialog_forget_pwd' catchtap='forgetThePassword'>忘记密码</view>
+      <input class='password_dialog_input_control' password type='number' focus='{{payFocus}}' hold-keyboard="true"
+         value="{{pwdVal}}" bindinput='inputPwd' maxlength='6' adjust-position="{{adjustPosition}}"
+         cursor-spacing="100" />
+   </view>
+   <view slot="footer">
+   </view>
+</mp-halfScreenDialog>
+<mp-halfScreenDialog show="{{applyServerDialog}}" extClass="extClassShoppingCart">
+   <view slot="title">选择服务类型</view>
+   <view slot="desc">
+      <scroll-view style="height: 55vh;" scroll-y>
+         <view class="apply-server-class" hover-class="hover-class-public" bindtap="applyRefund" data-type="1">
+            <view>
+               <view></view>
+               <view>
+                  <view class="apply-server-title">我要退款(无需退货)</view>
+                  <view class="apply-server-desc">没收到货，货与卖家协商同意不用退货只退款</view>
+               </view>
+            </view>
+            <text class="iconfont iconhtbArrowright02"></text>
+         </view>
+         <view class="view-line"></view>
+         <view class="apply-server-class" hover-class="hover-class-public" bindtap="applyRefund" data-type="2">
+            <view>
+               <view></view>
+               <view>
+                  <view class="apply-server-title">我要退货退款</view>
+                  <view class="apply-server-desc">已收到货，需要退还收到的货物</view>
+               </view>
+            </view>
+            <text class="iconfont iconhtbArrowright02"></text>
+         </view>
+      </scroll-view>
+   </view>
+</mp-halfScreenDialog>

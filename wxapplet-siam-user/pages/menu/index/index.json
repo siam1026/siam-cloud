@@ -1,0 +1,12 @@
+{
+  "usingComponents": {
+    "is-show-tip":"../../../components/is-show-tip/is-show-tip",
+    "mp-dialog": "../../../components/dialog/dialog",
+    "mp-halfScreenDialog": "../../../components/half-screen-dialog/half-screen-dialog",
+    "mp-vtabs": "../../../components/vtabs/index",
+    "mp-vtabs-content": "../../../components/vtabs-content/index",
+    "multiple-rate": "../../../components/multiple-rate/multiple-rate",
+    "mp-select-text": "../../../components/select-text/index"
+  },
+  "navigationBarTitleText": "菜单"
+}

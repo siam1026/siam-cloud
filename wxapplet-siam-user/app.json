@@ -1,0 +1,98 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/order/index/index",
+    "pages/order/detail/detail",
+    "pages/order/evaluate/evaluate",
+    "pages/order/refund/apply/apply",
+    "pages/order/refund/progress/progress",
+    "pages/mine/index/index",
+    "pages/mine/userinfo/userinfo",
+    "pages/mine/coupons/coupons",
+    "pages/mine/integral/integral",
+    "pages/mine/balance/index/index",
+    "pages/mine/member/index/index",
+    "pages/mine/member/recharge/recharge",
+    "pages/mine/member/record/record",
+    "pages/mine/member/detail/detail",
+    "pages/mine/share/index/index",
+    "pages/mine/share/reward/reward",
+    "pages/menu/index/index",
+    "pages/menu/detail/detail",
+    "pages/menu/pay/pay",
+    "pages/menu/search/search",
+    "pages/address/index/index",
+    "pages/address/choose/choose",
+    "pages/address/insert/insert",
+    "pages/address/edit/edit",
+    "pages/address/replace/replace",
+    "pages/address/search/search",
+    "pages/internal/login/authorization/authorization",
+    "pages/logs/logs",
+    "pages/mine/share/withdrawal/index/index",
+    "pages/mine/share/withdrawal/detail/detail",
+    "pages/mine/security/index/index",
+    "pages/mine/security/reset/reset",
+    "pages/mine/security/verify/verify",
+    "components/pay-password/pay-password",
+    "pages/internal/mall/index/index",
+    "pages/internal/mall/menu/menu",
+    "pages/internal/mall/car/car",
+    "pages/internal/mall/detail/detail",
+    "pages/internal/mall/pay/pay",
+    "pages/internal/mall/order/detail/detail",
+    "pages/internal/mall/order/refund/apply/apply",
+    "pages/internal/mall/order/refund/progress/progress",
+    "pages/internal/mall/order/logistics/logistics",
+    "pages/mine/unreceived/integral/list/list",
+    "pages/mine/collect/index/index",
+    "pages/mine/unreceived/reward/list/list",
+    "pages/login/code/code",
+    "pages/login/choose/choose"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "暹罗外卖",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#bebebe",
+    "selectedColor": "#004ca0",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "外卖",
+        "iconPath": "assets/tabbar/Icon/index.png",
+        "selectedIconPath": "assets/tabbar/SelectedIcon/blue/index.png"
+      },
+      {
+        "pagePath": "pages/internal/mall/index/index",
+        "text": "商城",
+        "iconPath": "assets/tabbar/Icon/store.png",
+        "selectedIconPath": "assets/tabbar/SelectedIcon/blue/store.png"
+      },
+      {
+        "pagePath": "pages/internal/mall/car/car",
+        "text": "购物车",
+        "iconPath": "assets/tabbar/Icon/car.png",
+        "selectedIconPath": "assets/tabbar/SelectedIcon/blue/car.png"
+      },
+      {
+        "pagePath": "pages/mine/index/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/Icon/mine.png",
+        "selectedIconPath": "assets/tabbar/SelectedIcon/blue/mine.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "plugins": {
+    "chooseLocation": {
+      "version": "1.0.0",
+      "provider": "wx63ffb7b7894e99ae"
+    }
+  }
+}

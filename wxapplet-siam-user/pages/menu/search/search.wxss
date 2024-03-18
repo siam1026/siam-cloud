@@ -1,0 +1,300 @@
+page {
+  background: #f5f5f5;
+}
+
+.search-input-views{
+  padding: 20rpx;
+}
+
+.iconsousuo-copy{
+  color: #c3c3c3;
+}
+
+.search-input-view{
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 30rpx;
+  padding: 5rpx 15rpx;
+}
+
+.search-image-class{
+  width: 40rpx;
+  height: auto;
+}
+
+.placeholder-search-class{
+  color: #c3c3c3;
+  font-size: 25rpx;
+}
+
+.search-input{
+  color: black;
+  font-size: 28rpx;
+  margin: 5rpx 0 5rpx 15rpx;
+  margin-left: 15rpx;
+  width: 100%;
+}
+
+.history-hot-search{
+  font-size: 28rpx;
+  color: #a5a5a5;
+}
+
+.history-hot-search-title{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx;
+}
+
+.delete-image-class{
+  width: 30rpx;
+  height: auto;
+}
+
+.history-hot-items{
+  padding: 5rpx 20rpx;
+}
+
+.history-hot-item{
+  border: 1rpx solid #e2e2e2;
+  padding: 10rpx 20rpx;
+  border-radius: 10rpx;
+  margin-right: 15rpx;
+  word-break: break-all;
+}
+
+.radio-group {
+  width: 80%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10rpx;
+  background: #fff;
+  border-radius: 50rpx;
+}
+
+.group-label {
+  margin: 1%;
+  font-size: 26rpx;
+  border-radius: 18rpx;
+  text-align: center;
+}
+
+.disabled-group-label {
+  background: #f5f5f5;
+  color: #808080;
+  border: none;
+}
+
+.radio {
+  display: none;
+}
+
+.search-value{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx;
+}
+
+.search-value-image-class{
+  width: 6%;
+  height: auto;
+}
+
+.search-value-class{
+  width: 90%;
+  border-bottom: 1rpx solid #e2e2e2;
+  font-size: 28rpx;
+  padding: 20rpx 20rpx 20rpx 0;
+}
+
+.business-items{
+  margin-top: 20rpx;
+}
+
+.main-image-num{
+  position: relative;
+  width: 100%;
+}
+
+.num {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 16px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  background: rgb(240, 20, 20);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+.business-item{
+  /* display: flex; */
+  margin-bottom: 20rpx;
+  background-color: white;
+  padding: 20rpx;
+  border-radius: 15rpx;
+  /* align-items: center; */
+}
+
+.image-detail{
+  display: flex;
+  justify-content: space-between;
+}
+
+.business-image{
+  width: 25%;
+}
+
+.business-info{
+  width: 75%;
+  margin-left: 15rpx;
+  padding:10rpx 0 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.business-info-flex{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #717171;
+}
+
+.business-sale{
+  margin:5rpx 0;
+}
+
+.business-fsize-color{
+  font-size: 24rpx;
+  color: #717171;
+}
+
+.business-name{
+  font-size: 34rpx;
+  font-weight: bold;
+  color: black;
+}
+
+.business-evaluate{
+  color: #ff6500;
+}
+
+.business-right{
+  margin-left: 15rpx;
+}
+
+.business-image{
+  width: 100%;
+  height: auto;
+  border: 1rpx solid #f5f5f5;
+}
+
+.business-discount-list{
+  padding: 1rpx 6rpx;
+  font-size: 20rpx;
+  border-radius: 10rpx;
+  margin-right: 5rpx;
+}
+
+.business-discount{
+  width: 90%;
+  padding-bottom: 1rpx;
+  display: flex;
+  align-items: center;
+}
+
+.goods-list-view{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10rpx;
+}
+
+.goods-item{
+  width: 33%;
+  margin: 0 20rpx;
+}
+
+.goods-image{
+  width: 100%;
+  height: 62px;
+}
+
+.goods-name{
+  font-size: 26rpx;
+}
+
+.goods-price{
+  font-size: 26rpx;
+  color: #ff6500;
+}
+
+.reduced-delivery-price{
+  font-size: 30rpx;
+  margin-top: 20rpx;
+}
+
+.dialog-title{
+  font-size: 30rpx;
+}
+
+/* 自定义弹出框的最大高度为100%，并设置他的左右上交的border-ric为0 */
+.weui-show .weui-half-screen-dialog.extClassShoppingCart {
+  max-height: 100vh;
+  padding: 0 20rpx;
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 12%;
+}
+
+.weui-half-screen-dialog.extClassShoppingCart .weui-half-screen-dialog__ft {
+  padding: 20rpx 0;
+  position: sticky;
+  bottom: 0;
+}
+
+
+.weui-show .weui-half-screen-dialog.extClassShoppingCart .weui-half-screen-dialog__hd {
+  padding: 0 20rpx;
+}
+
+/* 选择商品规格弹窗 */
+.weui-show .weui-half-screen-dialog.extClassSpecifications {
+  z-index: 9999999;
+}
+
+/* 自定义弹窗样式 */
+.weui-show .weui-half-screen-dialog.extClassSpecifications {
+  padding: 0 20rpx;
+}
+
+.weui-half-screen-dialog.extClassSpecifications .weui-half-screen-dialog__ft {
+  padding: 20rpx 0 0 0;
+  position: sticky;
+  bottom: 0;
+}
+
+/* 自定义弹出框的最大高度为100%，并设置他的左右上交的border-ric为0 */
+.weui-show .weui-half-screen-dialog.extClassSpecifications {
+  max-height: 90vh;
+  /* border-radius: 0%; */
+}
+
+.weui-show .weui-half-screen-dialog.extClassSpecifications .weui-half-screen-dialog__hd {
+  padding: 0 20rpx;
+}
+
+.iconweibiaoti35-copy{
+  font-size: 26rpx;
+}

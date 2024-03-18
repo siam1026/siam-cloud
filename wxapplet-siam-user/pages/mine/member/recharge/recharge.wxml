@@ -1,0 +1,100 @@
+<!-- <view class="member-info">
+  <image src="{{userInfo.headImg}}" mode="widthFix" class="headImg"></image>
+  <view class="nickname-vipEndTime">
+    <view class="nickname">{{userInfo.username}}</view>
+    <view class="vipEndTime {{userInfo.type==1?'ptyh-class':'cjhy-class'}}">
+
+      {{userInfo.typeVipText}}
+    </view>
+  </view>
+</view> -->
+<view class="swiper-content">
+  <!-- <view class="swiper-tab self-adaption">
+    <view class="swiper-tab-item" wx:for="{{modeList}}" wx:key="index" data-current="{{index}}" bindtap="clickTab"
+      hover-class='hover-click-class'>
+      <view class="swiper_table_item_view {{currentTab==item.modeId?'active':''}}" data-current="{{index}}"
+        bindtap="clickTab">
+        {{item.modeName}}
+      </view>
+    </view>
+  </view> -->
+  <view class="swiper-current">
+    <swiper current="{{currentTab}}" class="swiper-box" duration="300" bindchange="bindSlideChange"
+      style="height: 80vh;">
+      <swiper-item class="swiper-items">
+        <scroll-view bindscrolltoupper="onPullDownRefresh" upper-threshold="-50" style="height: 100%;"
+          bindscrolltolower="onReachBottom" lower-threshold="0" scroll-y class='scroll-views' wx:if="{{list.length>0}}">
+          <view class="content-recharge">
+            <radio-group class="radio-group" bindchange="radioChange">
+              <label wx:for="{{list}}" wx:key="index"
+                class="group-label {{!item.checked?'disabled-group-label':'active theme-bg'}}">
+                <view class="{{item.isSale&&item.briefDescription?'':'label-view'}}">
+                  <radio value="{{index}}" checked="{{item.checked}}" class="radio" />
+                  <view class="recharge-name">{{item.name?item.name:''}}</view>
+                  <view class="theme-color recharge-price {{item.checked?'radio-active':''}}">
+                    {{item.isSale?item.salePrice:item.price}}
+                    <text class="recharge-text" decode="true">元</text>
+                  </view>
+                  <view class="sale-name" wx:if="{{item.isSale}}">{{item.isSale?item.price:item.price}}元</view>
+                  <view class="brief-description" wx:if="{{item.isSale&&item.briefDescription}}">
+                    {{item.briefDescription}}</view>
+                </view>
+              </label>
+            </radio-group>
+            <view class="description">
+              <text>{{list[checkValue].description}}</text>
+            </view>
+          </view>
+        </scroll-view>
+        <is-show-tip isShow="{{list.length<=0}}" bind:bindTap="goToDrink" buttonText="去兑换" top="5" bottom="0"
+          text="{{list.length<=0}}" tipText="暂无数据" button="{{button}}"></is-show-tip>
+      </swiper-item>
+      <!-- <swiper-item class="swiper-items">
+        <view class="content-recharge balance-swiper">
+          <view class="balance-tip">
+            <text class="iconfont iconyue" decode="true">&nbsp;</text>余额查询</view>
+          <view class="select-balance">
+            <view class="balance-button" bindtap="bindMoneyBalance">
+              <view class="balance-value">￥{{userInfo.balance}}</view>
+              <view class="balance-title">钱包余额</view>
+            </view>
+            |
+            <view class="balance-button" bindtap="bindIntegralBalance">
+              <view class="balance-value">{{userInfo.points}}</view>
+              <view class="balance-title">积分余额</view>
+            </view>
+          </view>
+          <view class="lijichaxun-view">
+            <view class="lijichaxun theme-bg" bindtap="bindMoneyBalance">
+              立即查询
+            </view>
+          </view>
+        </view>
+      </swiper-item>
+      <swiper-item class="swiper-items">
+        <view class="content-recharge my-record-swiper" bindtap="bindRechargeRecord">
+          <view>
+            <view class="ckwdjl-view">查看你的充值记录</view>
+            <view class="zdjl-czjl-view">
+              <text>账单记录</text>
+              <text decode="true">&nbsp;充值记录</text>
+            </view>
+            <view class="ljck-button theme-border theme-color">立即查看</view>
+          </view>
+          <image src="{{userInfo.headImg}}" mode="widthFix" class="headImg"></image>
+        </view>
+      </swiper-item> -->
+    </swiper>
+  </view>
+</view>
+<view class="bottom-view" wx:if="{{list.length>0}}">
+  <view class="total-view">
+    <view>
+      合计：
+      <text class="symbol-text">￥</text>
+      <text class="total-text">{{list[checkValue].isSale?list[checkValue].salePrice:list[checkValue].price}}</text>
+      <text class="strike_through sale-price" wx:if="{{list[checkValue].isSale}}">￥{{list[checkValue].price}}</text>
+    </view>
+    <view class="pay-button" bindtap="bindPay">立即支付</view>
+  </view>
+</view>

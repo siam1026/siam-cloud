@@ -1,0 +1,22 @@
+<scroll-view bindscrolltoupper="onPullDownRefresh" upper-threshold="-100" style="height:{{winHeight}}px"
+      bindscrolltolower="onReachBottom" lower-threshold="20" scroll-x="false" scroll-y="true" class='scroll-views'>
+  <view class="delivery-address-list" wx:if="{{addressList.length>0}}">
+    <view class="my-address">我的地址</view>
+    <view class="delivery-address-item" wx:for="{{addressList}}" wx:key="index">
+      <view class="address-detail-info">
+        <view class="address-name out_of_range one_row">
+        {{item.province}}{{item.city}}{{item.area}} {{item.street}}
+        </view>
+        <view class="personal-info">
+          <view class="default-address" hidden="{{!item.isDefault}}">默认地址</view>
+          <!-- <view class="address-tag theme-bg">家</view> -->
+          <view class="phone-number">{{item.phone}}</view>
+          <view class="username-class">{{item.realname}}</view>
+        </view>
+      </view>
+      <text class="iconfont iconbianji-copy theme-color" bindtap="editAddressTap" data-data="{{item}}" data-key="{{index}}"></text>
+    </view>
+  </view>
+  <is-show-tip isShow="{{addressList.length<=0}}" bind:bindTap="goToDrink" iconfont="" buttonText="去喝一杯" top="45" bottom="10" text="{{addressList.length<=0}}" tipText="您还没有地址信息" button="{{addressList.length>0}}"></is-show-tip>
+</scroll-view>
+<navigator url="../insert/insert" class="insert-address-view theme-color self-adaption">+新增地址</navigator>

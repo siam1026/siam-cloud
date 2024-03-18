@@ -1,0 +1,7 @@
+<view class="internet-error" wx:if="{{isShow}}" 
+style="padding-top: {{top}}%;padding-bottom:{{bottom}}%;margin-bottom:{{bottom}}%;">
+  <image src="{{src}}" mode="widthFix" class="icon-internet-error" wx:if="{{src}}"></image>
+  <text class="iconfont {{iconfont?iconfont:'iconwushuju'}}" wx:else></text>
+  <text wx:if="{{text}}" class="text-tip-class">{{tipText}}</text>
+  <button size="mini" bindtap="bindTap" wx:if="{{button}}" style="font-size:24rpx;" class="{{classText}}" >{{buttonText}}</button>
+</view>

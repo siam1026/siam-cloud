@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "is-show-tip":"../../../components/is-show-tip/is-show-tip",
+    "mp-halfScreenDialog": "../../../components/half-screen-dialog/half-screen-dialog"
+  },
+  "navigationBarBackgroundColor": "#004ca0",
+  "navigationBarTextStyle":"white"
+}
