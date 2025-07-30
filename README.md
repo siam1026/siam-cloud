@@ -104,9 +104,9 @@ com.siam
 
 ## 站点演示
 
-> 【演示商家后台】：https://spa.show.siamit.cn/shop
+> 【演示商家后台】：http://spa.show.siamit.cn/shop
 >
-> 【演示调度后台】：https://spa.show.siamit.cn/admin
+> 【演示调度后台】：http://spa.show.siamit.cn/admin
 >
 > 【演示账号】：[点击获取](https://github.com/siam1026/siam-cloud/raw/master/doc/images/wechat/公众号_演示账号.png)
 >
