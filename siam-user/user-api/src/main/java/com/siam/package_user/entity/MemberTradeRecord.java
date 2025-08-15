@@ -1,6 +1,6 @@
 package com.siam.package_user.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -16,7 +16,10 @@ import java.util.Date;
 @ApiModel(value = "用户交易表")
 public class MemberTradeRecord {
 
+    @TableField(exist = false)
     Date startTime;
+
+    @TableField(exist = false)
     Date endTime;
 
     @ApiModelProperty(notes = "主键id")

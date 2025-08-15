@@ -46,7 +46,7 @@ public interface PointsMallCouponsMemberRelationMapper extends BaseMapper<Points
             "<if test=\"couponsMemberRelation.memberId != null\"> AND cmr.member_id = #{couponsMemberRelation.memberId} </if>" +
             "<if test=\"couponsMemberRelation.isUsed != null\"> AND cmr.is_used = #{couponsMemberRelation.isUsed} </if>" +
             "<if test=\"couponsMemberRelation.isExpired != null\"> AND cmr.is_expired = #{couponsMemberRelation.isExpired} </if>" +
-            " AND cmr.is_valid = 1" +
+            " AND cmr.is_valid = 1 AND cmr.is_expired = 0 AND cmr.is_used = 0 AND now() between cmr.start_time and cmr.end_time " +
             "</where> order by cmr.create_time desc" +
             "</script>")
     Page<Map<String, Object>> getListByPage(@Param("page") Page page, @Param("couponsMemberRelation") PointsMallCouponsMemberRelation couponsMemberRelation);

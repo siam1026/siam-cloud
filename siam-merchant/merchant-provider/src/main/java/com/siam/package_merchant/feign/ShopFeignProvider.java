@@ -1,5 +1,6 @@
 package com.siam.package_merchant.feign;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
@@ -40,12 +41,11 @@ public class ShopFeignProvider implements ShopFeignApi {
     }
 
     public BasicResult selectByExample(ShopParam param) {
-        ShopExample example = new ShopExample();
-        ShopExample.Criteria criteria = example.createCriteria();
+        LambdaQueryWrapper<Shop> wrapper = new LambdaQueryWrapper();
         if(param.getShopIdList() != null){
-            criteria.andIdIn(param.getShopIdList());
+            wrapper.in(Shop::getId, param.getShopIdList());
         }
-        return BasicResult.success(shopService.selectByExample(example));
+        return BasicResult.success(shopService.list(wrapper));
     }
 
     @Override
@@ -61,13 +61,13 @@ public class ShopFeignProvider implements ShopFeignApi {
     @Override
     public BasicResult<Integer> countByExample(ShopParam param) {
         ShopExample example = new ShopExample();
-        ShopExample.Criteria criteria = example.createCriteria();
+        LambdaQueryWrapper<Shop> wrapper = new LambdaQueryWrapper();
         if(param.getAuditStatus() != null){
-            criteria.andAuditStatusEqualTo(param.getAuditStatus());
+            wrapper.eq(Shop::getAuditStatus, param.getAuditStatus());
         }
         if(param.getStatus() != null){
-            criteria.andStatusEqualTo(param.getStatus());
+            wrapper.eq(Shop::getStatus, param.getStatus());
         }
-        return BasicResult.success(shopService.countByExample(example));
+        return BasicResult.success(shopService.count(wrapper));
     }
 }

@@ -168,10 +168,10 @@ Page({
       //   return
       // }
       let paymentModes = that.data.paymentModes;
-      if (e.detail.value == 0) {
-        toastService.showToast("暂不支持微信支付，请选择余额支付/积分支付");
-        return
-      }
+      // if (e.detail.value == 0) {
+      //   toastService.showToast("暂不支持微信支付，请选择余额支付/积分支付");
+      //   return
+      // }
       if (e.detail.value == 1) {
         console.log(that.data.userInfo.paymentPassword);
         if (!that.data.userInfo.paymentPassword) {
@@ -418,8 +418,9 @@ Page({
       deliveryAndSelfTaking: app.deliveryAndSelfTaking
     });
     let data = JSON.parse(options.orderDetail);
+    console.log(app.deliveryAndSelfTaking)
     console.log(data)
-    if (app.deliveryAndSelfTaking.deliveryAddress) {
+    if (app.deliveryAndSelfTaking.deliveryAddress && app.deliveryAndSelfTaking.currentTab == 0) {
       //选择地址和更换地址进行配送费的加减操作
       https.request('/api-order/rest/common/selectDeliveryFee', {
         deliveryAddressId: app.deliveryAndSelfTaking.deliveryAddress.id,
@@ -428,6 +429,7 @@ Page({
         console.log(result)
         app.deliveryAndSelfTaking.reducedDeliveryTotalPrice = result.data;
         app.deliveryAndSelfTaking.feeData = result.data;
+        app.deliveryAndSelfTaking.actualPrice = data.actualPrice + result.data;
         data.actualPrice = data.actualPrice + result.data;
         this.setData({
           deliveryAndSelfTaking: app.deliveryAndSelfTaking,
@@ -436,10 +438,10 @@ Page({
         this.getCouponsMemberRelation(data);
       })
     } else {
-      this.setData({
-        "deliveryAndSelfTaking.deliveryAddress": null
-      });
-      data.actualPrice = data.actualPrice + app.deliveryAndSelfTaking.reducedDeliveryTotalPrice;
+      // this.setData({
+      //   "deliveryAndSelfTaking.deliveryAddress": null
+      // });
+      //data.actualPrice = data.actualPrice + app.deliveryAndSelfTaking.reducedDeliveryTotalPrice;
       this.getCouponsMemberRelation(data);
     }
 
@@ -498,7 +500,7 @@ Page({
   getRequestSubscribeMessage() {
     let self = this;
     console.log("用户的是否需要请求授权服务通知====>" + app.globalData.loginUserInfo.isRequestWxNotify);
-    
+
     if (this.data.paymentModeIndex == 1) {
       console.log(this.data.userInfo.paymentPassword);
       if (!this.data.userInfo.paymentPassword) {
@@ -638,6 +640,7 @@ Page({
       //   toastService.showToast("登录用户错误，请重新登录");
       //   return
       // }
+      openId = this.data.userInfo.openId;
       if (this.data.paymentModes[this.data.paymentModeIndex].value == 1) {
         this.weChatPay(id, orderNo, actualPrice, openId);
       }
@@ -800,7 +803,7 @@ Page({
           this.data.data.packingCharges = 0;
           for (var key in this.data.data.orderDetailList) {
             this.data.data.orderDetailList[key].totalPrice = utilHelper.toFixed(this.data.data.orderDetailList[key].price * this.data.data.orderDetailList[key].number, 2);
-            this.data.data.packingCharges = this.data.data.packingCharges + (this.data.data.orderDetailList[key].packingCharges * this.data.data.orderDetailList[key].number);
+            this.data.data.packingCharges = utilHelper.toFixed(this.data.data.packingCharges + (this.data.data.orderDetailList[key].packingCharges * this.data.data.orderDetailList[key].number));
           }
         }
         let reducedDeliveryPrice = 0;

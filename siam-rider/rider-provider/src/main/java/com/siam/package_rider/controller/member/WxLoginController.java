@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -91,7 +92,7 @@ public class WxLoginController {
 
     @ApiOperation(value = "获取微信手机号")
     @PostMapping(value = "/getWxPhone")
-    public BasicResult getWxPhone(WxCode wxCode) throws Exception {
+    public BasicResult getWxPhone(@RequestBody WxCode wxCode) throws Exception {
         BasicData basicResult = new BasicData();
         /*
          1. 得用wxCode从wx服务器拿到session_key

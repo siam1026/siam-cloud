@@ -2,6 +2,7 @@ package com.siam.package_user.service_impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.internal.LinkedTreeMap;
+import com.siam.package_common.constant.BaseCode;
 import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
@@ -100,6 +101,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private SmsLogFeignApi smsLogFeignApi;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
 //    @Autowired
 //    private PointsMallCouponsMemberRelationService pointsMallCouponsMemberRelationService;
@@ -239,13 +243,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<Member> selectAllMemberNoneCoupons() {
-        return memberMapper.selectAllMemberNoneCoupons();
+    public List<Member> selectAllMemberNoneCoupons(Integer couponsId) {
+        return memberMapper.selectAllMemberNoneCoupons(couponsId);
     }
 
     @Override
-    public List<Member> selectAllMemberNoneCouponsByPointsMall() {
-        return memberMapper.selectAllMemberNoneCouponsByPointsMall();
+    public List<Member> selectAllMemberNoneCouponsByPointsMall(Integer couponsId) {
+        return memberMapper.selectAllMemberNoneCouponsByPointsMall(couponsId);
     }
 
     @Override
@@ -590,9 +594,9 @@ public class MemberServiceImpl implements MemberService {
 
         //获取小程序openId
         WxSession wxSession = WxLoginController.getSessionKeyFromWxByCode(param.getCode());
-        if (wxSession.getOpenid() == null) {
-            throw new StoneCustomerException("用户唯一标识获取失败");
-        }
+//        if (wxSession.getOpenid() == null) {
+//            throw new StoneCustomerException("用户唯一标识获取失败");
+//        }
         log.debug("\n\n自动注册获取的openid：" + wxSession.getOpenid());
 
         // 判断是否已经注册
@@ -686,9 +690,6 @@ public class MemberServiceImpl implements MemberService {
         String password = "123456";
         password = CommonUtils.genMd5Password(password, passwordSalt);
 
-        //TODO MARK - 新用户默认余额给1000元
-        BigDecimal balance = new BigDecimal(1000);
-
         // 添加member记录
         Member insertMember = new Member();
         insertMember.setUsername(param.getUsername());
@@ -696,7 +697,7 @@ public class MemberServiceImpl implements MemberService {
         insertMember.setPassword(password);
         insertMember.setPasswordSalt(passwordSalt);
         /*insertMember.setNickname(member.getNickname());*/
-        insertMember.setBalance(balance);
+        insertMember.setBalance(BigDecimal.ZERO);
         insertMember.setLoginCount(Quantity.INT_1);
         insertMember.setInviteCode(null);
         insertMember.setIsDisabled(false);
@@ -765,13 +766,14 @@ public class MemberServiceImpl implements MemberService {
 
         //赠送系统默认优惠券-新人3折卷
         Coupons dbCoupons = couponsFeignApi.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID).getData();
-        if (dbCoupons == null) {
-            throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
+        if (dbCoupons != null) {
+            CouponsMemberRelation couponsMemberRelation = new CouponsMemberRelation();
+            couponsMemberRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
+            couponsMemberRelation.setMemberId(insertMember.getId());
+            couponsMemberRelationFeignApi.insertSelective(couponsMemberRelation);
+        }else{
+            log.error("系统默认优惠券-新人3折卷不存在");
         }
-        CouponsMemberRelation couponsMemberRelation = new CouponsMemberRelation();
-        couponsMemberRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
-        couponsMemberRelation.setMemberId(insertMember.getId());
-        couponsMemberRelationFeignApi.insertSelective(couponsMemberRelation);
 
         log.debug("邀请者id:" + param.getInviterId());
         if (param.getInviterId() != null && !param.getInviterId().equals("") && !param.getInviterId().equals("undefined")) {
@@ -791,13 +793,15 @@ public class MemberServiceImpl implements MemberService {
                 log.debug("start-------发送邀请优惠卷");
                 //发送邀请卷
                 Coupons inviteCoupons = couponsFeignApi.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID).getData();
-                if (inviteCoupons == null) {
-                    throw new StoneCustomerException("系统默认优惠券-邀请新人卷不存在");
+                if (inviteCoupons != null) {
+                    CouponsMemberRelation inviteCouponsMemberRelation = new CouponsMemberRelation();
+                    inviteCouponsMemberRelation.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+                    inviteCouponsMemberRelation.setMemberId(Integer.valueOf(param.getInviterId()));
+                    couponsMemberRelationFeignApi.insertSelective(inviteCouponsMemberRelation);
+                }else{
+                    log.error("系统默认优惠券-邀请新人卷不存在");
                 }
-                CouponsMemberRelation inviteCouponsMemberRelation = new CouponsMemberRelation();
-                inviteCouponsMemberRelation.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
-                inviteCouponsMemberRelation.setMemberId(Integer.valueOf(param.getInviterId()));
-                couponsMemberRelationFeignApi.insertSelective(inviteCouponsMemberRelation);
+
                 log.debug("end-------发送邀请优惠卷");
 
                 //将注册方式改为邀请注册
@@ -817,7 +821,10 @@ public class MemberServiceImpl implements MemberService {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
         Member member = memberMapper.selectByPrimaryKey(loginMember.getId());
-
+        if(member == null){
+            throw new StoneCustomerException(BaseCode.TOKEN_ERR, "您暂未登录，请登陆后访问");
+        }
+        
         MemberBillingRecordDto memberBillingRecordDto;
 
         //余额的账单类型
@@ -976,7 +983,8 @@ public class MemberServiceImpl implements MemberService {
             throw new StoneCustomerException("手机号错误");
         }
 
-        if("123456".equals(param.getMobileCode())) {
+        String systemMobileCode = (String) redisUtils.get("systemMobileCode");
+        if(org.apache.commons.lang3.StringUtils.isNotBlank(systemMobileCode) && systemMobileCode.equals(param.getMobileCode())) {
             //万能验证码，放行
         }else{
             // 判断验证码是否匹配

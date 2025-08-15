@@ -970,11 +970,8 @@ page {
  }
  
  .mp-vtabs-class scroll-view {
+  width: 20vh;
   height: 100vh;
- }
- 
- .weui-vtabs-content__wrp scroll-view {
-   height: 100vh;
  }
  
  .weui-vtabs-bar__scrollview .weui-vtabs-bar__content {

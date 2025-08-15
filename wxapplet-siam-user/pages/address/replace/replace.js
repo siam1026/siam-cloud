@@ -2,6 +2,7 @@ var amapFile = require('../../../utils/gaode-libs/amap-wx.js');
 var config = require('../../../utils/gaode-libs/config.js');
 import toastService from '../../../utils/toast.service';
 import https from '../../../utils/http';
+import authService from '../../../utils/auth';
 var lonlat;
 var city, keywords;
 const app = getApp();
@@ -10,7 +11,8 @@ Page({
     tips: [],
     isButton: false,
     searchInput:false,
-    customItem: ''
+    customItem: '',
+    deliveryAddressList:[]
   },
   bindInput: function (e) {
     var that = this;
@@ -123,7 +125,7 @@ Page({
             var pages = getCurrentPages();
             var prevPage = pages[pages.length - 2];
             prevPage.getCarouselList();
-            prevPage.getRegeoInit();
+            prevPage.getRegeo();
           }
           wx.navigateBack(1);
         }
@@ -141,7 +143,7 @@ Page({
       var pages = getCurrentPages();
       var prevPage = pages[pages.length - 2];
       prevPage.getCarouselList();
-      prevPage.getRegeoInit();
+      prevPage.getRegeo();
     }
     wx.navigateBack(1);
   },
@@ -155,7 +157,7 @@ Page({
     });
     if(this.data.jump_page=='index'){
       prevPage.getCarouselList();
-      prevPage.getRegeoInit();
+      prevPage.getRegeoAddress();
     }
     wx.navigateBack(1);
   },
@@ -227,7 +229,7 @@ Page({
           isOpenSettingInfo:res.authSetting['scope.userLocation']?false:true
         })
         if (res.authSetting['scope.userLocation']) {
-          that.getRegeoInit();
+          that.getRegeoAddress();
           that.getAutoHeight();
         }
       }
@@ -290,6 +292,17 @@ Page({
           })
         })
       }
+    });
+  },
+  goInsertAddress(e){
+    authService.checkIsLogin().then(result => {
+      if (result) {
+        wx.navigateTo({
+          url: '/pages/address/insert/insert',
+        })
+        return;
+      }
+      app.checkIsAuth("scope.userInfo");
     });
   },
   onShow: function (e) {

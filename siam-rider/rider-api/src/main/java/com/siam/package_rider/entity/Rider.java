@@ -1,6 +1,6 @@
 package com.siam.package_rider.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -17,19 +17,17 @@ public class Rider {
     /* ##################################### START 扩展字段 #################################### */
 
     //页码
-    @TableField(select = false)
-    private Integer pageNo = 1;
+    @TableField(exist = false) private Integer pageNo = 1;
 
-    //页面大小
-    @TableField(select = false)
-    private Integer pageSize = 20;
+    // 页面大小
+    @TableField(exist = false) private Integer pageSize = 20;
 
     //开始日期
-    @TableField(select = false)
+    @TableField(exist = false)
     private Date startCreateTime;
 
     //结束日期
-    @TableField(select = false)
+    @TableField(exist = false)
     private Date endCreateTime;
 
     public Date getStartCreateTime() {
@@ -59,11 +57,11 @@ public class Rider {
     private String passwordSalt;
 
     //门店名称
-    @TableField(select = false)
+    @TableField(exist = false)
     private String shopName;
 
     //门店名称
-    @TableField(select = false)
+    @TableField(exist = false)
     private List<Integer> ids;
 
     public String getShopName() {

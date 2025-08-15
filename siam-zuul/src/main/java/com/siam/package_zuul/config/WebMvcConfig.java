@@ -46,9 +46,12 @@ public class WebMvcConfig {
                 .addPathPatterns("/*/rest/member/**")
                 .excludePathPatterns("/api-user/rest/member/login")
                 .excludePathPatterns("/api-user/rest/member/loginByMobile")
-                .excludePathPatterns("/api-user/rest/member/logout")
+//                .excludePathPatterns("/api-user/rest/member/logout")
                 .excludePathPatterns("/api-user/rest/member/register")
-                .excludePathPatterns("/api-user/rest/member/verification/login");
+                .excludePathPatterns("/api-user/rest/member/verification/login")
+                .excludePathPatterns("/api-user/rest/member/weChat/login")
+                .excludePathPatterns("/api-order/rest/member/wxPay/notify")
+                .excludePathPatterns("/api-order/rest/member/wxPay/refundSuccessNotify");;
 
         //商户拦截器
         registry.addFilter(merchantFilter)

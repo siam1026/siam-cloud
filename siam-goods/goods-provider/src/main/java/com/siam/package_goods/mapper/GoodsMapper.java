@@ -14,25 +14,6 @@ import java.util.List;import com.baomidou.mybatisplus.extension.plugins.paginati
 import java.util.Map;
 
 public interface GoodsMapper extends BaseMapper<Goods> {
-    int countByExample(GoodsExample example);
-
-    int deleteByExample(GoodsExample example);
-
-    int deleteByPrimaryKey(Integer id);
-
-    int insertSelective(Goods record);
-
-    List<Goods> selectByExample(GoodsExample example);
-
-    Goods selectByPrimaryKey(Integer id);
-
-    int updateByExampleSelective(@Param("record") Goods record, @Param("example") GoodsExample example);
-
-    int updateByExample(@Param("record") Goods record, @Param("example") GoodsExample example);
-
-    int updateByPrimaryKeySelective(Goods record);
-
-    int updateByPrimaryKey(Goods record);
 
     @ResultMap("BaseResultMap")
     @Select("<script>select g.* from tb_goods g" +

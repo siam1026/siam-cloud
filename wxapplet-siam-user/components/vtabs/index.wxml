@@ -1,7 +1,7 @@
 <view class="weui-vtabs">
   <view class="weui-vtabs-bar__wrp {{tabBarClass}}">
     <scroll-view 
-      scroll-y
+      scroll-y="{{ifScrolling}}"
       class="weui-vtabs-bar__scrollview"
       scroll-into-view="weui-vtabs-item__{{currentView}}"
       style="height:{{contentHeight}}px;"
@@ -25,7 +25,7 @@
   </view>
   <view class="weui-vtabs-content__wrp">
     <scroll-view 
-      scroll-y
+      scroll-y="{{ifScrolling}}"
       class="weui-vtabs-content__scrollview" 
       scroll-top="{{contentScrollTop}}"
       scroll-with-animation="{{animation}}"

@@ -1,5 +1,6 @@
 package com.siam.package_merchant.controller.member;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
@@ -30,6 +31,7 @@ import com.siam.package_util.entity.Setting;
 import com.siam.package_util.feign.SettingFeignApi;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -184,12 +186,6 @@ public class ShopController {
         BasicData basicResult = new BasicData();
         ShopDetailVo shopDetailVo = new ShopDetailVo();
 
-        //TODO(MARK)-小程序用的是高德地图，后端用的是百度地图，所以需要转换一下
-        String[] strArray = shop.getPosition().split(",");
-        Map<String, BigDecimal> coordinateMap = baiduMapUtils.gaoDeToBaidu(Double.valueOf(strArray[0]), Double.valueOf(strArray[1]));
-        log.debug("\n\ngaode-position : " + shop.getPosition());
-        log.debug("\n\nbaidu-position : " + coordinateMap.get("lng") + "," + coordinateMap.get("lat"));
-
         if(shop.getId() == null){
             throw new StoneCustomerException("门店id不能为空");
         }
@@ -198,23 +194,33 @@ public class ShopController {
         if(dbShop == null){
             throw new StoneCustomerException("该门店信息不存在");
         }
-        if(dbShop.getStatus() != Quantity.INT_2) throw new StoneCustomerException("该店铺待上架或已下架，不允许查看");
+        if(dbShop.getStatus() != Quantity.INT_2){
+            throw new StoneCustomerException("该店铺待上架或已下架，不允许查看");
+        }
 
-        //如果返回值小于等于0，则代表当前位置超出配送范围 或 当前位置不合法 -- 需要将该店铺从列表中移除
-        //计算配送时长、距离公里数
-        /*String addressB = dbShop.getProvince() + dbShop.getCity() + dbShop.getArea() + dbShop.getStreet();*/
-        TravelingDistanceVo travelingDistanceVo = commonFeignApi.selectTravelingDistance(coordinateMap.get("lng"), coordinateMap.get("lat"), dbShop.getLongitude(), dbShop.getLatitude()).getData();
-        System.out.println("\n\n" + dbShop.getName() + "'travelingDistanceVo.getDistanceValue() : " + travelingDistanceVo.getDistanceValue());
-        Setting setting = settingFeignApi.selectCurrent().getData();
-        if(travelingDistanceVo.getDistanceValue().compareTo(BigDecimal.ZERO) == 0){
-            //如果距离为0，则代表百度地图没有计算结果
-            //还有一种情况会造成距离为0，那就是起点和终点相等--这种情况也算作地址填写错误
-            shopDetailVo.setIsOutofDeliveryRange(true);
-        }else if(travelingDistanceVo.getDistanceValue().compareTo(setting.getDeliveryDistanceLimit()) > 0){
-            //超出5.5公里则不予配送
-            shopDetailVo.setIsOutofDeliveryRange(true);
-        }else{
-            shopDetailVo.setIsOutofDeliveryRange(false);
+        /* TODO(MARK)-小程序用的是高德地图，后端用的是百度地图，所以需要转换一下 */
+        if(StringUtils.isNotBlank(shop.getPosition())){
+            String[] strArray = shop.getPosition().split(",");
+            Map<String, BigDecimal> coordinateMap = baiduMapUtils.gaoDeToBaidu(Double.valueOf(strArray[0]), Double.valueOf(strArray[1]));
+            log.debug("\n\ngaode-position : " + shop.getPosition());
+            log.debug("\n\nbaidu-position : " + coordinateMap.get("lng") + "," + coordinateMap.get("lat"));
+
+            //如果返回值小于等于0，则代表当前位置超出配送范围 或 当前位置不合法 -- 需要将该店铺从列表中移除
+            //计算配送时长、距离公里数
+            /*String addressB = dbShop.getProvince() + dbShop.getCity() + dbShop.getArea() + dbShop.getStreet();*/
+            TravelingDistanceVo travelingDistanceVo = commonFeignApi.selectTravelingDistance(coordinateMap.get("lng"), coordinateMap.get("lat"), dbShop.getLongitude(), dbShop.getLatitude()).getData();
+            System.out.println("\n\n" + dbShop.getName() + "'travelingDistanceVo.getDistanceValue() : " + travelingDistanceVo.getDistanceValue());
+            Setting setting = settingFeignApi.selectCurrent().getData();
+            if(travelingDistanceVo.getDistanceValue().compareTo(BigDecimal.ZERO) == 0){
+                //如果距离为0，则代表百度地图没有计算结果
+                //还有一种情况会造成距离为0，那就是起点和终点相等--这种情况也算作地址填写错误
+                shopDetailVo.setIsOutofDeliveryRange(true);
+            }else if(travelingDistanceVo.getDistanceValue().compareTo(setting.getDeliveryDistanceLimit()) > 0){
+                //超出5.5公里则不予配送
+                shopDetailVo.setIsOutofDeliveryRange(true);
+            }else{
+                shopDetailVo.setIsOutofDeliveryRange(false);
+            }
         }
 
         //查询当前门店是否营业
@@ -299,9 +305,9 @@ public class ShopController {
         List<Integer> matchShopIdList = new ArrayList<>();
 
         //1、通过店铺名称查询
-        ShopExample shopExample = new ShopExample();
-        shopExample.createCriteria().andNameLike("%"+ searchParam.getKeywords() +"%");
-        List<Shop> shopList = shopService.selectByExample(shopExample);
+        LambdaQueryWrapper<Shop> wrapper = new LambdaQueryWrapper();
+        wrapper.like(Shop::getName, "%"+ searchParam.getKeywords() +"%");
+        List<Shop> shopList = shopService.list(wrapper);
         List<Integer> filterList1 = new ArrayList<>();
         shopList.forEach(shop -> {
             filterList1.add(shop.getId());

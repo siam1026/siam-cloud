@@ -20,11 +20,9 @@ import java.util.Map;
 
 public interface OrderService extends IService<Order> {
 
-    int countByExample(OrderExample example);
-
     void delete(OrderParam param);
 
-    Order insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
+    Order insert(OrderParam param);
 
     /**
      * [本地事务]
@@ -36,7 +34,7 @@ public interface OrderService extends IService<Order> {
      */
     Order insertByMQ(OrderParam param, String transId) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
 
-    void cancelOrder(OrderParam param);
+    void cancelOrderByUnPaid(OrderParam param);
 
     void cancelOrderNoReason(OrderParam param) throws IOException;
 
@@ -44,11 +42,7 @@ public interface OrderService extends IService<Order> {
 
     void confirmReceipt(OrderParam param);
 
-    List<Order> selectByExample(OrderExample example);
-
     Order selectByPrimaryKey(Integer id);
-
-    void updateByExampleSelective(Order record, OrderExample example);
 
     void updateByPrimaryKeySelective(Order record);
 
@@ -96,7 +90,7 @@ public interface OrderService extends IService<Order> {
     /**
      * @description:订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)
      * @throws
-     * @author Chen Qu
+     * @author 暹罗
      * @date 2020/4/22 18:47
      */
     Map countOrder(OrderParam order);
@@ -154,7 +148,7 @@ public interface OrderService extends IService<Order> {
 
     int selectCountOrderPeoples(OrderParam param);
 
-    void updateRefundStatus(String out_trade_no);
+    void refundMerchantBalance(String out_trade_no);
 
     Map<String, Object> selectSumField(OrderParam order);
 
@@ -174,8 +168,23 @@ public interface OrderService extends IService<Order> {
 
     List<Order> waitPrintOrderList(OrderParam param);
 
-    void auditAfterSalesOrder(OrderParam param);
+    void auditAfterSalesOrderByAdmin(OrderParam param);
+
+    void auditAfterSalesOrderByMerchant(OrderParam param);
 
     Map statistic(OrderParam param) throws ParseException;
 
+    /**
+     *
+     * @param dbOrder 订单数据
+     * @param printType 打印类型
+     * @return
+     */
+    void printOrderReceipt(Order dbOrder, String printType);
+
+    /**
+     * 订单完成后，发放资金给商家、骑手
+     * @param dbOrder
+     */
+    void allocatingFunds(Order dbOrder);
 }

@@ -38,6 +38,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -127,7 +128,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     private PointsMallFullReductionRuleFeignApi fullReductionRuleFeignApi;
 
     @Autowired
-    private RocketMQTemplate rocketMQTemplate;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -299,6 +300,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
         /*//加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
         Message message = new Message("TID_COMMON_MALL", "CLOSE_OVERDUE_ORDER", JSON.toJSONString(dbOrder).getBytes());
         message.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_5M);
+        RocketMQTemplate rocketMQTemplate = applicationContext.getBean("rocketMQTemplate", RocketMQTemplate.class);
         rocketMQTemplate.getProducer().send(message);*/
 
         return dbOrder;
@@ -588,8 +590,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     @Override
     public void updateByFinishOverdueOrder() {
         //积分商城订单支付超过7天(7*24个小时) 且 订单处于已发货状态，则将订单修改为已完成
-        Date overdueTime = DateUtilsPlus.addDays(new Date(), Quantity.INT_7);
-        pointsMallOrderMapper.updateFinish(overdueTime, new Date(), Quantity.INT_6);
+        pointsMallOrderMapper.updateFinish(Quantity.INT_6);
     }
 
     @Override
@@ -1936,7 +1937,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             }
         }
 
-        PointsMallOrder dbPointsMallOrder = pointsMallOrderMapper.selectById(param.getOrderRefund().getOrderId());
+        PointsMallOrder dbPointsMallOrder = pointsMallOrderMapper.selectById(param.getId());
         if(dbPointsMallOrder == null){
             throw new StoneCustomerException("该订单不存在");
         }
@@ -2264,7 +2265,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
             }
         }
 
-        PointsMallOrder dbPointsMallOrder = pointsMallOrderMapper.selectById(param.getOrderRefund().getOrderId());
+        PointsMallOrder dbPointsMallOrder = pointsMallOrderMapper.selectById(param.getId());
         if(dbPointsMallOrder == null){
             throw new StoneCustomerException("该订单不存在");
         }

@@ -1,6 +1,6 @@
 <view wx:if="{{menuList.length>0}}" class="mp-vtabs-view">
    <mp-vtabs vtabs="{{menuList}}" activeTab="{{activeTab}}" tabBarClass="mp-vtabs-class" bindtabclick="onTabCLick"
-      bindchange="onChange" tabBarLineColor="#004ca0" tabBarActiveTextColor="#004ca0">
+      bindchange="onChange" tabBarLineColor="#004ca0" tabBarActiveTextColor="#004ca0" contentHeight="{{contentHeight}}">
       <block wx:for="{{menuList}}" wx:key="title" wx:for-item="menu" wx:for-index="menuIndex">
          <mp-vtabs-content tabIndex="{{menuIndex}}">
             <view class="vtabs-content-item {{menuList.length-1==menuIndex?'is-end-item':''}}">

@@ -1,5 +1,6 @@
 package com.siam.package_goods.model.param;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.siam.package_goods.entity.Goods;
 import lombok.Data;
 
@@ -14,6 +15,8 @@ import java.util.List;
  */
 @Data
 public class GoodsParam extends Goods {
+
+    private Integer menuId;
 
     //搜索关键字
     private String keywords;

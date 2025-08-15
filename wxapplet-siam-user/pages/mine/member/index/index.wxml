@@ -65,32 +65,32 @@
   </view>
   <view class="add_buttom">
     <view class="add-vip" bindtap="bindVipRecharge">加入会员尊享4大权益</view>
-    <!-- <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_page/benefits_icon.png"
+    <!-- <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_page/benefits_icon.png"
 								mode="aspectFill" class="vip-button-image"></image> -->
   </view>
 
   <view class="vip-details-view">
     <view class="vip-detail">
       <!-- <text class="iconfont icondingdan-"></text> -->
-      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_page/guarantee.png?v={{appVersion}}"
+      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_page/guarantee.png?v={{appVersion}}"
         mode="aspectFill" class="invite-image"></image>
       <view class="iconfont-title">账户保障</view>
     </view>
     <view class="vip-detail">
       <!-- <text class="iconfont iconyue"></text> -->
-      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_page/wallet.png?v={{appVersion}}"
+      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_page/wallet.png?v={{appVersion}}"
         mode="aspectFill" class="invite-image"></image>
       <view class="iconfont-title">独家礼券</view>
     </view>
     <view class="vip-detail">
       <!-- <text class="iconfont iconyouhuiquan"></text> -->
-      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_page/trophy.png?v={{appVersion}}"
+      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_page/trophy.png?v={{appVersion}}"
         mode="aspectFill" class="invite-image"></image>
       <view class="iconfont-title">下单奖励</view>
     </view>
     <view class="vip-detail">
       <!-- <text class="iconfont iconyouhuiquan"></text> -->
-      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_page/share.png?v={{appVersion}}"
+      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_page/share.png?v={{appVersion}}"
         mode="aspectFill" class="invite-image"></image>
       <view class="iconfont-title">邀请奖励</view>
     </view>
@@ -99,7 +99,7 @@
   <view class="gift-view">
     <view class="view-line"></view>
     <view class="gift-view-info">
-      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_page/recharge.png?v={{appVersion}}"
+      <image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_page/recharge.png?v={{appVersion}}"
       mode="widthFix" class="gift-image" bindtap="bindVipRecharge"></image>
     </view>
     <view class="gift-content">

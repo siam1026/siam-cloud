@@ -29,9 +29,9 @@ public class CouponsShopRelationServiceImpl implements CouponsShopRelationServic
 
     @Override
     public void insertSelective(Integer couponsId, List<Integer> shopIdList) {
-        if (couponsId.equals(BusinessType.NEW_PEOPLE_COUPONS_ID) || couponsId.equals(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID)) {
-            throw new StoneCustomerException("新人优惠卷和推荐新人优惠卷为系统默认优惠卷，不允许操作");
-        }
+//        if (couponsId.equals(BusinessType.NEW_PEOPLE_COUPONS_ID) || couponsId.equals(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID)) {
+//            throw new StoneCustomerException("新人优惠卷和推荐新人优惠卷为系统默认优惠卷，不允许操作");
+//        }
 
         /*Integer couponsMemberRelationCount = couponsMemberRelationMapper.getCountByCouponsId(couponsId);
         if (couponsMemberRelationCount != null && couponsMemberRelationCount > 0) {

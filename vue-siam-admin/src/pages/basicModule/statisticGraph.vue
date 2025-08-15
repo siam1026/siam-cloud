@@ -443,7 +443,7 @@
       vue.$http.post(vue, '/api-goods/rest/admin/statistics/todayStatistic', {},
         (vue, data) => {
           vue.todayList.dayCountPaid = data.data.dayCountPaid;
-          vue.todayList.daySumActualPrice = data.data.daySumActualPrice;
+          vue.todayList.daySumActualPrice = parseFloat(data.data.daySumActualPrice).toFixed(2);
           vue.todayList.handleShopCount = data.data.handleShopCount;
           vue.todayList.handleMerchantWithdrawCount = data.data.handleMerchantWithdrawCount;
           vue.todayList.handleShopChangeCount = data.data.handleShopChangeCount;
@@ -455,15 +455,15 @@
           vue.todayList.yesterdayMemberCount = data.data.yesterdayMemberCount;
           vue.todayList.thisMonthMemberCount = data.data.thisMonthMemberCount;
           vue.todayList.allMemberCount = data.data.allMemberCount;
-          vue.todayList.totalActualPrice = data.data.totalActualPrice;
-          vue.todayList.totalDeliveryFee = data.data.totalDeliveryFee;
-          vue.todayList.totalRefundAmount = data.data.totalRefundAmount;
-          vue.todayList.totalRefundDeliveryFee = data.data.totalRefundDeliveryFee;
+          vue.todayList.totalActualPrice = parseFloat(data.data.totalActualPrice).toFixed(2);;
+          vue.todayList.totalDeliveryFee = parseFloat(data.data.totalDeliveryFee).toFixed(2);
+          vue.todayList.totalRefundAmount = parseFloat(data.data.totalRefundAmount).toFixed(2);
+          vue.todayList.totalRefundDeliveryFee = parseFloat(data.data.totalRefundDeliveryFee).toFixed(2);
           vue.todayList.unCompletedNum = data.data.unCompletedNum;
           vue.todayList.waitHandleRefundNum = data.data.waitHandleRefundNum;
-          vue.todayList.balance = data.data.balance;
-          vue.todayList.daySumIncome = data.data.daySumIncome;
-          vue.todayList.daySumExpense = data.data.daySumExpense;
+          vue.todayList.balance = parseFloat(data.data.balance).toFixed(2);
+          vue.todayList.daySumIncome = parseFloat(data.data.daySumIncome).toFixed(2);
+          vue.todayList.daySumExpense = parseFloat(data.data.daySumExpense).toFixed(2);
         },(error, data)=> {
           vue.$message({
             showClose: true,

@@ -1,6 +1,7 @@
 package com.siam.package_merchant.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.siam.package_merchant.entity.Shop;
 import com.siam.package_merchant.model.example.ShopExample;
 
@@ -8,23 +9,17 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public interface ShopService {
+public interface ShopService extends IService<Shop> {
 
     int insert(Shop record);
 
     int insertSelective(Shop record);
 
-    int deleteByExample(ShopExample example);
-
     int deleteByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(Shop record);
 
-    List<Shop> selectByExample(ShopExample example);
-
     Shop selectByPrimaryKey(Integer id);
-
-    int countByExample(ShopExample example);
 
     Page<Shop> getListByPage(int pageNo, int pageSize, Shop shop);
 

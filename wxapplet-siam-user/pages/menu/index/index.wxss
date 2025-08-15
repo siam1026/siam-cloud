@@ -145,6 +145,7 @@ swiper {
 .notice-view {
   font-size: 24rpx;
   color: #9b9b9b;
+  margin: 20rpx;
 }
 
 .business-info-other {
@@ -310,8 +311,8 @@ swiper {
 }
 
 .commodity-type {
-  /* line-height: 64rpx; */
-  padding: 10rpx 20rpx;
+  line-height: 64rpx;
+  padding: 0rpx 20rpx;
   /* margin-top: 25rpx; */
 }
 
@@ -413,6 +414,7 @@ swiper {
   z-index: 0;
   opacity: 0.7;
   visibility: visible;
+  line-height: 40rpx;
 }
 
 .shopping-cart-detail {
@@ -605,7 +607,6 @@ swiper {
 }
 
 .fullname-class {
-  margin-top: 11rpx;
   font-size: 26rpx;
 }
 
@@ -967,12 +968,12 @@ swiper {
 }
 
 .weui-vtabs-bar__scrollview .weui-vtabs-bar__content {
-  padding-bottom: 10vh;
+  padding-bottom: 12vh;
   background: #eeeeee;
 }
 
 .weui-vtabs-content__scrollview .weui-vtabs-content {
-  padding-bottom: 50px;
+  padding-bottom: 80px;
 }
 
 .is-end-item {
@@ -1187,6 +1188,7 @@ swiper {
 }
 .mp-vtabs-class-1{
   width: 32%;
+  margin-bottom: 70px;
 }
 .weui-vtabs-bar__item{
   width: 100%;

@@ -1,24 +1,24 @@
 <view class="section-location">
-	<!-- <view class="section" wx:if="{{userLocation}}">
+	<view class="section" wx:if="{{userLocation}}">
 		<picker mode="region" bindchange="bindRegionChange" value="{{region}}" custom-item="{{customItem}}">
 			<view class="picker flex_center">
 				{{region[1]?region[1]:"定位中..."}}<text class="iconfont iconweibiaoti35" wx:if="{{region[1]}}"></text>
 			</view>
 		</picker>
 		<input bindinput="bindInput" placeholder="请输入地址名称	{{scope.userLocation}}" focus="true" />
-	</view> -->
-	<!-- <view class="location-address">
+	</view>
+	<view class="location-address">
 		<view class="address-title">当前地址</view>
 		<view class="location-name theme-color">
 			<view bindtap="bindSearch" data-keywords="{{sectionLocation}}" wx:if="{{sectionLocation}}" hover-class="hover-class-public">{{sectionLocation.name}}</view>
 			<view class="please-location" wx:else>请重新定位</view>
 			<view bindtap="{{isOpenSettingInfo?'openSettingInfo':'getRegeoAddress'}}">重新定位</view>
 		</view>
-	</view> -->
+	</view>
 </view>
 <view wx:if="{{!searchInput}}">
 	<view class="address-title">收货地址</view>
-	<view class="delivery-address">
+	<view class="delivery-address" wx:if="{{deliveryAddressList.length>0}}">
 		<view wx:for="{{deliveryAddressList}}" wx:key="index" hover-class="hover-class-public"
 		class="delivery-address-item" bindtap="{{addressType?'getShopAddressTap':'getDeliveryAddressTip'}}" data-address="{{item}}">
 			<view class="delivery-address-detail">{{item.province}}{{item.city}}{{item.area}}{{item.street}}</view>
@@ -29,6 +29,7 @@
 			</view>
 		</view>
 	</view>
+  <is-show-tip isShow="{{deliveryAddressList.length<=0}}" bind:bindTap="goInsertAddress" buttonText="添加地址" top="40" bottom="10" text="{{deliveryAddressList.length<=0}}" tipText="暂无收货地址" button="{{true}}"></is-show-tip>
 </view>
 <view wx:else>
 	<view bindtap="bindSearch" data-keywords="{{i}}" class="text_box" wx:for="{{tips}}" wx:for-item="i" wx:key="index">

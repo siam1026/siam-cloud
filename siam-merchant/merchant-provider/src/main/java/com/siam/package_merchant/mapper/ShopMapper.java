@@ -11,25 +11,6 @@ import java.util.List;import com.baomidou.mybatisplus.extension.plugins.paginati
 import java.util.Map;
 
 public interface ShopMapper extends BaseMapper<Shop> {
-    int countByExample(ShopExample example);
-
-    int deleteByExample(ShopExample example);
-
-    int deleteByPrimaryKey(Integer id);
-
-    int insertSelective(Shop record);
-
-    List<Shop> selectByExample(ShopExample example);
-
-    Shop selectByPrimaryKey(Integer id);
-
-    int updateByExampleSelective(@Param("record") Shop record, @Param("example") ShopExample example);
-
-    int updateByExample(@Param("record") Shop record, @Param("example") ShopExample example);
-
-    int updateByPrimaryKeySelective(Shop record);
-
-    int updateByPrimaryKey(Shop record);
 
     @ResultMap("BaseResultMap")
     @Select("<script>select s.* from tb_shop s" +

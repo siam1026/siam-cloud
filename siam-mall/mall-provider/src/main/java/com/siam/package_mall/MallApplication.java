@@ -1,5 +1,6 @@
 package com.siam.package_mall;
 
+import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +13,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableCircuitBreaker
 @EnableFeignClients("com.siam")
 @EnableEurekaClient
-@SpringBootApplication(scanBasePackages = "com.siam")
+@SpringBootApplication(scanBasePackages = "com.siam", exclude = {RocketMQAutoConfiguration.class})
 @MapperScan(basePackages = {"com.siam.**.mapper"})
 public class MallApplication
 {

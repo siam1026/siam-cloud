@@ -1,14 +1,18 @@
 package com.siam.package_util.service.internal;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.siam.package_util.model.dto.OrderDetailPrintDto;
+import com.siam.package_util.model.dto.OrderPrintDto;
 import com.siam.package_util.entity.internal.Printer;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  *  暹罗
  */
-public interface PrinterService {
+public interface PrinterService extends IService<Printer> {
 
     void deleteByPrimaryKey(Integer id);
 
@@ -35,4 +39,28 @@ public interface PrinterService {
      * @return
      */
     Page<Map<String, Object>> getListJoinShop(int pageNo, int pageSize, Printer printer);
+
+    /**
+     * 打印后厨总单
+     * @param orderPrintDto
+     * @param orderDetailPrintDtoList
+     * @return
+     */
+    void kitchenTotalOrderPrint(OrderPrintDto orderPrintDto, List<OrderDetailPrintDto> orderDetailPrintDtoList, Integer printerId);
+
+    /**
+     * 打印后厨单商品
+     * @param orderPrintDto
+     * @param orderDetailPrintDto
+     * @return
+     */
+    void kitchenSingleGoodsOrderPrint(OrderPrintDto orderPrintDto, OrderDetailPrintDto orderDetailPrintDto, Integer printerId);
+
+    /**
+     * 结账单打印
+     *
+     * @param orderPrintDto 订单信息
+     * @param orderDetailPrintDtoList  订单商品信息
+     */
+    void checkoutOrderPrint(OrderPrintDto orderPrintDto, List<OrderDetailPrintDto> orderDetailPrintDtoList, Integer printerId);
 }

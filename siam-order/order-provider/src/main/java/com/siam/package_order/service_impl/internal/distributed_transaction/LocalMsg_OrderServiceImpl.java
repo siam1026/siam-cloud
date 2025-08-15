@@ -24,6 +24,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,7 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
     private CouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
 
     @Autowired
-    private RocketMQTemplate rocketMQTemplate;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -80,17 +81,12 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
     private RedisTemplate redisTemplate;
 
     @Override
-    public int countByExample(OrderExample example) {
-        return 0;
-    }
-
-    @Override
     public void delete(OrderParam param) {
 
     }
 
     @Override
-    public Order insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
+    public Order insert(OrderParam param) {
 //        //TODO(MARK) - 购物车下单、直接购买两种形式可以不拆分成两个接口
 //        //TODO(MARK) - 系统默认免运费
 //        param.setDeliveryFee(BigDecimal.ZERO);
@@ -250,6 +246,7 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
 //        //加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
 //        Message message = new Message("TID_COMMON_MALL", "CLOSE_OVERDUE_ORDER", JSON.toJSONString(dbOrder).getBytes());
 //        message.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_5M);
+//        RocketMQTemplate rocketMQTemplate = applicationContext.getBean("rocketMQTemplate", RocketMQTemplate.class);
 //        rocketMQTemplate.getProducer().send(message);
 //
 //        return dbOrder;
@@ -263,7 +260,7 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrder(OrderParam param) {
+    public void cancelOrderByUnPaid(OrderParam param) {
 
     }
 
@@ -283,18 +280,8 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> selectByExample(OrderExample example) {
-        return null;
-    }
-
-    @Override
     public Order selectByPrimaryKey(Integer id) {
         return null;
-    }
-
-    @Override
-    public void updateByExampleSelective(Order record, OrderExample example) {
-
     }
 
     @Override
@@ -433,7 +420,7 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateRefundStatus(String out_trade_no) {
+    public void refundMerchantBalance(String out_trade_no) {
 
     }
 
@@ -483,13 +470,28 @@ public class LocalMsg_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void auditAfterSalesOrder(OrderParam param) {
+    public void auditAfterSalesOrderByAdmin(OrderParam param) {
+
+    }
+
+    @Override
+    public void auditAfterSalesOrderByMerchant(OrderParam param) {
 
     }
 
     @Override
     public Map statistic(OrderParam param) throws ParseException {
         return null;
+    }
+
+    @Override
+    public void printOrderReceipt(Order dbOrder, String printType) {
+
+    }
+
+    @Override
+    public void allocatingFunds(Order dbOrder) {
+
     }
 
     @Override

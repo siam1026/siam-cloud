@@ -1,6 +1,7 @@
 package com.siam.package_merchant.service_impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siam.package_util.feign.SettingFeignApi;
 import com.siam.package_util.entity.Setting;
 import com.siam.package_merchant.entity.Shop;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ShopServiceImpl implements ShopService {
+public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements ShopService {
 
     @Autowired
     private ShopMapper shopMapper;
@@ -30,37 +31,22 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public int insertSelective(Shop record) {
-        return shopMapper.insertSelective(record);
-    }
-
-    @Override
-    public int deleteByExample(ShopExample example) {
-        return shopMapper.deleteByExample(example);
+        return shopMapper.insert(record);
     }
 
     @Override
     public int deleteByPrimaryKey(Integer id) {
-        return shopMapper.deleteByPrimaryKey(id);
+        return shopMapper.deleteById(id);
     }
 
     @Override
     public int updateByPrimaryKeySelective(Shop record) {
-        return shopMapper.updateByPrimaryKeySelective(record);
-    }
-
-    @Override
-    public List<Shop> selectByExample(ShopExample example) {
-        return shopMapper.selectByExample(example);
+        return shopMapper.updateById(record);
     }
 
     @Override
     public Shop selectByPrimaryKey(Integer id) {
-        return shopMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public int countByExample(ShopExample example) {
-        return shopMapper.countByExample(example);
+        return shopMapper.selectById(id);
     }
 
     @Override

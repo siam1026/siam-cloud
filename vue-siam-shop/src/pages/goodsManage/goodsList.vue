@@ -545,7 +545,7 @@
       },
       getspecificationList() {
         let vue = this   
-        let param = { pageNo: -1, pageSize: 10 ,goodsId: vue.goodsId}
+        let param = { pageNo: -1, pageSize: 1000 ,goodsId: vue.goodsId}
         vue.$http.post( vue, '/api-goods/rest/merchant/goodsSpecificationOption/list', param,
           (vue, data) => {
             let arr = data.data.records

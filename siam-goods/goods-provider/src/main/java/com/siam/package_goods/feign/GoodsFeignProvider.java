@@ -1,5 +1,6 @@
 package com.siam.package_goods.feign;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_goods.entity.Goods;
 import com.siam.package_goods.mapper.GoodsMapper;
@@ -67,16 +68,17 @@ public class GoodsFeignProvider implements GoodsFeignApi {
     @Override
     public BasicResult<List<Goods>> selectByExample(GoodsParam param) {
         GoodsExample example = new GoodsExample();
-        GoodsExample.Criteria criteria = example.createCriteria();
+        LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
         if(param.getShopId() != null){
-            criteria.andShopIdEqualTo(param.getShopId());
+            wrapper.eq(Goods::getShopId, param.getShopId());
         }
         if(param.getKeywords() != null){
-            criteria.andNameLike("%"+ param.getKeywords() +"%");
+            wrapper.like(Goods::getName, "%"+ param.getKeywords() +"%");
         }
         if(param.getFilterList1() != null){
-            criteria.andShopIdNotIn(param.getFilterList1());
+            wrapper.notIn(Goods::getShopId, param.getFilterList1());
         }
-        return BasicResult.success(goodsMapper.selectByExample(example));
+
+        return BasicResult.success(goodsMapper.selectList(wrapper));
     }
 }

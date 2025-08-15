@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../../config/index.js';
+import jsonBig from 'json-bigint';
 
 const qs = require('qs');
 
@@ -41,12 +42,44 @@ function post(vue, url, params, success, fail) {
   // }
 
   var headersValue = {headers : {"Authorization" : sessionStorage.getItem("token"), 'Content-Type': 'application/json'}};
-  axios.post(url, params, headersValue)
+  // axios.post(url, params, headersValue)
+  //   .then(function (response) {
+  //     let data = response.data;
+  //     dealData(vue,data,success,fail,params);
+  //   })
+  //   .catch(failInner);
+
+
+
+  // 使用 json-bigint 解决超过16位数字解析精度丢失问题
+  const api = axios.create({
+    // 接口的基础连接
+    // baseURL: 'http:// www.xxxxx.com/',
+    // 自定义返回的元素数据,axios会默认用JSON.parse
+    // `transformResponse` 在传递给 then/catch 前，允许修改响应数据
+    transformResponse: [
+      function (data) {
+        // 对 data 进行任意转换处理
+        try {
+           // 如果转换成功则返回转换的数据结果
+            const json = jsonBig({
+              storeAsString:true
+            })
+            return json.parse(data)
+        } catch (err) {
+          return data
+        }
+      }
+    ]
+  })
+  
+  api.post(url, params, headersValue)
     .then(function (response) {
       let data = response.data;
       dealData(vue,data,success,fail,params);
     })
     .catch(failInner);
+
 }
 
 function put(vue, url, params, success, fail) {

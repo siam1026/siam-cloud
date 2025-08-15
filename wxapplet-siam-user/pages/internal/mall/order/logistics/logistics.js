@@ -18,7 +18,7 @@ Page({
    getOrderDetail(id) {
       toastService.showLoading();
       https.request('/api-mall/rest/member/pointsMall/orderLogistics/list', {
-         id: id,
+         orderId: id,
          pageNo:-1,
          pageSize:20
       }).then(result => {

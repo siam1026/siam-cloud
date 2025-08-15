@@ -1,23 +1,19 @@
 package com.siam.package_order.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.siam.package_order.entity.OrderDetail;
 import com.siam.package_order.model.example.OrderDetailExample;
 
 import java.util.List;
 
-public interface OrderDetailService {
-    int countByExample(OrderDetailExample example);
+public interface OrderDetailService extends IService<OrderDetail> {
 
     void deleteByPrimaryKey(Integer id);
 
     void insertSelective(OrderDetail record);
 
-    List<OrderDetail> selectByExample(OrderDetailExample example);
-
     OrderDetail selectByPrimaryKey(Integer id);
-
-    void updateByExampleSelective(OrderDetail record, OrderDetailExample example);
 
     void updateByPrimaryKeySelective(OrderDetail record);
 

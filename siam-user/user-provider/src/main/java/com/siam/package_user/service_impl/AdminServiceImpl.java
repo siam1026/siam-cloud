@@ -5,6 +5,7 @@ import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
+import com.siam.package_common.util.RedisUtils;
 import com.siam.package_user.auth.cache.AdminSessionManager;
 import com.siam.package_user.entity.Admin;
 import com.siam.package_user.mapper.AdminMapper;
@@ -39,6 +40,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private MemberTradeRecordService memberTradeRecordService;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     public int countByExample(AdminExample example){
         return adminMapper.countByExample(example);
@@ -118,7 +122,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public AdminResult loginByMobile(AdminParam param) {
-        if("123456".equals(param.getMobileCode())) {
+        String systemMobileCode = (String) redisUtils.get("systemMobileCode");
+        if(StringUtils.isNotBlank(systemMobileCode) && systemMobileCode.equals(param.getMobileCode())) {
             //万能验证码，放行
         }else {
             // 判断验证码是否匹配
@@ -203,7 +208,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void forgetPasswordStep1(AdminParam param) {
-        if("123456".equals(param.getMobileCode())) {
+        String systemMobileCode = (String) redisUtils.get("systemMobileCode");
+        if(StringUtils.isNotBlank(systemMobileCode) && systemMobileCode.equals(param.getMobileCode())) {
             //万能验证码，放行
         }else {
             // 判断验证码是否匹配

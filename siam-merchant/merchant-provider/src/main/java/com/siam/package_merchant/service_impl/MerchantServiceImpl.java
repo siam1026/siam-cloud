@@ -8,6 +8,7 @@ import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.Base64Utils;
 import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.OSSUtils;
+import com.siam.package_common.util.RedisUtils;
 import com.siam.package_goods.feign.*;
 import com.siam.package_merchant.auth.cache.MerchantSessionManager;
 import com.siam.package_merchant.entity.Merchant;
@@ -28,6 +29,7 @@ import com.siam.package_util.entity.SmsLog;
 import com.siam.package_util.entity.SysMessage;
 import com.siam.package_util.feign.MessageFeignApi;
 import com.siam.package_util.feign.SmsLogFeignApi;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class MerchantServiceImpl implements MerchantService {
 
@@ -69,6 +72,9 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Autowired
     private MessageFeignApi messageFeignApi;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     //    @Override
 //    public void updateBalance(MerchantBillingRecord merchantBillingRecord) {
@@ -180,7 +186,8 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public MerchantResult loginByMobile(MerchantParam param) {
-        if("123456".equals(param.getMobileCode())) {
+        String systemMobileCode = (String) redisUtils.get("systemMobileCode");
+        if(StringUtils.isNotBlank(systemMobileCode) && systemMobileCode.equals(param.getMobileCode())) {
             //万能验证码，放行
         }else{
             // 判断验证码是否匹配
@@ -214,7 +221,8 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public MerchantResult registerByMobile(MerchantParam param) {
-        if("123456".equals(param.getMobileCode())) {
+        String systemMobileCode = (String) redisUtils.get("systemMobileCode");
+        if(StringUtils.isNotBlank(systemMobileCode) && systemMobileCode.equals(param.getMobileCode())) {
             //万能验证码，放行
         }else{
             // 判断验证码是否匹配
@@ -236,7 +244,7 @@ public class MerchantServiceImpl implements MerchantService {
 
             // 添加merchant记录
             Merchant insertMerchant = new Merchant();
-            insertMerchant.setUsername(param.getUsername());
+            insertMerchant.setUsername(param.getUsername() != null ? param.getUsername() : "admin-" + param.getMobile());
             insertMerchant.setMobile(param.getMobile());
             insertMerchant.setPassword(password);
             insertMerchant.setPasswordSalt(passwordSalt);
@@ -268,24 +276,27 @@ public class MerchantServiceImpl implements MerchantService {
 
             //建立店铺与系统默认优惠券ID-新人3折卷的关联关系
             Coupons dbCoupons = couponsFeignApi.selectByPrimaryKey(BusinessType.NEW_PEOPLE_COUPONS_ID).getData();
-            if(dbCoupons == null){
-                throw new StoneCustomerException("系统默认优惠券-新人3折卷不存在");
+            if(dbCoupons != null){
+                CouponsShopRelation insertCouponsShopRelation = new CouponsShopRelation();
+                insertCouponsShopRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
+                insertCouponsShopRelation.setShopId(shopId);
+                insertCouponsShopRelation.setCreateTime(new Date());
+                couponsShopRelationFeignApi.insertSelective(insertCouponsShopRelation);
+            }else{
+                log.error("系统默认优惠券-新人3折卷不存在");
             }
-            CouponsShopRelation insertCouponsShopRelation = new CouponsShopRelation();
-            insertCouponsShopRelation.setCouponsId(BusinessType.NEW_PEOPLE_COUPONS_ID);
-            insertCouponsShopRelation.setShopId(shopId);
-            insertCouponsShopRelation.setCreateTime(new Date());
-            couponsShopRelationFeignApi.insertSelective(insertCouponsShopRelation);
+
             //建立店铺与系统默认优惠券ID-推荐新人3折卷的关联关系
             Coupons dbCouponsInvite = couponsFeignApi.selectByPrimaryKey(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID).getData();
-            if(dbCouponsInvite == null){
-                throw new StoneCustomerException("系统默认优惠券ID-推荐新人3折卷不存在");
+            if(dbCouponsInvite != null){
+                CouponsShopRelation insertCouponsShopRelationInvite = new CouponsShopRelation();
+                insertCouponsShopRelationInvite.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
+                insertCouponsShopRelationInvite.setShopId(shopId);
+                insertCouponsShopRelationInvite.setCreateTime(new Date());
+                couponsShopRelationFeignApi.insertSelective(insertCouponsShopRelationInvite);
+            }else{
+                log.error("系统默认优惠券ID-推荐新人3折卷不存在");
             }
-            CouponsShopRelation insertCouponsShopRelationInvite = new CouponsShopRelation();
-            insertCouponsShopRelationInvite.setCouponsId(BusinessType.INVITE_NEW_PEOPLE_COUPONS_ID);
-            insertCouponsShopRelationInvite.setShopId(shopId);
-            insertCouponsShopRelationInvite.setCreateTime(new Date());
-            couponsShopRelationFeignApi.insertSelective(insertCouponsShopRelationInvite);
 
             //TODO-给调度后台发送一条系统消息
             SysMessage sysMessage = new SysMessage();
@@ -383,7 +394,8 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public void forgetPasswordStep1(MerchantParam param) {
-        if("123456".equals(param.getMobileCode())) {
+        String systemMobileCode = (String) redisUtils.get("systemMobileCode");
+        if(StringUtils.isNotBlank(systemMobileCode) && systemMobileCode.equals(param.getMobileCode())) {
             //万能验证码，放行
         }else{
             // 判断验证码是否匹配

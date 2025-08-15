@@ -6,7 +6,7 @@
 	</view>
 	<view class="button-view">
 		
-	<button class="getphonenumber" type="primary" bindgetphonenumber='getPhoneNumber' open-type='getPhoneNumber' style="font-size: 30rpx;">微信手机号码登录</button>
+	<button class="getphonenumber" type="primary" bindgetphonenumber='getPhoneNumber' open-type='getPhoneNumber' style="font-size: 30rpx;">手机号码快捷登录</button>
 	<!-- <button class="getphonenumber" type="primary" wx:else
 	bindtap="getUserProfile">获取用户信息</button> -->
 	<button class="verification-code theme-color-border" hover-class="hover-class-public" bindtap="verificationCodeTap" style="font-size: 30rpx;">手机号验证码登录</button>

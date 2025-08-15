@@ -18,7 +18,7 @@ public interface OrderFeignApi {
     /**
      * @description:订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)
      * @throws
-     * @author Chen Qu
+     * @author 暹罗
      * @date 2020/4/22 18:47
      */
     @PostMapping(value = "/api/order/countOrder")

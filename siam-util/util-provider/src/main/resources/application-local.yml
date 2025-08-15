@@ -164,6 +164,8 @@ feign:
 
 #rocketmq配置
 rocketmq:
+  #mq开关，关闭则启动时不加载rocketmq
+  switch: false
   #消息通道
   name-server: 127.0.0.1:9876
   producer:
@@ -213,6 +215,18 @@ management:
       enabled: false
     elasticsearch:
       enabled: false
+
+#芯烨云打印机开放 API相关配置
+xinyeyun:
+  user: siam1026@163.com
+  key: siam1026@163.com
+  domain: https://open.xpyun.net/api/openapi/
+  api_url:
+    addPrinters: ${xinyeyun.domain}/xprinter/addPrinters
+    setVoiceType: ${xinyeyun.domain}/xprinter/setVoiceType
+    print: ${xinyeyun.domain}/xprinter/print
+    playVoiceExt: ${xinyeyun.domain}/xprinter/playVoiceExt
+    playCustomVoice: ${xinyeyun.domain}/xprinter/playCustomVoice
 
 #日志配置
 logging:

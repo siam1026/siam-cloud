@@ -115,7 +115,7 @@ Page({
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         toastService.showLoading("正在登录...", true);
         let phone = this.data.phone;
-        var mobile = /^[1][3,4,5,7,8][0-9]{9}$/;
+        var mobile = /^1[3-9]\d{9}$/;
         var isMobile = mobile.exec(phone);
         //输入有误的话，弹出模态框提示
         if (!isMobile) {

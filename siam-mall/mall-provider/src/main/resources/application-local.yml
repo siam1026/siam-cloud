@@ -213,6 +213,8 @@ hystrix:
 
 #rocketmq配置
 rocketmq:
+  #mq开关，关闭则启动时不加载rocketmq
+  switch: false
   #消息通道
   name-server: 127.0.0.1:9876
   producer:

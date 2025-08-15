@@ -29,7 +29,7 @@ Page({
       statusBarHeight: app.globalData.systemInfoSync.statusBarHeight * 2
     });
     this.getCarouselList();
-    this.getRegeoInit();
+    this.getRegeo();
   },
   onShow: function () {
     //判断是否显示新用户弹窗

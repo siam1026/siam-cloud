@@ -1,5 +1,6 @@
 package com.siam.package_goods.controller.merchant;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.annoation.MerchantPermission;
 import com.siam.package_common.constant.BasicResultCode;
@@ -12,6 +13,7 @@ import com.siam.package_goods.entity.Goods;
 import com.siam.package_goods.entity.MenuGoodsRelation;
 import com.siam.package_goods.model.dto.GoodsMenuDto;
 import com.siam.package_goods.model.example.MenuGoodsRelationExample;
+import com.siam.package_goods.model.param.GoodsParam;
 import com.siam.package_goods.service.*;
 import com.siam.package_merchant.auth.cache.MerchantSessionManager;
 import com.siam.package_merchant.entity.Merchant;
@@ -150,45 +152,47 @@ public class MerchantGoodsController {
             @ApiImplicitParam(name = "menuId", value = "菜单id", required = false, paramType = "query", dataType = "int"),
     })
     @PostMapping(value = "/insert")
-    public BasicResult insert(@RequestBody @Validated(value = {}) Goods goods, HttpServletRequest request){
+    public BasicResult insert(@RequestBody @Validated(value = {}) GoodsParam param, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
         //获取当前登录用户绑定的门店编号
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         //商品的主图 等于 商品轮播图的第一张图
-        if(StringUtils.isNotBlank(goods.getSubImages())){
-            goods.setMainImage(goods.getSubImages().split(",")[0]);
+        if(StringUtils.isNotBlank(param.getSubImages())){
+            param.setMainImage(param.getSubImages().split(",")[0]);
         }
 
         //添加商品记录
         //设置默认库存为0
-        goods.setShopId(loginMerchant.getShopId());
-        goods.setStock(Quantity.INT_0);
-        goods.setMonthlySales(Quantity.INT_0);
-        goods.setTotalSales(Quantity.INT_0);
-        goods.setTotalComments(Quantity.INT_0);
-        goods.setCreateTime(new Date());
-        goods.setUpdateTime(new Date());
+        Goods insertGoods = new Goods();
+        BeanUtil.copyProperties(param, insertGoods);
+        insertGoods.setShopId(loginMerchant.getShopId());
+        insertGoods.setStock(Quantity.INT_0);
+        insertGoods.setMonthlySales(Quantity.INT_0);
+        insertGoods.setTotalSales(Quantity.INT_0);
+        insertGoods.setTotalComments(Quantity.INT_0);
+        insertGoods.setCreateTime(new Date());
+        insertGoods.setUpdateTime(new Date());
         //兑换商品所需积分数量新增时默认等于折扣价
-        goods.setExchangePoints(goods.getPrice().intValue());
-        goodsService.insertSelective(goods);
+        insertGoods.setExchangePoints(param.getPrice().intValue());
+        goodsService.insertSelective(insertGoods);
 
         //建立商品与类别的关系
         MenuGoodsRelation insertMenuGoodsRelation = new MenuGoodsRelation();
-        insertMenuGoodsRelation.setGoodsId(goods.getId());
-        insertMenuGoodsRelation.setMenuId(goods.getMenuId());
+        insertMenuGoodsRelation.setGoodsId(insertGoods.getId());
+        insertMenuGoodsRelation.setMenuId(param.getMenuId());
         insertMenuGoodsRelation.setCreateTime(new Date());
         insertMenuGoodsRelation.setUpdateTime(new Date());
         menuGoodsRelationService.insertSelective(insertMenuGoodsRelation);
 
         //生成商品公共规格
-        goodsSpecificationService.insertPublicGoodsSpecification(goods.getId());
+        goodsSpecificationService.insertPublicGoodsSpecification(insertGoods.getId());
 
         //TODO(MARK)-目前只能通过图片地址来判别重复，后续可以优化成那个啥位数来判定唯一
         //添加图片上传记录
-        if(StringUtils.isNotBlank(goods.getSubImages())){
-            String[] array = goods.getSubImages().split(",");
+        if(StringUtils.isNotBlank(param.getSubImages())){
+            String[] array = param.getSubImages().split(",");
             for (String str : array) {
                 PictureUploadRecordParam uploadRecordParam = new PictureUploadRecordParam();
                 uploadRecordParam.setUrl(str);
@@ -238,13 +242,13 @@ public class MerchantGoodsController {
             @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
     })
     @PostMapping(value = "/update")
-    public BasicResult update(@RequestBody @Validated(value = {}) Goods goods, HttpServletRequest request){
+    public BasicResult update(@RequestBody @Validated(value = {}) GoodsParam param, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
         //获取当前登录用户绑定的门店编号
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
-        Goods dbGoods = goodsService.selectByPrimaryKey(goods.getId());
+        Goods dbGoods = goodsService.selectByPrimaryKey(param.getId());
         if (dbGoods == null){
             throw new StoneCustomerException("该商品不存在");
         } else if (loginMerchant.getShopId() != dbGoods.getShopId()){
@@ -252,33 +256,36 @@ public class MerchantGoodsController {
         }
 
         //商品的主图 等于 商品轮播图的第一张图
-        if(StringUtils.isNotBlank(goods.getSubImages())){
-            goods.setMainImage(goods.getSubImages().split(",")[0]);
+        if(StringUtils.isNotBlank(param.getSubImages())){
+            param.setMainImage(param.getSubImages().split(",")[0]);
         }
 
         // 修改商品信息
-        goods.setUpdateTime(new Date());
-        goodsService.updateByPrimaryKeySelective(goods);
+        Goods updateGoods = new Goods();
+        BeanUtil.copyProperties(param, updateGoods);
+        updateGoods.setId(dbGoods.getId());
+        updateGoods.setUpdateTime(new Date());
+        goodsService.updateByPrimaryKeySelective(updateGoods);
 
         //判断商品类别关系  目前不考虑一个商品有多个类别的情况
         MenuGoodsRelationExample example = new MenuGoodsRelationExample();
-        example.createCriteria().andGoodsIdEqualTo(goods.getId());
+        example.createCriteria().andGoodsIdEqualTo(dbGoods.getId());
         List<MenuGoodsRelation> list = menuGoodsRelationService.selectByExample(example);
         if(list!=null && list.size()>0){
             //如果商品原先的类别被修改了，现在就修改数据重新建立关系
             MenuGoodsRelation dbMenuGoodsRelation = list.get(0);
-            if(goods.getMenuId() != dbMenuGoodsRelation.getMenuId()){
+            if(param.getMenuId() != dbMenuGoodsRelation.getMenuId()){
                 MenuGoodsRelation updateMenuGoodsRelation = new MenuGoodsRelation();
                 updateMenuGoodsRelation.setId(dbMenuGoodsRelation.getId());
-                updateMenuGoodsRelation.setMenuId(goods.getMenuId());
+                updateMenuGoodsRelation.setMenuId(param.getMenuId());
                 updateMenuGoodsRelation.setUpdateTime(new Date());
                 menuGoodsRelationService.updateByPrimaryKeySelective(updateMenuGoodsRelation);
             }
         }else{
             //如果商品原先没有类别，现在就建立关系
             MenuGoodsRelation insertMenuGoodsRelation = new MenuGoodsRelation();
-            insertMenuGoodsRelation.setGoodsId(goods.getId());
-            insertMenuGoodsRelation.setMenuId(goods.getMenuId());
+            insertMenuGoodsRelation.setGoodsId(dbGoods.getId());
+            insertMenuGoodsRelation.setMenuId(param.getMenuId());
             insertMenuGoodsRelation.setCreateTime(new Date());
             insertMenuGoodsRelation.setUpdateTime(new Date());
             menuGoodsRelationService.insertSelective(insertMenuGoodsRelation);
@@ -286,8 +293,8 @@ public class MerchantGoodsController {
 
         //TODO(MARK)-目前只能通过图片地址来判别重复，后续可以优化成那个啥位数来判定唯一
         //添加图片上传记录
-        if(StringUtils.isNotBlank(goods.getSubImages())){
-            String[] array = goods.getSubImages().split(",");
+        if(StringUtils.isNotBlank(param.getSubImages())){
+            String[] array = param.getSubImages().split(",");
             for (String str : array) {
                 PictureUploadRecordParam uploadRecordParam = new PictureUploadRecordParam();
                 uploadRecordParam.setUrl(str);

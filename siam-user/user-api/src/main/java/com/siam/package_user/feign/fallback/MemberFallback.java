@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class MemberFallback implements MemberFeignApi {
@@ -60,6 +61,16 @@ public class MemberFallback implements MemberFeignApi {
 
     @Override
     public BasicResult queryWxPublicPlatformOpenId() throws IOException {
+        return null;
+    }
+
+    @Override
+    public BasicResult<List<Member>> selectAllMemberNoneCoupons(Integer couponsId) {
+        return null;
+    }
+
+    @Override
+    public BasicResult<List<Member>> selectAllMemberNoneCouponsByPointsMall(Integer couponsId) {
         return null;
     }
 }

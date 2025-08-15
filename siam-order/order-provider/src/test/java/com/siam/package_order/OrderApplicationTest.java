@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -49,7 +50,7 @@ public class OrderApplicationTest {
     private OrderDetailMapper orderDetailMapper;
 
     @Autowired
-    private RocketMQTemplate rocketMQTemplate;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private ShopFeignApi shopFeignApi;
@@ -233,6 +234,7 @@ public class OrderApplicationTest {
         Message message = new Message("TID_COMMON", tags, JSON.toJSONString(order).getBytes());
         //delaytime的值: messageDelayLevel=1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
         message.setDelayTimeLevel(3);
+        RocketMQTemplate rocketMQTemplate = applicationContext.getBean("rocketMQTemplate", RocketMQTemplate.class);
         rocketMQTemplate.getProducer().send(message);
     }
 }

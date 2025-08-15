@@ -1,6 +1,8 @@
 package com.siam.package_order.feign;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.model.example.OrderExample;
@@ -31,7 +33,7 @@ public class OrderFeignProvider implements OrderFeignApi {
     /**
      * @description:订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)
      * @throws
-     * @author Chen Qu
+     * @author 暹罗
      * @date 2020/4/22 18:47
      */
     public BasicResult countOrder(OrderParam order){
@@ -93,21 +95,20 @@ public class OrderFeignProvider implements OrderFeignApi {
     }
 
     public BasicResult countByExample(OrderParam order){
-        OrderExample example = new OrderExample();
-        OrderExample.Criteria criteria = example.createCriteria();
+        LambdaQueryWrapper<Order> orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
         if(order.getShopId() != null){
-            criteria.andShopIdEqualTo(order.getShopId());
+            orderLambdaQueryWrapper.eq(Order::getShopId, order.getShopId());
         }
         if(order.getStatus() != null){
-            criteria.andStatusEqualTo(order.getStatus());
+            orderLambdaQueryWrapper.eq(Order::getStatus, order.getStatus());
         }
         if(order.getCreateTimeGreaterThan() != null){
-            criteria.andCreateTimeGreaterThan(order.getCreateTimeGreaterThan());
+            orderLambdaQueryWrapper.gt(Order::getCreateTime, order.getCreateTimeGreaterThan());
         }
         if(order.getExcludeStatusList() != null){
-            criteria.andStatusNotIn(order.getExcludeStatusList());
+            orderLambdaQueryWrapper.notIn(Order::getStatus, order.getExcludeStatusList());
         }
-        return BasicResult.success(orderService.countByExample(example));
+        return BasicResult.success(orderService.count(orderLambdaQueryWrapper));
     }
 
     public BasicResult selectCountOrderPeoples(OrderParam param){

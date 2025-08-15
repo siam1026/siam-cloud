@@ -11,7 +11,8 @@ var proListToTop = [],
   isInitShow = true,
   winHeight = 0,
   totalPrice = 0,
-  totalNum = 0, menuList = [];
+  totalNum = 0,
+  menuList = [];
 
 Page({
 
@@ -58,9 +59,9 @@ Page({
     appraiseFocus: false,
     showConfirmBar: false,
     shoppingCartList: [],
-    isShopDetail:false,
-    isActivityDialog:false,
-    isOutofDeliveryRangeDialog:false
+    isShopDetail: false,
+    isActivityDialog: false,
+    isOutofDeliveryRangeDialog: false
   },
   closeShoppingCart: function () {
     this.setData({
@@ -222,8 +223,8 @@ Page({
       if (result.success && result.data) {
         if (result.data.isOutofDeliveryRange) {
           this.setData({
-            isOutofDeliveryRangeDialog:true
-          }) 
+            isOutofDeliveryRangeDialog: true
+          })
         }
         this.getFullReductionRule(result.data)
       }
@@ -254,7 +255,7 @@ Page({
     shopInfo.shop.firstPoster = GlobalConfig.ossUrl + shopInfo.shop.firstPoster;
     shopInfo.shop.shopWithinImgs = shopWithinImgs;
     //shopInfo.shop.isOperating = false;
-    app.getIsItNear(shopInfo.shop.startTime,shopInfo.shop.endTime);
+    app.getIsItNear(shopInfo.shop.startTime, shopInfo.shop.endTime);
     this.setData({
       shopInfo: shopInfo,
       fullPriceReduction: utilHelper.toFixed(fullPriceReduction, 2),
@@ -306,7 +307,7 @@ Page({
               aitem.imagesUrls.push(item);
             });
           }
-          if(aitem.replyPageInfo){
+          if (aitem.replyPageInfo) {
             aitem.replyPageInfo.list.forEach((bitem, bIndex) => {
               let goodt = (bitem.isGiveLike == 0) ? "点赞" : "取消点赞";
               let type = (bitem.isGiveLike == 0) ? "good" : "deletegood";
@@ -335,7 +336,7 @@ Page({
               bitem.placement = 'top';
             })
           }
-          
+
           aitem.createTime = dateHelper.fmtDate(aitem.createTime);
         });
         //console.log(result.data.records)
@@ -401,9 +402,10 @@ Page({
 
         menuList = menuList;
         totalPrice = utilHelper.toFixed(totalPrice, 2);
-        var isStartDeliveryPrice = false, priceDifference = 0;
+        var isStartDeliveryPrice = false,
+          priceDifference = 0;
 
-        this.data.shopInfo.shop.startDeliveryPrice=(this.data.shopInfo.shop.startDeliveryPrice?this.data.shopInfo.shop.startDeliveryPrice:0);
+        this.data.shopInfo.shop.startDeliveryPrice = (this.data.shopInfo.shop.startDeliveryPrice ? this.data.shopInfo.shop.startDeliveryPrice : 0);
         if (totalPrice + packingCharges >= this.data.shopInfo.shop.startDeliveryPrice) {
           isStartDeliveryPrice = true;
         }
@@ -590,7 +592,7 @@ Page({
     if (replyId) {
       data.replyId = replyId;
     }
-    https.request('/api-user/rest/member/giveLike/insert', data).then(result => {
+    https.request('/api-order/rest/member/giveLike/insert', data).then(result => {
       toastService.hideLoading();
       if (result.success) {
         if (type == "1") {
@@ -677,7 +679,7 @@ Page({
       return
     }
     toastService.showLoading();
-    https.request('/api-user/rest/member/reply/insert', {
+    https.request('/api-order/rest/member/reply/insert', {
       appraiseId: this.data.appraiseId,
       replyId: this.data.replyId,
       replyType: this.data.replyType,
@@ -693,7 +695,7 @@ Page({
     })
   },
   getReplyByAppraiseId(e) {
-    https.request('/api-user/rest/member/reply/list', {
+    https.request('/api-order/rest/member/reply/list', {
       appraiseId: this.data.appraiseId,
       pageNo: -1,
       pageSize: 20
@@ -755,14 +757,14 @@ Page({
       id: id,
       position: app.deliveryAndSelfTaking.location
     }).then(result => {
-      
+
       if (result.success && result.data) {
         //获取商品的详细图片，转换以轮播图的数据格式
         //console.log(result.data)
         result.data.mainImage = GlobalConfig.ossUrl + result.data.mainImage
         this.setData({
           goodsInfo: result.data,
-          priceAfter:result.data.price
+          priceAfter: result.data.price
         })
         this.selectByGoodsId(id);
       }
@@ -970,7 +972,7 @@ Page({
         }
       })
     });
-    
+
   },
   goToPay() {
     authService.checkIsLogin().then(result => {
@@ -991,7 +993,7 @@ Page({
       })
     });
   },
-  toPay(){
+  toPay() {
     var list = this.data.shoppingCartList;
     var orderDetail = {};
     orderDetail.actualPrice = this.data.totalPrice;
@@ -1040,17 +1042,27 @@ Page({
     })
   },
   onTabCLick(e) {
+    var _this = this;
     const index = e.detail.index
-    console.log('tabClick', index)
-  },
-  isShopDetailTap(){
+    console.log('tabClick', index);
     this.setData({
-      isShopDetail:true
+      activeTab: index,
+      ifScroll: true
+    });
+    setTimeout(() => {
+      _this.setData({
+        ifScroll: false
+      })
+    }, 1000);
+  },
+  isShopDetailTap() {
+    this.setData({
+      isShopDetail: true
     })
   },
-  isPromotionTap(){
+  isPromotionTap() {
     this.setData({
-      isActivityDialog:true
+      isActivityDialog: true
     })
   },
   onChange(e) {
@@ -1072,12 +1084,12 @@ Page({
       }
     })
   },
-  editAddress(){
+  editAddress() {
     this.setData({
-      isOutofDeliveryRangeDialog:false
+      isOutofDeliveryRangeDialog: false
     })
     wx.navigateTo({
-      url: '../../address/replace/replace?jump_page=menu_index&addressType='+true+'&shopId='+this.data.shopInfo.shop.id,
+      url: '../../address/replace/replace?jump_page=menu_index&addressType=' + true + '&shopId=' + this.data.shopInfo.shop.id,
     })
   },
   /**
@@ -1093,7 +1105,7 @@ Page({
     });
     this.setData({
       shopId: options.id,
-      screenHeight:app.globalData.systemInfoSync.screenHeight
+      screenHeight: app.globalData.systemInfoSync.screenHeight
     });
     this.topViewHeight();
   },
@@ -1137,7 +1149,7 @@ Page({
         //console.log(res.networkType)
         let networkType = res.networkType;
         if (networkType != 'none') {
-          
+
         }
         that.setData({
           netWorkType: res.networkType == 'none' ? true : false
@@ -1159,7 +1171,7 @@ Page({
   /** 
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () { },
+  onUnload: function () {},
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
@@ -1193,33 +1205,46 @@ Page({
     const query = wx.createSelectorQuery();
     let windowHeight = app.globalData.systemInfoSync.windowHeight;
     let screenHeight = app.globalData.systemInfoSync.screenHeight;
-    let statusBarHeight=app.globalData.systemInfoSync.statusBarHeight * 2;
+    let statusBarHeight = app.globalData.systemInfoSync.statusBarHeight * 2;
     console.log(windowHeight)
     var height = 0;
+    setTimeout(() => {
+
+    }, 1000);
+
     query.selectAll('#page-top-view,#d_p_s,#shopping-cart-detail').boundingClientRect(function (rect) {
       console.log(rect)
       _this.setData({
-        'pageTopView':rect[0].height*2,
-        'dps':rect[1].height*2,
-        'shoppingCartDetail':rect[2].height*2,
-        'contentHeight':screenHeight-(rect[1].height*2)-(rect[2].height*2)
+        'pageTopView': rect[0].height * 2,
+        'dps': rect[1].height * 2,
+        'shoppingCartDetail': rect[2].height * 2,
+        'contentHeight': screenHeight - (rect[1].height) - (rect[2].height) - 48
       })
     }).exec();
-
-  
     console.log(app.globalData.systemInfoSync);
   },
   onPageScroll(e) {
     console.log(e);
-    if((e.scrollTop)>=(this.data.pageTopView-10)){
-      this.setData({
-        ifScroll:true
+    var _this = this;
+    var pageTopView = this.data.pageTopView;
+    var dps = this.data.dps;
+    wx.createSelectorQuery().selectAll('#businessRecommend').boundingClientRect(function (rect) {
+      console.log(rect);
+      var businessRecommendHeight = (rect[0].height * 2);
+      _this.setData({
+        'businessRecommendHeight': (rect[0].height * 2)
       })
-    }else{
-      this.setData({
-        ifScroll:false
-      })
-    }
+      if ((e.scrollTop) >= ((pageTopView / 2) + (dps / 2) + (businessRecommendHeight / 2))) {
+        _this.setData({
+          ifScroll: true
+        })
+      } else {
+        _this.setData({
+          ifScroll: false
+        })
+      }
+    }).exec();
+
   }
   // onPageScroll(e) {
   //   console.log(e);

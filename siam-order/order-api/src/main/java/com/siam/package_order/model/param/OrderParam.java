@@ -79,4 +79,7 @@ public class OrderParam extends Order {
     private List excludeStatusList;
 
     private Date createTimeGreaterThan;
+
+    // 打印类型：checkout=结账单 label=标签 kitchenTotal=后厨总单 kitchenSingleGoods=后厨单商品
+    private String printType;
 }

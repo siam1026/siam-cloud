@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 提供给其他服务Feign客户端调用的用户模块相关接口
@@ -75,6 +76,16 @@ public class MemberFeignProvider implements MemberFeignApi {
     public BasicResult queryWxPublicPlatformOpenId() throws IOException {
         memberService.queryWxPublicPlatformOpenId();
         return BasicResult.success();
+    }
+
+    @Override
+    public BasicResult<List<Member>> selectAllMemberNoneCoupons(Integer couponsId) {
+        return BasicResult.success(memberService.selectAllMemberNoneCoupons(couponsId));
+    }
+
+    @Override
+    public BasicResult<List<Member>> selectAllMemberNoneCouponsByPointsMall(Integer couponsId) {
+        return BasicResult.success(memberService.selectAllMemberNoneCouponsByPointsMall(couponsId));
     }
 
     /**

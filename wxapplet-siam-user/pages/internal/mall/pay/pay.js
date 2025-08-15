@@ -139,10 +139,10 @@ Page({
       //   return
       // }
       let paymentModes = that.data.paymentModes;
-      if (e.detail.value == 0) {
-        toastService.showToast("暂不支持微信支付，请选择余额支付/积分支付");
-        return
-      }
+      // if (e.detail.value == 0) {
+      //   toastService.showToast("暂不支持微信支付，请选择余额支付/积分支付");
+      //   return
+      // }
       if (e.detail.value == 1) {
         console.log(that.data.userInfo.paymentPassword);
         if (!that.data.userInfo.paymentPassword) {
@@ -177,12 +177,12 @@ Page({
   },
   insertAddress() {
     wx.navigateTo({
-      url: '../../address/insert/insert',
+      url: '/pages/address/insert/insert',
     })
   },
   editAddress(e) {
     wx.navigateTo({
-      url: "../../address/edit/edit?detail=" + JSON.stringify(e.currentTarget.dataset.data),
+      url: "/pages/address/edit/edit?detail=" + JSON.stringify(e.currentTarget.dataset.data),
     })
     this.setData({
       refreshKey: e.currentTarget.dataset.key
@@ -620,6 +620,7 @@ Page({
       //   toastService.showToast("登录用户错误，请重新登录");
       //   return
       // }
+      openId=this.data.userInfo.openId;
       if (this.data.paymentModes[this.data.paymentModeIndex].value == 1) {
         this.weChatPay(id, orderNo, actualPrice, openId);
       }

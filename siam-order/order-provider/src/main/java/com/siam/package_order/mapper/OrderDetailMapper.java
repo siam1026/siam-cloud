@@ -11,25 +11,6 @@ import java.util.List;import com.baomidou.mybatisplus.extension.plugins.paginati
 import java.util.Map;
 
 public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
-    int countByExample(OrderDetailExample example);
-
-    int deleteByExample(OrderDetailExample example);
-
-    int deleteByPrimaryKey(Integer id);
-
-    int insertSelective(OrderDetail record);
-
-    List<OrderDetail> selectByExample(OrderDetailExample example);
-
-    OrderDetail selectByPrimaryKey(Integer id);
-
-    int updateByExampleSelective(@Param("record") OrderDetail record, @Param("example") OrderDetailExample example);
-
-    int updateByExample(@Param("record") OrderDetail record, @Param("example") OrderDetailExample example);
-
-    int updateByPrimaryKeySelective(OrderDetail record);
-
-    int updateByPrimaryKey(OrderDetail record);
 
     @ResultMap("BaseResultMap")
     @Select("<script>select od.* from tb_order_detail od" +

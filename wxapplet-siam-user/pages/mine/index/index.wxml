@@ -1,6 +1,6 @@
 <view class="container">
 
-	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mypage_top.jpg?v={{appVersion}}" class="index-bg-class" mode="widthFix"></image>
+	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mypage_top.jpg?v={{appVersion}}" class="index-bg-class" mode="widthFix"></image>
 	<view class="userinfo" style="margin-top:{{statusBarHeight+30}}rpx;">
 		<block wx:if="{{!data}}">
 			<button bindtap="getUserProfile" plain="true" class="userinfo-button"
@@ -131,7 +131,7 @@
 					<navigator class="navigator-class" url="../../mine/share/index/index?inviterId={{data.id}}">
 						<view class="invite-wrapper">
 							<image
-								src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/share-invite/share_mine.png?v={{timestamp}}"
+								src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/share-invite/share_mine.png?v={{timestamp}}"
 								mode="widthFix" class="invite-image"></image>
 						</view>
 					</navigator>

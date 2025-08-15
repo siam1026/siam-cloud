@@ -65,4 +65,20 @@ public interface MemberFeignApi {
      */
     @PostMapping(value = "/api/member/queryWxPublicPlatformOpenId")
     BasicResult queryWxPublicPlatformOpenId() throws IOException;
+
+    /**
+     * 将新用户的"是否需要弹出新人引导提示"字段值改成是
+     *
+     * @author 暹罗
+     */
+    @PostMapping(value = "/api/member/selectAllMemberNoneCoupons")
+    BasicResult<List<Member>> selectAllMemberNoneCoupons(@RequestParam("couponsId") Integer couponsId);
+
+    /**
+     * 将新用户的"是否需要弹出新人引导提示"字段值改成是
+     *
+     * @author 暹罗
+     */
+    @PostMapping(value = "/api/member/selectAllMemberNoneCouponsByPointsMall")
+    BasicResult<List<Member>> selectAllMemberNoneCouponsByPointsMall(@RequestParam("couponsId") Integer couponsId);
 }

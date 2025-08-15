@@ -1,6 +1,7 @@
 package com.siam.package_goods.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.siam.package_goods.model.dto.GoodsMenuDto;
 import com.siam.package_goods.entity.Goods;
 import com.siam.package_goods.model.example.GoodsExample;
@@ -11,14 +12,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public interface GoodsService {
-    int countByExample(GoodsExample example);
+public interface GoodsService extends IService<Goods> {
 
     void deleteByPrimaryKey(Integer id);
 
     void insertSelective(Goods record);
-
-    List<Goods> selectByExample(GoodsExample example);
 
     Goods selectByPrimaryKey(Integer id);
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import com.baomidou.mybatisplus.annotation.TableField;
 
 @Data
 public class TravelingDistanceVo {
@@ -21,10 +22,10 @@ public class TravelingDistanceVo {
     private BigDecimal durationValue;
 
     //页码
-    private Integer pageNo = 1;
+    @TableField(exist = false) private Integer pageNo = 1;
 
     //页面大小
-    private Integer pageSize = 20;
+    @TableField(exist = false) private Integer pageSize = 20;
 
     public Integer getPageNo() {
         return pageNo;

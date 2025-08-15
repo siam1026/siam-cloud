@@ -1,5 +1,6 @@
 package com.siam.package_order.controller.member;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
@@ -30,7 +31,6 @@ import com.siam.package_user.entity.Member;
 import com.siam.package_user.entity.MemberBillingRecord;
 import com.siam.package_user.feign.MemberBillingRecordFeignApi;
 import com.siam.package_user.feign.MemberFeignApi;
-import com.siam.package_user.model.example.MemberBillingRecordExample;
 import com.siam.package_user.model.param.MemberBillingRecordParam;
 import com.siam.package_user.util.TokenUtil;
 import com.siam.package_weixin_basic.service.WxNotifyService;
@@ -93,6 +93,12 @@ public class MerchantOrderController {
 
     @Autowired
     private CouponsMemberRelationFeignApi couponsMemberRelationFeignApi;
+
+    @Autowired
+    private MemberSessionManager memberSessionManager;
+
+    @Autowired
+    private MerchantSessionManager merchantSessionManager;
 
     private Lock lock = new ReentrantLock();
 
@@ -234,6 +240,11 @@ public class MerchantOrderController {
         }
         orderService.updateByPrimaryKeySelective(updateOrder);
 
+        if(status == Quantity.INT_6){
+            // 发放资金给商家、骑手
+            orderService.allocatingFunds(dbOrder);
+        }
+        
         //发送短信提醒自提
         if(status==Quantity.INT_3){
             // 发送短信提醒自提
@@ -362,27 +373,35 @@ public class MerchantOrderController {
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         //自取订单-待制作订单
-        OrderExample example = new OrderExample();
-        example.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andShoppingWayEqualTo(Quantity.INT_1).andStatusEqualTo(Quantity.INT_2);
-        int waitHandleNum = orderService.countByExample(example);
+        LambdaQueryWrapper<Order> orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
+        orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_1);
+        orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_2);
+        int waitHandleNum = orderService.count(orderLambdaQueryWrapper);
         dataMap.put("waitHandleNum", waitHandleNum);
 
         //自取订单-待自取订单
-        example = new OrderExample();
-        example.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andShoppingWayEqualTo(Quantity.INT_1).andStatusEqualTo(Quantity.INT_3);
-        int waitPickUpNum = orderService.countByExample(example);
+        orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
+        orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_1);
+        orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_3);
+        int waitPickUpNum = orderService.count(orderLambdaQueryWrapper);
         dataMap.put("waitPickUpNum", waitPickUpNum);
 
         //外卖订单-待配送订单
-        example = new OrderExample();
-        example.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andShoppingWayEqualTo(Quantity.INT_2).andStatusEqualTo(Quantity.INT_4);
-        int waitDeliveryNum = orderService.countByExample(example);
+        orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
+        orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_2);
+        orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_4);
+        int waitDeliveryNum = orderService.count(orderLambdaQueryWrapper);
         dataMap.put("waitDeliveryNum", waitDeliveryNum);
 
         //外卖订单-已配送订单
-        example = new OrderExample();
-        example.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andShoppingWayEqualTo(Quantity.INT_2).andStatusEqualTo(Quantity.INT_5);
-        int deliveredNum = orderService.countByExample(example);
+        orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
+        orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_2);
+        orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_5);
+        int deliveredNum = orderService.count(orderLambdaQueryWrapper);
         dataMap.put("deliveredNum", deliveredNum);
 
         return BasicResult.success(dataMap);
@@ -403,9 +422,11 @@ public class MerchantOrderController {
             List<Integer> excludedStatusList = new ArrayList<>();
             excludedStatusList.add(Quantity.INT_1);
             excludedStatusList.add(Quantity.INT_10);
-            OrderExample example = new OrderExample();
-            example.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andStatusNotIn(excludedStatusList).andIsPrintedEqualTo(false);
-            orders = orderService.selectByExample(example);
+            LambdaQueryWrapper<Order> orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
+            orderLambdaQueryWrapper.notIn(Order::getStatus, excludedStatusList);
+            orderLambdaQueryWrapper.eq(Order::getIsPrinted, false);
+            orders = orderService.list(orderLambdaQueryWrapper);
 
             //为了解决以下两个问题，此处需要同步修改以上订单的打印状态为已打印，需要做并发控制
             //1.浏览器打开多个商家端页面时，不造成重复打印的问题
@@ -416,13 +437,16 @@ public class MerchantOrderController {
                 orders.forEach(order -> {
                     idList.add(order.getId());
                 });
-                example = new OrderExample();
-                example.createCriteria().andIdIn(idList);
+
+                orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                orderLambdaQueryWrapper.in(Order::getId, idList);
+
                 //定义需要修改的信息
                 Order order = new Order();
                 order.setIsPrinted(true);
                 //批量修改以上订单的打印状态为已打印
-                orderService.updateByExampleSelective(order, example);
+
+                orderService.update(order, orderLambdaQueryWrapper);
             }
         } finally {
             lock.unlock();
@@ -463,12 +487,6 @@ public class MerchantOrderController {
         return BasicResult.success(page);
     }
 
-    @Autowired
-    private MemberSessionManager memberSessionManager;
-
-    @Autowired
-    private MerchantSessionManager merchantSessionManager;
-
     /**
      * 售后处理订单-处理
      *
@@ -477,225 +495,8 @@ public class MerchantOrderController {
      */
     @PostMapping(value = "/auditAfterSalesOrder")
     public BasicResult auditAfterSalesOrder(@RequestBody @Validated(value = {ValidGroupOfId.class, ValidGroupOfAudit.class}) OrderParam orderParam, HttpServletRequest request){
-        BasicResult basicResult = new BasicResult();
-
-        if(orderParam.getStatus() == Quantity.INT_2 && org.apache.commons.lang3.StringUtils.isBlank(orderParam.getOpinion())){
-            throw new StoneCustomerException("审核不通过时，审核意见不能为空");
-        }
-
-        //获取当前登录用户绑定的门店编号
-        Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
-
-        Order dbOrder = orderService.selectByPrimaryKey(orderParam.getId());
-        if(dbOrder == null) throw new StoneCustomerException("该订单不存在");
-        if(dbOrder.getShopId() != loginMerchant.getShopId()) throw new StoneCustomerException("您没有权限处理该订单");
-
-        OrderRefund dbOrderRefund = orderRefundService.selectByOrderId(orderParam.getId());
-        if(dbOrderRefund == null) throw new StoneCustomerException("该订单无退款记录");
-        if(dbOrderRefund.getStatus()!=Quantity.INT_1 && dbOrderRefund.getStatus()!=Quantity.INT_2){
-            throw new StoneCustomerException("该售后订单已被处理过，不允许操作");
-        }
-
-        //获取该订单的对应用户
-        Member orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
-
-        if(orderParam.getStatus() == Quantity.INT_1){
-            //审核通过
-
-            //修改订单记录状态-售后处理完成
-            Order updateOrder = new Order();
-            updateOrder.setId(orderParam.getId());
-            updateOrder.setStatus(Quantity.INT_9);
-            orderService.updateByPrimaryKeySelective(updateOrder);
-
-            //进行订单自动退款操作
-            boolean isRefundSuccess = false;
-            if(dbOrder.getPaymentMode().equals(Quantity.INT_1)){
-                //微信支付
-                isRefundSuccess = wxPayService.refund(dbOrder.getOrderNo(), dbOrder.getActualPrice(), dbOrderRefund.getRefundAmount());
-
-            }else if(dbOrder.getPaymentMode().equals(Quantity.INT_2)){
-                //余额支付
-                //增加用户的余额
-                Member updateMember = new Member();
-                updateMember.setId(orderMember.getId());
-                updateMember.setBalance(orderMember.getBalance().add(dbOrderRefund.getRefundAmount()));
-                updateMember.setTotalConsumeBalance(orderMember.getTotalConsumeBalance().subtract(dbOrderRefund.getRefundAmount()));
-                memberFeignApi.updateByPrimaryKeySelective(updateMember);
-                orderMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
-
-                //添加账单记录
-                MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
-                memberBillingRecord.setMemberId(orderMember.getId());
-                memberBillingRecord.setType(MemberBillingRecord.TYPE_ORDER_REFUND_RETURN_BALANCE);
-                memberBillingRecord.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
-                memberBillingRecord.setCoinType(MemberBillingRecord.COIN_TYPE_BALANCE);
-                memberBillingRecord.setNumber(dbOrderRefund.getRefundAmount());
-                memberBillingRecord.setMessage("用户申请退款-余额退回");
-                memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
-
-                //退款成功的操作
-                orderService.updateRefundStatus(dbOrder.getOrderNo());
-
-                isRefundSuccess = true;
-            }
-            if(!isRefundSuccess){
-                throw new StoneCustomerException("退款失败，请联系管理员");
-            }
-
-            //5）只有在退了使用优惠券的商品时，优惠券才会被退回
-            if(dbOrderRefund.getIsUsedCoupons()){
-                //退回优惠卷
-                Integer couponsMemberRelationId = dbOrder.getCouponsMemberRelationId();
-                if (couponsMemberRelationId != null) {
-                    couponsMemberRelationFeignApi.updateCouponsUsed(couponsMemberRelationId,false);
-                }
-            }
-
-            //修改退款状态 -- 退款成功
-            OrderRefund updateOrderRefund = new OrderRefund();
-            updateOrderRefund.setId(dbOrderRefund.getId());
-            updateOrderRefund.setStatus(Quantity.INT_7);
-            orderRefundService.updateByPrimaryKeySelective(updateOrderRefund);
-
-            //添加退款流程
-            OrderRefundProcess orderRefundProcess = new OrderRefundProcess();
-            orderRefundProcess.setOrderRefundId(dbOrderRefund.getId());
-            orderRefundProcess.setName("退款成功");
-            orderRefundProcess.setCreateTime(new Date());
-            orderRefundProcessService.insertSelective(orderRefundProcess);
-
-            //发送服务通知
-            wxNotifyService.sendOrderRefundSuccessMessage(orderMember.getOpenId(), dbOrder.getShopName(), dbOrder.getOrderNo(), dbOrder.getDescription(), dbOrderRefund.getRefundAmount(), new Date());
-            //退回下单奖励积分
-            MemberBillingRecordParam billingRecordParam = new MemberBillingRecordParam();
-            billingRecordParam.setType(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS);
-            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
-            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS);
-            billingRecordParam.setOrderId(dbOrder.getId());
-            List<MemberBillingRecord> list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
-            if(!list.isEmpty()){
-                MemberBillingRecord dbMemberBillingRecord = list.get(0);
-                Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
-                //获取用户当前积分数 -- 未到账积分
-                BigDecimal unreceivedPointsNum = dbMember.getUnreceivedPoints().subtract(dbMemberBillingRecord.getNumber());
-                //修改用户的积分数
-                Member member = new Member();
-                member.setId(dbOrder.getMemberId());
-                member.setUnreceivedPoints(unreceivedPointsNum);
-                memberFeignApi.updateByPrimaryKeySelective(member);
-                dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
-
-                MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
-                memberBillingRecord.setMemberId(dbOrder.getMemberId());
-                memberBillingRecord.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_POINTS);
-                memberBillingRecord.setType(MemberBillingRecord.TYPE_ORDER_REWARD_POINTS_RETURN);
-                memberBillingRecord.setOperateType(MemberBillingRecord.OPERATE_TYPE_SUB);
-                memberBillingRecord.setNumber(dbMemberBillingRecord.getNumber());
-                memberBillingRecord.setMessage("订单退款-下单奖励积分退回");
-                memberBillingRecord.setOrderId(dbOrder.getId());
-                memberBillingRecord.setCreateTime(new Date());
-                memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
-
-                //之前的账单记录标注已退回
-                MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
-                updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
-                updateMemberBillingRecord.setIsReturn(true);
-                memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
-            }
-
-            //退回下单佣金奖励
-            List typeList = new ArrayList();
-            typeList.add(MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION);
-            typeList.add(MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION);
-            typeList.add(MemberBillingRecord.TYPE_OWN_COMMISSION);
-            billingRecordParam = new MemberBillingRecordParam();
-            billingRecordParam.setTypeList(typeList);
-            billingRecordParam.setOperateType(MemberBillingRecord.OPERATE_TYPE_ADD);
-            billingRecordParam.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
-            billingRecordParam.setOrderId(dbOrder.getId());
-            list = memberBillingRecordFeignApi.selectByExample(billingRecordParam).getData();
-            if(!list.isEmpty()){
-                for (MemberBillingRecord dbMemberBillingRecord : list) {
-                    Integer type = null;
-                    String message = "";
-                    if(dbMemberBillingRecord.getType().equals(MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION)){
-                        type = MemberBillingRecord.TYPE_FIRST_LEVEL_INVITER_COMMISSION_RETURN;
-                        message = "订单退款-一级邀请人佣金奖励退回";
-                    }else if(dbMemberBillingRecord.getType().equals(MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION)){
-                        type = MemberBillingRecord.TYPE_SECOND_LEVEL_INVITER_COMMISSION_RETURN;
-                        message = "订单退款-二级邀请人佣金奖励退回";
-                    }else if(dbMemberBillingRecord.getType().equals(MemberBillingRecord.TYPE_OWN_COMMISSION)){
-                        type = MemberBillingRecord.TYPE_OWN_COMMISSION_RETURN;
-                        message = "订单退款-下单用户佣金奖励退回";
-                    }
-
-                    Member dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
-                    //增加用户的邀请新用户注册奖励金额
-                    BigDecimal updateUnreceivedInviteRewardAmount = dbMember.getUnreceivedInviteRewardAmount().subtract(dbMemberBillingRecord.getNumber()).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-                    Member updateMember = new Member();
-                    updateMember.setId(dbMember.getId());
-                    updateMember.setUnreceivedInviteRewardAmount(updateUnreceivedInviteRewardAmount);
-                    updateMember.setUpdateTime(new Date());
-                    memberFeignApi.updateByPrimaryKeySelective(updateMember);
-                    dbMember = memberFeignApi.selectByPrimaryKey(dbMemberBillingRecord.getMemberId()).getData();
-
-                    //增加用户账单记录
-                    MemberBillingRecord memberBillingRecord = new MemberBillingRecord();
-                    memberBillingRecord.setMemberId(dbMember.getId());
-                    memberBillingRecord.setType(type);
-                    memberBillingRecord.setOperateType(MemberBillingRecord.OPERATE_TYPE_SUB);
-                    memberBillingRecord.setCoinType(MemberBillingRecord.COIN_TYPE_UNRECEIVED_INVITE_REWARD_AMOUNT);
-                    memberBillingRecord.setNumber(dbMemberBillingRecord.getNumber());
-                    memberBillingRecord.setMessage(message);
-                    memberBillingRecord.setOrderId(dbOrder.getId());
-                    memberBillingRecord.setCreateTime(new Date());
-                    memberBillingRecordFeignApi.insertSelective(memberBillingRecord);
-
-                    //之前的账单记录标注已退回
-                    MemberBillingRecord updateMemberBillingRecord = new MemberBillingRecord();
-                    updateMemberBillingRecord.setId(dbMemberBillingRecord.getId());
-                    updateMemberBillingRecord.setIsReturn(true);
-                    memberBillingRecordFeignApi.updateByPrimaryKeySelective(updateMemberBillingRecord);
-                }
-            }
-        }else if(orderParam.getStatus() == Quantity.INT_2){
-            //审核不通过
-
-            //修改订单记录状态-售后处理完成
-            Order updateOrder = new Order();
-            updateOrder.setId(orderParam.getId());
-            updateOrder.setStatus(Quantity.INT_9);
-            orderService.updateByPrimaryKeySelective(updateOrder);
-
-            //修改退款状态 -- 退款已关闭
-            OrderRefund updateOrderRefund = new OrderRefund();
-            updateOrderRefund.setId(dbOrderRefund.getId());
-            updateOrderRefund.setStatus(Quantity.INT_6);
-            orderRefundService.updateByPrimaryKeySelective(updateOrderRefund);
-
-            //添加退款流程 -- 商家拒绝退款
-            OrderRefundProcess orderRefundProcess = new OrderRefundProcess();
-            orderRefundProcess.setOrderRefundId(dbOrderRefund.getId());
-            orderRefundProcess.setName("商家拒绝退款");
-            orderRefundProcess.setDescription(orderParam.getOpinion());
-            orderRefundProcess.setCreateTime(new Date());
-            orderRefundProcessService.insertSelective(orderRefundProcess);
-
-            //添加退款流程 -- 退款关闭
-            OrderRefundProcess orderRefundProcess_second = new OrderRefundProcess();
-            orderRefundProcess_second.setOrderRefundId(dbOrderRefund.getId());
-            orderRefundProcess_second.setName("退款关闭");
-            orderRefundProcess_second.setCreateTime(DateUtilsPlus.addSeconds(new Date(), 5));
-            orderRefundProcessService.insertSelective(orderRefundProcess_second);
-        }
-
-        basicResult.setSuccess(true);
-        basicResult.setCode(BasicResultCode.SUCCESS);
-        basicResult.setMessage("审核成功");
-        return basicResult;
+        orderService.auditAfterSalesOrderByMerchant(orderParam);
+        return BasicResult.success();
     }
 
 
@@ -802,5 +603,17 @@ public class MerchantOrderController {
         resultMap.put("lastWeekSumActualPrice", lastWeekSumActualPrice);
 
         return BasicResult.success(resultMap);
+    }
+
+    /**
+     * 打印结账单小票
+     */
+    @PostMapping(value = "/xpYunPrinterOrderDetail")
+    public BasicResult xpYunPrinterOrderDetail(@RequestBody @Validated(value = {}) OrderParam param){
+        // 打印类型：结账单、标签、后厨总单、后厨单商品
+
+        Order dbOrder = orderService.getById(param.getId());
+        orderService.printOrderReceipt(dbOrder, param.getPrintType());
+        return BasicResult.success();
     }
 }

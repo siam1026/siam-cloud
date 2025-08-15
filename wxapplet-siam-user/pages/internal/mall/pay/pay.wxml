@@ -193,5 +193,5 @@
 </mp-halfScreenDialog>
 <mp-dialog show="{{isVipDialogShow}}" buttons="{{buttons}}" mask-closable="{{maskClosable}}" catchtouchmove="true" extClass="extClassIsVip"
 ext-class="{{extClass}}" bind:tap="close">
-	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_recharge_guide.png?v={{timestamp}}" mode="widthFix" class="now-order-image" bindtap="goToRecharge"></image>
+	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_recharge_guide.png?v={{timestamp}}" mode="widthFix" class="now-order-image" bindtap="goToRecharge"></image>
 </mp-dialog>

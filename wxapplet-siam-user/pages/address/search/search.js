@@ -50,16 +50,19 @@ Page({
     //直接调用上一个页面的 setData() 方法，把数据存到上一个页面中去
     let district, city, regins;
     if (data.district) {
-      district = data.district.split("省");
-      city = district[1].split("市"); 
-      regins = [district[0] + "省", city[0] + "市", city[1]]
+      //   district = data.district.split("省");
+      //   city = district[1].split("市"); 
+      //   regins = [district[0] + "省", city[0] + "市", city[1]]
+      district = this.data.region[0];
+      city = this.data.region[1];
+      regins = [district, city, data.district.split("市")[1]]
     }
     prevPage.setData({
       region: data.district ? regins : this.data.region,
       street: data.name,
-      location:data.location,
-      longitude:data.location.split(",")[0],
-      latitude:data.location.split(",")[1]
+      location: data.location,
+      longitude: data.location.split(",")[0],
+      latitude: data.location.split(",")[1]
     })
     wx.navigateBack(1);
   },
@@ -95,7 +98,7 @@ Page({
         console.log(res)
         that.setData({
           userLocation: res.authSetting['scope.userLocation'],
-          tips:[]
+          tips: []
         })
         if (res.authSetting['scope.userLocation']) {
           that.getRegeoAddress();
@@ -139,7 +142,11 @@ Page({
     this.setData({
       region: e.detail.value
     })
-    var value = { detail: { value: keywords } }
+    var value = {
+      detail: {
+        value: keywords
+      }
+    }
     city = e.detail.value[1];
     this.bindInput(value);
   },

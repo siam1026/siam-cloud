@@ -154,7 +154,7 @@ Page({
         callback && callback(data);
       },
       fail: (error) => {
-        console.log('上传失败-->' + error)
+        console.log('上传失败-->' + JSON.stringify(error))
         toastService.showError('上传失败');
       },
       complete: () => {

@@ -39,7 +39,7 @@ public class GoodsSpecificationOptionController {
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicData basicResult = new BasicData();
 
-        Page<Map<String, Object>> page = goodsSpecificationOptionService.getListByPageJoinGoods(-1, 10, goodsSpecificationOptionDto);
+        Page<Map<String, Object>> page = goodsSpecificationOptionService.getListByPageJoinGoods(-1, 1000, goodsSpecificationOptionDto);
 
         List<Map<String, Object>> list = page.getRecords();
 

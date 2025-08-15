@@ -156,7 +156,7 @@ Page({
     let self = this;
     toastService.showModal(null, title, function () {
       https.request('/api-order/rest/member/appraise/insert', {
-        id: self.data.orderId,
+        orderId: self.data.orderId,
         shopId: self.data.shopId,
         appraiseType: 1,
         content: content,

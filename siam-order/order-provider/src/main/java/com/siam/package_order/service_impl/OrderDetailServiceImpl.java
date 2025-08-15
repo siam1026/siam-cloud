@@ -1,6 +1,7 @@
 package com.siam.package_order.service_impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siam.package_order.mapper.OrderMapper;
 import com.siam.package_order.entity.OrderDetail;
 import com.siam.package_order.model.example.OrderDetailExample;
@@ -13,38 +14,26 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class OrderDetailServiceImpl implements OrderDetailService {
+public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, OrderDetail> implements OrderDetailService {
     @Autowired
     private OrderDetailMapper orderDetailMapper;
     @Autowired
     private OrderMapper orderMapper;
 
-    public int countByExample(OrderDetailExample example){
-        return orderDetailMapper.countByExample(example);
-    }
-
     public void deleteByPrimaryKey(Integer id){
-        orderDetailMapper.deleteByPrimaryKey(id);
+        orderDetailMapper.deleteById(id);
     }
 
     public void insertSelective(OrderDetail record){
-        orderDetailMapper.insertSelective(record);
-    }
-
-    public List<OrderDetail> selectByExample(OrderDetailExample example){
-        return orderDetailMapper.selectByExample(example);
+        orderDetailMapper.insert(record);
     }
 
     public OrderDetail selectByPrimaryKey(Integer id){
-        return orderDetailMapper.selectByPrimaryKey(id);
-    }
-
-    public void updateByExampleSelective(OrderDetail record, OrderDetailExample example){
-        orderDetailMapper.updateByExampleSelective(record, example);
+        return orderDetailMapper.selectById(id);
     }
 
     public void updateByPrimaryKeySelective(OrderDetail record){
-        orderDetailMapper.updateByPrimaryKeySelective(record);
+        orderDetailMapper.updateById(record);
     }
 
     public Page getListByPage(int pageNo, int pageSize, OrderDetail orderDetail) {

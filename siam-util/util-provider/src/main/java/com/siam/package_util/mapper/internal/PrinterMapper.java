@@ -11,25 +11,6 @@ import java.util.List;import com.baomidou.mybatisplus.extension.plugins.paginati
 import java.util.Map;
 
 public interface PrinterMapper extends BaseMapper<Printer> {
-    int countByExample(PrinterExample example);
-
-    int deleteByExample(PrinterExample example);
-
-    int deleteByPrimaryKey(Integer id);
-
-    int insertSelective(Printer record);
-
-    List<Printer> selectByExample(PrinterExample example);
-
-    Printer selectByPrimaryKey(Integer id);
-
-    int updateByExampleSelective(@Param("record") Printer record, @Param("example") PrinterExample example);
-
-    int updateByExample(@Param("record") Printer record, @Param("example") PrinterExample example);
-
-    int updateByPrimaryKeySelective(Printer record);
-
-    int updateByPrimaryKey(Printer record);
 
     @ResultMap("BaseResultMap")
     @Select("<script>select c.* from tb_printer c" +

@@ -19,8 +19,9 @@
 						<view class="ask-for-delivery-view">
 							<view class="ask-for-delivery-house">
 								<text class="iconfont icondizhi"></text>
-								<view class="right-class out_of_range two_row">{{deliveryAndSelfTaking.deliveryAddress.province}}{{deliveryAndSelfTaking.deliveryAddress.city}}
-								{{deliveryAndSelfTaking.deliveryAddress.area}}{{deliveryAndSelfTaking.deliveryAddress.street}}</view>
+								<view class="right-class out_of_range two_row">
+                {{deliveryAndSelfTaking.deliveryAddress.province?deliveryAndSelfTaking.deliveryAddress.province:''}}{{deliveryAndSelfTaking.deliveryAddress.city?deliveryAndSelfTaking.deliveryAddress.city:''}}
+								{{deliveryAndSelfTaking.deliveryAddress.area?deliveryAndSelfTaking.deliveryAddress.area:''}}{{deliveryAndSelfTaking.deliveryAddress.street}}</view>
 							</view>
 							<view class="ask-for-delivery-address-detail">
 								<text class="iconfont icon002dianhua"></text>
@@ -50,7 +51,7 @@
 			<view class="currentTab1-view">
 				<view class="currentTab1-title">商家地址</view>
 				<view>{{shopAddress.shop.name}}</view>
-				<view>{{shopAddress.shop.province}}{{shopAddress.shop.city}}{{shopAddress.shop.area}}{{shopAddress.shop.street}}</view>
+				<view>{{shopAddress.shop.province?shopAddress.shop.province:''}}{{shopAddress.shop.city?shopAddress.shop.city:''}}{{shopAddress.shop.area?shopAddress.shop.area:''}}{{shopAddress.shop.street}}</view>
 			</view>
 			<view class="time-phone-view">
 				<view class="time-phone-item">
@@ -215,5 +216,5 @@ bind:close="balancePayFail" maskClosable="{{maskClosable}}">
 </mp-halfScreenDialog>
 <mp-dialog show="{{isVipDialogShow}}" buttons="{{buttons}}" mask-closable="{{maskClosable}}" catchtouchmove="true" extClass="extClassIsVip"
 ext-class="{{extClass}}" bind:tap="close">
-	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/vip_recharge_guide.png?v={{timestamp}}" mode="widthFix" class="now-order-image" bindtap="goToRecharge"></image>
+	<image src="https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/vip_recharge_guide.png?v={{timestamp}}" mode="widthFix" class="now-order-image" bindtap="goToRecharge"></image>
 </mp-dialog>

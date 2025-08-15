@@ -16,9 +16,6 @@ import java.util.Date;
 @ApiModel(value = "商品表")
 public class Goods {
 
-    @TableField(select = false)
-    private Integer menuId;
-
     /**
      * 状态 1=待上架 2=已上架 3=已下架 4=售罄
      */
@@ -27,7 +24,16 @@ public class Goods {
     public static final int STATUS_OFF_SHELF = 3;
     public static final int STATUS_SELL_OUT = 4;
 
+    @TableField(exist = false)
     String position;
+
+    //页码
+    @TableField(exist = false) private Integer pageNo = 1;
+
+    //页面大小
+    @TableField(exist = false) private Integer pageSize = 20;
+
+    // ------------------------------------------------------------------------------------
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -95,214 +101,20 @@ public class Goods {
     @ApiModelProperty(notes = "排序号")
     private Integer sortNumber;
 
+    @ApiModelProperty(notes = "打印机id(多个用逗号隔开)")
+    private String printerId;
+
+    @ApiModelProperty(notes = "打印次数")
+    private Integer printNum;
+
+    @ApiModelProperty(notes = "单位id")
+    private Long unitId;
+
+    private String unitName;
+
     @ApiModelProperty(notes = "创建时间")
     private Date createTime;
 
     @ApiModelProperty(notes = "修改时间")
     private Date updateTime;
-
-    //页码
-    private Integer pageNo = 1;
-
-    //页面大小
-    private Integer pageSize = 20;
-
-    public Integer getPageNo() {
-        return pageNo;
-    }
-
-    public void setPageNo(Integer pageNo) {
-        this.pageNo = pageNo;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
-
-    public String getMainImage() {
-        return mainImage;
-    }
-
-    public void setMainImage(String mainImage) {
-        this.mainImage = mainImage == null ? null : mainImage.trim();
-    }
-
-    public String getSubImages() {
-        return subImages;
-    }
-
-    public void setSubImages(String subImages) {
-        this.subImages = subImages == null ? null : subImages.trim();
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail == null ? null : detail.trim();
-    }
-
-    public String getDetailImages() {
-        return detailImages;
-    }
-
-    public void setDetailImages(String detailImages) {
-        this.detailImages = detailImages == null ? null : detailImages.trim();
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public Boolean getIsHot() {
-        return isHot;
-    }
-
-    public void setIsHot(Boolean isHot) {
-        this.isHot = isHot;
-    }
-
-    public Boolean getIsNew() {
-        return isNew;
-    }
-
-    public void setIsNew(Boolean isNew) {
-        this.isNew = isNew;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Boolean getIsSale() {
-        return isSale;
-    }
-
-    public void setIsSale(Boolean isSale) {
-        this.isSale = isSale;
-    }
-
-    public BigDecimal getSalePrice() {
-        return salePrice;
-    }
-
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
-    }
-
-    public Integer getMonthlySales() {
-        return monthlySales;
-    }
-
-    public void setMonthlySales(Integer monthlySales) {
-        this.monthlySales = monthlySales;
-    }
-
-    public Integer getTotalSales() {
-        return totalSales;
-    }
-
-    public void setTotalSales(Integer totalSales) {
-        this.totalSales = totalSales;
-    }
-
-    public Integer getTotalComments() {
-        return totalComments;
-    }
-
-    public void setTotalComments(Integer totalComments) {
-        this.totalComments = totalComments;
-    }
-
-    public String getPreferentialName() {
-        return preferentialName;
-    }
-
-    public void setPreferentialName(String preferentialName) {
-        this.preferentialName = preferentialName == null ? null : preferentialName.trim();
-    }
-
-    public BigDecimal getPackingCharges() {
-        return packingCharges;
-    }
-
-    public void setPackingCharges(BigDecimal packingCharges) {
-        this.packingCharges = packingCharges;
-    }
-
-    public BigDecimal getProductTime() {
-        return productTime;
-    }
-
-    public void setProductTime(BigDecimal productTime) {
-        this.productTime = productTime;
-    }
-
-    public Integer getExchangePoints() {
-        return exchangePoints;
-    }
-
-    public void setExchangePoints(Integer exchangePoints) {
-        this.exchangePoints = exchangePoints;
-    }
-    public Integer getSortNumber() {
-        return sortNumber;
-    }
-
-    public void setSortNumber(Integer sortNumber) {
-        this.sortNumber = sortNumber;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(Integer shopId) {
-        this.shopId = shopId;
-    }
 }

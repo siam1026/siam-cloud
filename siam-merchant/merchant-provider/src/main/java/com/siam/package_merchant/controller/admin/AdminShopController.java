@@ -1,5 +1,6 @@
 package com.siam.package_merchant.controller.admin;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.annoation.AdminPermission;
 import com.siam.package_common.constant.BasicResultCode;
@@ -11,13 +12,13 @@ import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_merchant.entity.Shop;
-import com.siam.package_merchant.feign.MerchantFeignApi;
+import com.siam.package_merchant.model.example.MerchantExample;
 import com.siam.package_merchant.model.example.ShopExample;
 import com.siam.package_merchant.model.param.ShopParam;
+import com.siam.package_merchant.service.MerchantService;
 import com.siam.package_merchant.service.ShopService;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.feign.MemberFeignApi;
-import com.siam.package_user.model.example.MemberExample;
 import com.siam.package_user.model.param.MemberParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +43,7 @@ public class AdminShopController {
     private ShopService shopService;
 
     @Autowired
-    private MerchantFeignApi merchantFeignApi;
+    private MerchantService merchantService;
 
     @Autowired
     private MemberFeignApi memberFeignApi;
@@ -86,11 +87,11 @@ public class AdminShopController {
             }
 
             //修改商家绑定的小程序用户id
-            Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
+            Merchant dbMerchant = merchantService.selectByPrimaryKey(dbShop.getMerchantId());
             Merchant updateMerchant = new Merchant();
             updateMerchant.setId(dbMerchant.getId());
             updateMerchant.setMemberId(memberList.get(0).getId());
-            merchantFeignApi.updateByPrimaryKeySelective(updateMerchant);
+            merchantService.updateByPrimaryKeySelective(updateMerchant);
 
             //如果绑定的小程序用户的 微信公众号openid为空，则触发 openid查询操作
             if(StringUtils.isBlank(memberList.get(0).getWxPublicPlatformOpenId())){
@@ -121,9 +122,9 @@ public class AdminShopController {
         BasicResult basicResult = new BasicResult();
         for (Integer id : param.getIds()) {
             //判断菜单下面有关联商品，则不能删除
-            ShopExample example = new ShopExample();
-            example.createCriteria().andIdEqualTo(id);
-            int result = shopService.countByExample(example);
+            LambdaQueryWrapper<Shop> wrapper = new LambdaQueryWrapper();
+            wrapper.eq(Shop::getId, id);
+            int result = shopService.count(wrapper);
             if(result == 0){
                 basicResult.setSuccess(false);
                 basicResult.setCode(BasicResultCode.ERR);
@@ -160,14 +161,17 @@ public class AdminShopController {
             updateShop.setAuditStatus(Quantity.INT_2);
             updateShop.setAuditTime(new Date());
             shopService.updateByPrimaryKeySelective(updateShop);
+
             //修改商家信息
-//            MerchantExample merchantExample = new MerchantExample();
-//            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
-//            Merchant updateMerchant = new Merchant();
-//            updateMerchant.setAuditStatus(Quantity.INT_2);
-//            updateMerchant.setUpdateTime(new Date());
-//            merchantFeignApi.updateByExampleSelective(updateMerchant, merchantExample);
+            MerchantExample merchantExample = new MerchantExample();
+            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
+            Merchant updateMerchant = new Merchant();
+            updateMerchant.setAuditStatus(Quantity.INT_2);
+            updateMerchant.setUpdateTime(new Date());
+            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+
             //TODO-发消息通知用户
+
         }else if(shopParam.getStatus() == Quantity.INT_2){
             //审核不通过
             //修改门店信息
@@ -177,13 +181,15 @@ public class AdminShopController {
             updateShop.setAuditReason(shopParam.getOpinion());
             updateShop.setAuditTime(new Date());
             shopService.updateByPrimaryKeySelective(updateShop);
+
             //修改商家信息
-//            MerchantExample merchantExample = new MerchantExample();
-//            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
-//            Merchant updateMerchant = new Merchant();
-//            updateMerchant.setAuditStatus(Quantity.INT_3);
-//            updateMerchant.setUpdateTime(new Date());
-//            merchantFeignApi.updateByExampleSelective(updateMerchant, merchantExample);
+            MerchantExample merchantExample = new MerchantExample();
+            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
+            Merchant updateMerchant = new Merchant();
+            updateMerchant.setAuditStatus(Quantity.INT_3);
+            updateMerchant.setUpdateTime(new Date());
+            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+
             //TODO-发消息通知用户
         }
 
@@ -211,35 +217,39 @@ public class AdminShopController {
         if(shopParam.getStatus() == Quantity.INT_1){
             //审核通过
             //修改门店信息
-//            Shop updateShop = new Shop();
-//            updateShop.setId(shopParam.getId());
-//            updateShop.setAuditStatus(Quantity.INT_2);
-//            updateShop.setAuditTime(new Date());
-//            shopService.updateByPrimaryKeySelective(updateShop);
-//            //修改商家信息
-//            MerchantExample merchantExample = new MerchantExample();
-//            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
-//            Merchant updateMerchant = new Merchant();
-//            updateMerchant.setAuditStatus(Quantity.INT_2);
-//            updateMerchant.setUpdateTime(new Date());
-//            merchantFeignApi.updateByExampleSelective(updateMerchant, merchantExample);
+            Shop updateShop = new Shop();
+            updateShop.setId(shopParam.getId());
+            updateShop.setAuditStatus(Quantity.INT_2);
+            updateShop.setAuditTime(new Date());
+            shopService.updateByPrimaryKeySelective(updateShop);
+
+            //修改商家信息
+            MerchantExample merchantExample = new MerchantExample();
+            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
+            Merchant updateMerchant = new Merchant();
+            updateMerchant.setAuditStatus(Quantity.INT_2);
+            updateMerchant.setUpdateTime(new Date());
+            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+
             //TODO-发消息通知用户
         }else if(shopParam.getStatus() == Quantity.INT_2){
             //审核不通过
             //修改门店信息
-//            Shop updateShop = new Shop();
-//            updateShop.setId(shopParam.getId());
-//            updateShop.setAuditStatus(Quantity.INT_3);
-//            updateShop.setAuditReason(shopParam.getOpinion());
-//            updateShop.setAuditTime(new Date());
-//            shopService.updateByPrimaryKeySelective(updateShop);
-//            //修改商家信息
-//            MerchantExample merchantExample = new MerchantExample();
-//            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
-//            Merchant updateMerchant = new Merchant();
-//            updateMerchant.setAuditStatus(Quantity.INT_3);
-//            updateMerchant.setUpdateTime(new Date());
-//            merchantFeignApi.updateByExampleSelective(updateMerchant, merchantExample);
+            Shop updateShop = new Shop();
+            updateShop.setId(shopParam.getId());
+            updateShop.setAuditStatus(Quantity.INT_3);
+            updateShop.setAuditReason(shopParam.getOpinion());
+            updateShop.setAuditTime(new Date());
+            shopService.updateByPrimaryKeySelective(updateShop);
+
+            //修改商家信息
+            MerchantExample merchantExample = new MerchantExample();
+            merchantExample.createCriteria().andShopIdEqualTo(shopParam.getId());
+            Merchant updateMerchant = new Merchant();
+            updateMerchant.setAuditStatus(Quantity.INT_3);
+            updateMerchant.setUpdateTime(new Date());
+            merchantService.updateByExampleSelective(updateMerchant, merchantExample);
+
             //TODO-发消息通知用户
         }
 

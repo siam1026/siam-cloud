@@ -13,25 +13,25 @@ Page({
   },
   getPhoneNumber: function (e) {
     //是否授权过用户信息
-    // if (e.detail.iv && e.detail.encryptedData) {
-    //   app.getLoginCode().then(code => {
-    //     toastService.showLoading("正在登录...", true);
-    //     https.request("/api-user/rest/wxLogin/getWxPhone", {
-    //       wxCode: code,
-    //       wxIV: e.detail.iv,
-    //       encryptedData: e.detail.encryptedData
-    //     }).then(result => {
-    //       toastService.hideLoading();
-    //       if (result.success) {
-    //         app.weChatLogin(result.data.phoneNumber, result.data.openid, this.data.inviterId);
-    //       }
-    //     })
-    //   })
-    //   //app.wxLogin(e.detail.iv, e.detail.encryptedData, app.globalData.code);
-    //   //this.wxLogin(e.detail.iv, e.detail.encryptedData,app.globalData.code);
-    //   return
-    // }
-    toastService.showToast("暂不支持微信登录，请选择验证码登录");
+    if (e.detail.iv && e.detail.encryptedData) {
+      app.getLoginCode().then(code => {
+        toastService.showLoading("正在登录...", true);
+        https.request("/api-user/rest/wxLogin/getWxPhone", {
+          wxCode: code,
+          wxIV: e.detail.iv,
+          encryptedData: e.detail.encryptedData
+        }).then(result => {
+          toastService.hideLoading();
+          if (result.success) {
+            app.weChatLogin(result.data.phoneNumber, result.data.openid, this.data.inviterId);
+          }
+        })
+      })
+      //app.wxLogin(e.detail.iv, e.detail.encryptedData, app.globalData.code);
+      //this.wxLogin(e.detail.iv, e.detail.encryptedData,app.globalData.code);
+      return
+    }
+    //toastService.showToast("暂不支持微信登录，请选择验证码登录");
   },
   wxLogin(iv, encryptedData, code) {
     // session_key 已经失效，需要重新执行登录流程\

@@ -210,7 +210,6 @@ public class WxPayService {
         return sb.toString();
     }
 
-
     //具体的调用微信的退款接口
     public boolean refund(String out_trade_no, BigDecimal total_fee, BigDecimal refund_fee){
         //只有正式环境才能执行
@@ -249,9 +248,7 @@ public class WxPayService {
             Map notifyMap = PayUtil.doXMLParse(xmlStr);
             if ("SUCCESS".equals(notifyMap.get("return_code"))) {
                 if("SUCCESS".equals(notifyMap.get("result_code"))) {
-                    //退款成功的操作
-                    orderService.updateRefundStatus(out_trade_no);
-
+                    return true;
                     /*//退款成功的操作
                     String prepay_id = (String) notifyMap.get("prepay_id");//返回的预付单信息
                     System.out.println(prepay_id);
@@ -300,7 +297,6 @@ public class WxPayService {
         jsonResult.put("msg",msg);
         jsonResult.put("data",data);
         System.out.println(jsonResult);*/
-        return true;
     }
 
     /**
@@ -331,7 +327,7 @@ public class WxPayService {
         SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, key.toCharArray()).build();
 
         // 指定TLS版本
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null,SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, null, null,SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
         // 设置httpclient的SSLSocketFactory
         httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
     }

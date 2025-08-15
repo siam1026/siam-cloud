@@ -1,9 +1,11 @@
 package com.siam.package_goods.service_impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.util.DateUtilsExtend;
 import com.siam.package_common.util.DateUtilsPlus;
+import com.siam.package_goods.entity.Goods;
 import com.siam.package_goods.model.example.GoodsExample;
 import com.siam.package_goods.model.param.StatisticsParam;
 import com.siam.package_goods.service.GoodsService;
@@ -285,21 +287,24 @@ public class StatisticsServiceImpl implements StatisticsService {
         int handleOrderRefundCount = orderFeignApi.countByExample(order).getData();
 
         //商品总览：已下架、已上架、库存售罄、全部商品
-        GoodsExample goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andStatusEqualTo(Quantity.INT_3);
-        int underShelfGoodsCount = goodsService.countByExample(goodsExample);
+        LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Goods::getShopId, loginMerchant.getShopId());
+        wrapper.eq(Goods::getStatus, Quantity.INT_3);
+        int underShelfGoodsCount = goodsService.count(wrapper);
 
-        goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andStatusEqualTo(Quantity.INT_2);
-        int onShelfGoodsCount = goodsService.countByExample(goodsExample);
+        wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Goods::getShopId, loginMerchant.getShopId());
+        wrapper.eq(Goods::getStatus, Quantity.INT_2);
+        int onShelfGoodsCount = goodsService.count(wrapper);
 
-        goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andShopIdEqualTo(loginMerchant.getShopId()).andStatusEqualTo(Quantity.INT_4);
-        int sellOutGoodsCount = goodsService.countByExample(goodsExample);
+        wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Goods::getShopId, loginMerchant.getShopId());
+        wrapper.eq(Goods::getStatus, Quantity.INT_4);
+        int sellOutGoodsCount = goodsService.count(wrapper);
 
-        goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andShopIdEqualTo(loginMerchant.getShopId());
-        int allGoodsCount = goodsService.countByExample(goodsExample);
+        wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Goods::getShopId, loginMerchant.getShopId());
+        int allGoodsCount = goodsService.count(wrapper);
 
         //指数总览：客单价(成交金额/成交订单数)、下单转化率(下单人数/访问人数)、下单-支付转化率(支付人数/下单人数)、支付转化率(支付人数/访问人数)
         Date startDate = new Date("1970/1/1 00:00:00");

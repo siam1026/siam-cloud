@@ -147,13 +147,13 @@ Page({
         result.data.vipEndTime = dateHelper.formatDate(result.data.vipEndTime);
         this.data.isVipImages = [];
         if (result.data.type == 1) {
-          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mine_page/user_1.png");
-          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mine_page/user_2.png");
-          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mine_page/user_3.png");
+          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mine_page/user_1.png");
+          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mine_page/user_2.png");
+          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mine_page/user_3.png");
         } else {
-          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mine_page/vip_1.png");
-          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mine_page/vip_2.png");
-          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/mine_page/vip_3.png");
+          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mine_page/vip_1.png");
+          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mine_page/vip_2.png");
+          this.data.isVipImages.push("https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/mine_page/vip_3.png");
         }
         this.setData({
           data: result.data,

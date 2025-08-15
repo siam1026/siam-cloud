@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.remoting.exception.RemotingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -79,13 +78,13 @@ public class OrderController {
      * @author 暹罗
      */
     @PostMapping(value = "/cancelOrder")
-    public BasicResult cancelOrder(@RequestBody @Validated(value = {}) OrderParam param){
-        orderService.cancelOrder(param);
+    public BasicResult cancelOrderByUnPaid(@RequestBody @Validated(value = {}) OrderParam param){
+        orderService.cancelOrderByUnPaid(param);
         return BasicResult.success();
     }
 
     /**
-     * 取消订单(已支付)/极速退款
+     * 取消订单(已支付)/极速退款 - 一分钟内取消订单
      *
      * @return
      * @author 暹罗
@@ -108,8 +107,12 @@ public class OrderController {
         return BasicResult.success();
     }
 
+    /**
+     * 【废弃，外卖系统没用到，积分商城才会用到】
+     * @param param
+     * @return
+     */
     @ApiOperation(value = "修改订单状态为已确认收货")
-
     @PostMapping(value = "/confirmReceipt")
     public BasicResult confirmReceipt(@RequestBody @Validated(value = {}) OrderParam param){
         orderService.confirmReceipt(param);

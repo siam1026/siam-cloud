@@ -2,6 +2,7 @@ package com.siam.package_goods.service_impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_goods.entity.Goods;
@@ -23,34 +24,28 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class GoodsServiceImpl implements GoodsService {
+public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements GoodsService {
+
     @Autowired
     private GoodsMapper goodsMapper;
-     @Autowired
-     private RawmaterialMapper rawmaterialMapper;
-    @Override
-    public int countByExample(GoodsExample example) {
-        return goodsMapper.countByExample(example);
-    }
+
+    @Autowired
+    private RawmaterialMapper rawmaterialMapper;
 
     public void deleteByPrimaryKey(Integer id){
-        goodsMapper.deleteByPrimaryKey(id);
+        goodsMapper.deleteById(id);
     }
 
     public void insertSelective(Goods record){
-        goodsMapper.insertSelective(record);
-    }
-
-    public List<Goods> selectByExample(GoodsExample example){
-        return goodsMapper.selectByExample(example);
+        goodsMapper.insert(record);
     }
 
     public Goods selectByPrimaryKey(Integer id){
-        return goodsMapper.selectByPrimaryKey(id);
+        return goodsMapper.selectById(id);
     }
 
     public void updateByPrimaryKeySelective(Goods record){
-        goodsMapper.updateByPrimaryKeySelective(record);
+        goodsMapper.updateById(record);
     }
 
     @Override
@@ -89,17 +84,17 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public void increaseStock(int id, int number) {
-        Goods dbGoods = goodsMapper.selectByPrimaryKey(id);
+        Goods dbGoods = goodsMapper.selectById(id);
         //增加库存数量
         Goods updateGoods = new Goods();
         updateGoods.setId(dbGoods.getId());
         updateGoods.setStock(dbGoods.getStock() + number);
-        goodsMapper.updateByPrimaryKeySelective(updateGoods);
+        goodsMapper.updateById(updateGoods);
     }
 
     @Override
     public void decreaseStock(int id, int number) {
-        Goods dbGoods = goodsMapper.selectByPrimaryKey(id);
+        Goods dbGoods = goodsMapper.selectById(id);
         if(dbGoods.getStock() - number < 0){
             throw new StoneCustomerException(dbGoods.getName() + "库存不足，请减少该单品购买数量");
         }
@@ -107,7 +102,7 @@ public class GoodsServiceImpl implements GoodsService {
         Goods updateGoods = new Goods();
         updateGoods.setId(dbGoods.getId());
         updateGoods.setStock(dbGoods.getStock() - number);
-        goodsMapper.updateByPrimaryKeySelective(updateGoods);
+        goodsMapper.updateById(updateGoods);
     }
 
     /**
@@ -414,12 +409,12 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public void updateStatus(List<Integer> ids, Integer status) {
         for (Integer id : ids) {
-            Goods goods=goodsMapper.selectByPrimaryKey(id);
+            Goods goods=goodsMapper.selectById(id);
             if (goods == null) {
                 throw new StoneCustomerException("修改失败,商品未找到");
             }
             goods.setStatus(status);
-            goodsMapper.updateByPrimaryKeySelective(goods);
+            goodsMapper.updateById(goods);
         }
     }
 

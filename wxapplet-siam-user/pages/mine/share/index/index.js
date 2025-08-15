@@ -416,13 +416,13 @@ Page({
     var inviterId = this.data.userInfo.id;
     console.log(inviterId)
     var timestamp=dateHelper.getTimestamp();
-    console.log(`https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/share-invite/share_wx.png?v=${timestamp}`)
+    console.log(`https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/share-invite/share_wx.png?v=${timestamp}`)
     var shareObj = {
       title: "你的好友送了你一张3折优惠券，快去领取吧～",
       // path: '/pages/insert-share-invite/insert-share-invite?inviterId=' + inviterId,
       path: '/pages/login/choose/choose?inviterId=' + inviterId,
       //自定义图片路径，可以是本地文件路径、代码包文件路径或者网络图片路径，支持PNG及JPG，不传入 imageUrl 则使用默认截图。显示图片长宽比是 5:4
-      imageUrl: `https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/bussiness/share-invite/share_wx.png?v=${timestamp}`
+      imageUrl: `https://siam-hangzhou.oss-cn-hangzhou.aliyuncs.com/data/images/business/share-invite/share_wx.png?v=${timestamp}`
     };
     // 默认是当前页面，必须是以‘/’开头的完整路径};
     // 来自页面内的按钮的转发

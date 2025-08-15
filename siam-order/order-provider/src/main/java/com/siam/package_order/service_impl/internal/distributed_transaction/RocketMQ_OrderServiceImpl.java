@@ -33,8 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.remoting.exception.RemotingException;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -137,7 +137,7 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
     private FullReductionRuleFeignApi fullReductionRuleFeignApi;
 
     @Autowired
-    private RocketMQTemplate rocketMQTemplate;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -151,20 +151,18 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
     @Autowired
     private TransactionLogService transactionLogService;
 
-
-    @Override
-    public int countByExample(OrderExample example) {
-        return 0;
-    }
-
     @Override
     public void delete(OrderParam param) {
 
     }
 
     @Override
-    public Order insert(OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-        pointsMallTransactionProducer.send("order", JSON.toJSONString(param));
+    public Order insert(OrderParam param) {
+        try {
+            pointsMallTransactionProducer.send("order", JSON.toJSONString(param));
+        } catch (MQClientException e) {
+            e.printStackTrace();
+        }
         //TODO - 返回订单信息(订单id)
         return null;
     }
@@ -319,6 +317,7 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
 //        //加入MQ延时队列，检测并关闭超时未支付的订单，5分钟
 //        Message message = new Message("TID_COMMON_MALL", "CLOSE_OVERDUE_ORDER", JSON.toJSONString(dbOrder).getBytes());
 //        message.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_5M);
+//        RocketMQTemplate rocketMQTemplate = applicationContext.getBean("rocketMQTemplate", RocketMQTemplate.class);
 //        rocketMQTemplate.getProducer().send(message);
 //
 //        //插入事务日志
@@ -334,7 +333,7 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrder(OrderParam param) {
+    public void cancelOrderByUnPaid(OrderParam param) {
 
     }
 
@@ -354,18 +353,8 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> selectByExample(OrderExample example) {
-        return null;
-    }
-
-    @Override
     public Order selectByPrimaryKey(Integer id) {
         return null;
-    }
-
-    @Override
-    public void updateByExampleSelective(Order record, OrderExample example) {
-
     }
 
     @Override
@@ -504,7 +493,7 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateRefundStatus(String out_trade_no) {
+    public void refundMerchantBalance(String out_trade_no) {
 
     }
 
@@ -554,13 +543,28 @@ public class RocketMQ_OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void auditAfterSalesOrder(OrderParam param) {
+    public void auditAfterSalesOrderByAdmin(OrderParam param) {
+
+    }
+
+    @Override
+    public void auditAfterSalesOrderByMerchant(OrderParam param) {
 
     }
 
     @Override
     public Map statistic(OrderParam param) throws ParseException {
         return null;
+    }
+
+    @Override
+    public void printOrderReceipt(Order dbOrder, String printType) {
+
+    }
+
+    @Override
+    public void allocatingFunds(Order dbOrder) {
+
     }
 
     @Override

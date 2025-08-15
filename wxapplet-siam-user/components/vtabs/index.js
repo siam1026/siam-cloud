@@ -110,7 +110,8 @@ Component({
         tabBarActiveBgColor: { type: String, value: '#ffffff' },
         activeTab: { type: Number, value: 0 },
         contentHeight: { type: Number, value: 100 },
-        animation: { type: Boolean, value: true }
+        animation: { type: Boolean, value: true },
+        ifScrolling: { type: Boolean, value: true }
     },
     data: {
         currentView: 0,

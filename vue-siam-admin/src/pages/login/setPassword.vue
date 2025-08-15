@@ -121,7 +121,7 @@
           mobile: vue.ruleForm.mobile,
 			    type: 'findpwd'
         }
-        vue.$http.post(vue, '/api-goods/rest/smsLog/sendMobileCode', param,
+        vue.$http.post(vue, '/api-util/rest/smsLog/sendMobileCode', param,
           (vue, data)=> {
               vue.logining = false;
               vue.$message({
