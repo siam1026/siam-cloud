@@ -8,8 +8,9 @@ import com.siam.package_goods.entity.GoodsAccessories;
 import com.siam.package_goods.service.GoodsAccessoriesService;
 import com.siam.package_goods.model.example.GoodsSpecificationOptionExample;
 import com.siam.package_goods.service.GoodsSpecificationOptionService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/admin/goodsAccessories")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台商品辅料模块相关接口", description = "AdminGoodsAccessoriesController")
+@Tag(name = "后台商品辅料模块相关接口", description = "AdminGoodsAccessoriesController")
 public class AdminGoodsAccessoriesController {
 
     @Autowired
@@ -29,7 +30,7 @@ public class AdminGoodsAccessoriesController {
     @Autowired
     private GoodsSpecificationOptionService goodsSpecificationOptionService;
 
-    @ApiOperation(value = "商品辅料列表")
+    @Operation(summary = "商品辅料列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsAccessories param){
         BasicData basicResult = new BasicData();
@@ -38,7 +39,7 @@ public class AdminGoodsAccessoriesController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增商品辅料")
+    @Operation(summary = "新增商品辅料")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) GoodsAccessories param){
         BasicResult basicResult = new BasicResult();
@@ -54,7 +55,7 @@ public class AdminGoodsAccessoriesController {
     }
 
 
-    @ApiOperation(value = "修改商品辅料")
+    @Operation(summary = "修改商品辅料")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) GoodsAccessories param){
         BasicResult basicResult = new BasicResult();
@@ -73,7 +74,7 @@ public class AdminGoodsAccessoriesController {
     }
 
 
-    @ApiOperation(value = "删除商品辅料")
+    @Operation(summary = "删除商品辅料")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) GoodsAccessories param){
         BasicResult basicResult = new BasicResult();

@@ -12,9 +12,10 @@ import com.siam.package_mall.model.example.PointsMallOrderLogisticsExample;
 import com.siam.package_mall.service.PointsMallOrderLogisticsService;
 import com.siam.package_mall.service.PointsMallOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ public class PointsMallOrderLogisticsServiceImpl implements PointsMallOrderLogis
     @Autowired
     private AliyunExpressUtils aliyunExpressUtils;
 
+    @Lazy
     @Resource(name = "pointsMallOrderServiceImpl")
     private PointsMallOrderService orderService;
 

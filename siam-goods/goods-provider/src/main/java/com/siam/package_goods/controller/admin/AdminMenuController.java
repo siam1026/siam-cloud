@@ -8,8 +8,9 @@ import com.siam.package_goods.entity.Menu;
 import com.siam.package_goods.service.MenuService;
 import com.siam.package_goods.model.example.MenuGoodsRelationExample;
 import com.siam.package_goods.service.MenuGoodsRelationService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/admin/menu")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台菜单分类模块相关接口", description = "AdminMenuController")
+@Tag(name = "后台菜单分类模块相关接口", description = "AdminMenuController")
 public class AdminMenuController {
 
     @Autowired
@@ -29,7 +30,7 @@ public class AdminMenuController {
     @Autowired
     private MenuGoodsRelationService menuGoodsRelationService;
 
-    @ApiOperation(value = "菜单列表")
+    @Operation(summary = "菜单列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Menu param){
         BasicData basicResult = new BasicData();
@@ -38,7 +39,7 @@ public class AdminMenuController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "菜单创建")
+    @Operation(summary = "菜单创建")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Menu param){
         BasicResult basicResult = new BasicResult();
@@ -54,7 +55,7 @@ public class AdminMenuController {
     }
 
 
-    @ApiOperation(value = "菜单修改")
+    @Operation(summary = "菜单修改")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Menu param){
         BasicResult basicResult = new BasicResult();
@@ -69,7 +70,7 @@ public class AdminMenuController {
     }
 
 
-    @ApiOperation(value = "菜单删除")
+    @Operation(summary = "菜单删除")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Menu param){
         BasicResult basicResult = new BasicResult();

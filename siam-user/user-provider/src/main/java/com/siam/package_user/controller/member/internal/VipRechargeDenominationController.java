@@ -5,8 +5,9 @@ import com.siam.package_user.service.internal.VipRechargeDenominationService;
 import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_user.entity.internal.VipRechargeDenomination;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -18,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/rest/vipRechargeDenomination")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "会员充值面额模块相关接口", description = "VipRechargeDenominationController")
+@Tag(name = "会员充值面额模块相关接口", description = "VipRechargeDenominationController")
 public class VipRechargeDenominationController {
 
     @Autowired
     private VipRechargeDenominationService vipRechargeDenominationService;
 
-    @ApiOperation(value = "会员充值面额列表")
+    @Operation(summary = "会员充值面额列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) VipRechargeDenomination vipRechargeDenomination){
         BasicData basicResult = new BasicData();

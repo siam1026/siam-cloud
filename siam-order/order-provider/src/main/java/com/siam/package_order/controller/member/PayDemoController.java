@@ -37,10 +37,16 @@ import com.siam.package_util.entity.Setting;
 import com.siam.package_util.feign.SettingFeignApi;
 import com.siam.package_weixin_pay.config.WxpayConfigDemo;
 import com.siam.package_weixin_pay.entity.WxpayBean;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +61,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -67,7 +73,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/rest/payDemo")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "支付模块相关接口", description = "PayController")
+@Tag(name = "支付模块相关接口", description = "PayController")
 public class PayDemoController {
 
     private Logger logger = LoggerFactory.getLogger(PayDemoController.class);
@@ -111,14 +117,7 @@ public class PayDemoController {
     @Autowired
     private MemberFeignApi memberFeignApi;
 
-    @ApiOperation(value = "支付宝支付")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "out_trade_no", value = "商户订单号", required = true, paramType = "query", dataType = "string"),
-        @ApiImplicitParam(name = "subject", value = "订单名称", required = true, paramType = "query", dataType = "string"),
-        @ApiImplicitParam(name = "total_amount", value = "付款金额", required = true, paramType = "query", dataType = "string"),
-        @ApiImplicitParam(name = "body", value = "商品描述", required = false, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/alipay")
+    @Operation(summary = "支付宝支付")@PostMapping(value = "/alipay")
     public BasicResult alipay(AlipayBean alipayBean){
         BasicData basicResult = new BasicData();
         try {
@@ -148,7 +147,7 @@ public class PayDemoController {
         return basicResult;
     }
 
-    @ApiOperation(value = "支付宝支付回调")
+    @Operation(summary = "支付宝支付回调")
     @PostMapping(value = "/alipayCallback")
     public BasicResult alipayCallback(HttpServletRequest request) throws UnsupportedEncodingException, AlipayApiException {
         BasicResult basicResult = new BasicResult();
@@ -261,14 +260,7 @@ public class PayDemoController {
     }
 
 
-    @ApiOperation(value = "微信支付")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "out_trade_no", value = "商户订单号", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subject", value = "订单名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "total_amount", value = "付款金额", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "body", value = "商品描述", required = false, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/wxpay")
+    @Operation(summary = "微信支付")@PostMapping(value = "/wxpay")
     public BasicResult wxpay(WxpayBean wxpayBean, HttpServletRequest request, WxPayUnifiedOrderRequest wxreq){
         BasicData basicResult = new BasicData();
         try {
@@ -320,7 +312,7 @@ public class PayDemoController {
     }
 
 
-    @ApiOperation(value = "微信支付回调")
+    @Operation(summary = "微信支付回调")
     @PostMapping(value = "/wxpayCallback")
     public BasicResult wxpayCallback(String xmlData,HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, AlipayApiException, WxPayException {
         BasicResult basicResult = new BasicResult();
@@ -361,14 +353,7 @@ public class PayDemoController {
         return "<xml><return_code><![CDATA[" + return_code + "]]></return_code><return_msg><![CDATA[" + return_msg + "]]></return_msg></xml>";
     }
 
-    @ApiOperation(value = "微信支付_2")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "out_trade_no", value = "商户订单号", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subject", value = "订单名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "total_amount", value = "付款金额", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "body", value = "商品描述", required = false, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/wxpay_2")
+    @Operation(summary = "微信支付_2")@PostMapping(value = "/wxpay_2")
     public BasicResult wxpay_2(WxpayBean wxpayBean, HttpServletRequest request, WxPayUnifiedOrderRequest wxreq){
         BasicData basicResult = new BasicData();
         basicResult.setData("http://www.baidu.com");
@@ -378,14 +363,7 @@ public class PayDemoController {
         return basicResult;
     }
 
-    @ApiOperation(value = "订单支付(过渡接口)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "out_trade_no", value = "商户订单号", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subject", value = "订单名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "total_amount", value = "付款金额", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "body", value = "商品描述", required = false, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/orderPay")
+    @Operation(summary = "订单支付(过渡接口)")@PostMapping(value = "/orderPay")
     public BasicResult orderPay(WxpayBean wxpayBean, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 

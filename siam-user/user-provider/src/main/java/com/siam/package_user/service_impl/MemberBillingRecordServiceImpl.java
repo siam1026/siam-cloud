@@ -13,6 +13,7 @@ import com.siam.package_user.service.MemberBillingRecordService;
 import com.siam.package_user.service.MemberService;
 import com.siam.package_user.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ public class MemberBillingRecordServiceImpl implements MemberBillingRecordServic
     @Autowired
     private MemberBillingRecordMapper memberBillingRecordMapper;
 
+    @Lazy
     @Autowired
     private MemberService memberService;
 

@@ -1,59 +1,60 @@
 package com.siam.package_order.mq_listener.internal;
 
-import com.alibaba.fastjson.JSONObject;
-import com.siam.package_order.entity.TransactionLog;
-import com.siam.package_order.model.param.OrderParam;
+import com.alibaba.fastjson.JSON;
+import com.siam.package_common.constant.Quantity;
+import com.siam.package_order.entity.Order;
+import com.siam.package_order.mapper.OrderMapper;
+import com.siam.package_order.model.dto.OrderPaySuccessMessage;
 import com.siam.package_order.service.OrderService;
-import com.siam.package_order.service_impl.TransactionLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.client.producer.TransactionListener;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
+/**
+ * 支付成功事务消息监听器
+ * executeLocalTransaction: 执行下游异步通知链路（公众号消息、语音提醒、打印）
+ * checkLocalTransaction: 回查订单支付状态，确认事务是否应提交
+ */
 @Component
 @Slf4j
 public class OrderTransactionListener implements TransactionListener {
 
-    @Resource(name = "rocketMQ_OrderServiceImpl")
-    private OrderService orderService;
-
     @Autowired
-    private TransactionLogService transactionLogService;
+    private OrderMapper orderMapper;
+
+    @Lazy
+    @Autowired
+    private OrderService orderService;
 
     @Override
     public LocalTransactionState executeLocalTransaction(Message message, Object o) {
-        log.info("[订单服务] 开始执行本地事务....");
-        LocalTransactionState state;
-        //执行本地事务
+        log.info("[订单服务] 开始执行支付成功本地事务，transId={}", message.getTransactionId());
         try {
-            OrderParam param = JSONObject.parseObject(new String(message.getBody()), OrderParam.class);
-            orderService.insertByMQ(param, message.getTransactionId());
-            state = LocalTransactionState.COMMIT_MESSAGE;
-            log.info("[订单服务] 本地事务已提交。{}", message.getTransactionId());
+            OrderPaySuccessMessage msg = JSON.parseObject(new String(message.getBody()), OrderPaySuccessMessage.class);
+            orderService.executePaymentNotify(msg.getOrderId());
+            log.info("[订单服务] 支付成功本地事务执行完成，transId={}", message.getTransactionId());
+            return LocalTransactionState.COMMIT_MESSAGE;
         } catch (Exception e) {
-            log.error("[订单服务] 执行本地事务失败。{}", e.getMessage());
-            state = LocalTransactionState.ROLLBACK_MESSAGE;
-            e.printStackTrace();
+            log.error("[订单服务] 支付成功本地事务执行失败，{}", e.getMessage(), e);
+            return LocalTransactionState.ROLLBACK_MESSAGE;
         }
-        return state;
     }
 
     @Override
     public LocalTransactionState checkLocalTransaction(MessageExt messageExt) {
-        log.info("[订单服务] 开始回查本地事务....");
-        LocalTransactionState state;
-        //如果本地事务存在，则事务提交成功
-        TransactionLog transactionLog = transactionLogService.getById(messageExt.getTransactionId());
-        if(transactionLog != null){
-            state = LocalTransactionState.COMMIT_MESSAGE;
-        }else{
-            state = LocalTransactionState.ROLLBACK_MESSAGE;
+        log.info("[订单服务] 开始回查支付本地事务，transId={}", messageExt.getTransactionId());
+        OrderPaySuccessMessage msg = JSON.parseObject(new String(messageExt.getBody()), OrderPaySuccessMessage.class);
+        Order dbOrder = orderMapper.selectById(msg.getOrderId());
+        if (dbOrder != null && (dbOrder.getStatus() == Quantity.INT_2 || dbOrder.getStatus() == Quantity.INT_4)) {
+            log.info("[订单服务] 回查确认：订单已支付，状态={}", dbOrder.getStatus());
+            return LocalTransactionState.COMMIT_MESSAGE;
         }
-        return state;
+        log.warn("[订单服务] 回查失败：订单未支付或不存在，orderId={}", msg.getOrderId());
+        return LocalTransactionState.ROLLBACK_MESSAGE;
     }
 }

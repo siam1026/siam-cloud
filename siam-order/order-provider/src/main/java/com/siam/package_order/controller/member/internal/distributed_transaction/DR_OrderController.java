@@ -4,7 +4,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.service.OrderService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -16,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/pointsMall/order")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "订单模块相关接口", description = "OrderController")
+@Tag(name = "订单模块相关接口", description = "OrderController")
 public class DR_OrderController {
 
     @Resource(name = "seata_OrderServiceImpl")

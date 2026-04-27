@@ -7,7 +7,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_mall.entity.PointsMallMenu;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/pointsMall/menu")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "菜单分类模块相关接口", description = "PointsMallMenuController")
+@Tag(name = "菜单分类模块相关接口", description = "PointsMallMenuController")
 public class PointsMallMenuController {
 
     @Autowired

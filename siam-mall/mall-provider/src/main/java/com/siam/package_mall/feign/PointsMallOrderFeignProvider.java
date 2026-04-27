@@ -7,7 +7,7 @@ import com.siam.package_mall.model.param.PointsMallOrderParam;
 import com.siam.package_mall.service.PointsMallOrderService;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Date;
 
 /**

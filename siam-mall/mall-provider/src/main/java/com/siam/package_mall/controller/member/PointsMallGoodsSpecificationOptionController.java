@@ -6,10 +6,16 @@ import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_mall.model.dto.PointsMallGoodsSpecificationOptionDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -26,16 +32,12 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/pointsMall/goodsSpecificationOption")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商品规格选项模块相关接口", description = "PointsMallGoodsSpecificationOptionController")
+@Tag(name = "商品规格选项模块相关接口", description = "PointsMallGoodsSpecificationOptionController")
 public class PointsMallGoodsSpecificationOptionController {
     @Autowired
     private PointsMallGoodsSpecificationOptionService goodsSpecificationOptionService;
 
-    @ApiOperation(value = "查询商品规格选项信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "goodsId", value = "商品id", required = true, paramType = "query", dataType = "int"),
-    })
-    @PostMapping(value = "/selectByGoodsId")
+    @Operation(summary = "查询商品规格选项信息")@PostMapping(value = "/selectByGoodsId")
     public BasicResult list(@RequestBody @Validated(value = {}) PointsMallGoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicData basicResult = new BasicData();
 

@@ -1,13 +1,13 @@
 package com.siam.package_promotion.model.param;
 
 import com.siam.package_promotion.entity.Advertisement;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-@ApiModel(value = "广告轮播图表")
+ @Schema(description= "广告轮播图表")
 public class AdvertisementParam extends Advertisement {
 
     //开始日期

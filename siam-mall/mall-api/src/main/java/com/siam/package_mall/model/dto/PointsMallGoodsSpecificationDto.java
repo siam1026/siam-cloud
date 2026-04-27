@@ -1,27 +1,27 @@
 package com.siam.package_mall.model.dto;
 
 import com.siam.package_mall.entity.PointsMallGoods;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 
 public class PointsMallGoodsSpecificationDto extends PointsMallGoods {
-    @ApiModelProperty(notes = "规格id")
+    @Schema(description = "规格id")
     private Integer specificationId;
 
-    @ApiModelProperty(notes = "规格名称")
+    @Schema(description = "规格名称")
     private String specificationName;
 
-    @ApiModelProperty(notes = "商品规格选项id")
+    @Schema(description = "商品规格选项id")
     private Integer specificationOptionId;
 
-    @ApiModelProperty(notes = "商品规格选项名称")
+    @Schema(description = "商品规格选项名称")
     private String specificationOptionName;
 
-    @ApiModelProperty(notes = "商品规格选项单价/加价金额")
+    @Schema(description = "商品规格选项单价/加价金额")
     private BigDecimal specificationOptionPrice;
 
-    @ApiModelProperty(notes = "商品规格选项库存 1代表有货，0代表无货")
+    @Schema(description = "商品规格选项库存 1代表有货，0代表无货")
     private Integer specificationOptionStock;
 
     public Integer getSpecificationId() {

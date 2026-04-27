@@ -9,22 +9,28 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_mall.entity.PointsMallCouponsMemberRelation;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/rest/member/pointsMall/couponsMemberRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "优惠卷用关系接口", description = "PointsMallCouponsMemberRelationController")
+@Tag(name = "优惠卷用关系接口", description = "PointsMallCouponsMemberRelationController")
 public class PointsMallCouponsMemberRelationController {
 
     @Autowired
@@ -36,18 +42,7 @@ public class PointsMallCouponsMemberRelationController {
     @Autowired
     private MemberSessionManager memberSessionManager;
 
-    @ApiOperation(value = "新增优惠卷用户关系")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "couponsId", value = "优惠卷id", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "couponsName", value = "优惠卷名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "memberId", value = "用户id", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "startTime", value = "生效时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "endTime", value = "过期时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "isUsed", value = "是否已经使用，0=未使用，1=已使用", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isExpired", value = "是否过期，0=未过期，1=已过期", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isValid", value = "是否生效，0-未生效，1-生效中", required = false, paramType = "query", dataType = "Boolean"),
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "新增优惠卷用户关系")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) PointsMallCouponsMemberRelation couponsMemberRelation) {
         BasicResult basicResult = new BasicResult();
 
@@ -59,11 +54,7 @@ public class PointsMallCouponsMemberRelationController {
         return basicResult;
     }
 
-    @ApiOperation(value = "查看优惠卷关系详情（包含关联优惠卷）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-    })
-    @PostMapping(value = "/selectById")
+    @Operation(summary = "查看优惠卷关系详情（包含关联优惠卷）")@PostMapping(value = "/selectById")
     public BasicResult selectById(@RequestBody @Validated(value = {}) PointsMallCouponsMemberRelation param){
         BasicData basicResult = new BasicData();
 
@@ -77,21 +68,7 @@ public class PointsMallCouponsMemberRelationController {
     }
 
 
-    @ApiOperation(value = "优惠卷用户关系列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "couponsId", value = "优惠卷id", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "couponsName", value = "优惠卷名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "memberId", value = "用户id", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "startTime", value = "生效时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "endTime", value = "过期时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "isUsed", value = "是否已经使用，0=未使用，1=已使用", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isExpired", value = "是否过期，0=未过期，1=已过期", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isValid", value = "是否生效，0-未生效，1-生效中", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "优惠卷用户关系列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) PointsMallCouponsMemberRelation couponsMemberRelation, HttpServletRequest request) {
         BasicData basicResult = new BasicData();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
@@ -103,7 +80,7 @@ public class PointsMallCouponsMemberRelationController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "查询优惠卷数量")
+    @Operation(summary = "查询优惠卷数量")
     @PostMapping(value = "/selectCounts")
     public BasicResult selectCounts(@RequestBody @Validated(value = {}) PointsMallCouponsMemberRelation param){
         BasicData basicResult = new BasicData();

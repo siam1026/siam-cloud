@@ -30,8 +30,9 @@ import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import com.siam.package_weixin_pay.config.WxPayConfig;
 import com.siam.package_weixin_pay.entity.WxPayDto;
 import com.siam.package_weixin_pay.util.PayUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +42,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -52,12 +53,15 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/wxPay")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "微信支付模块相关接口", description = "WxPayController")
+@Tag(name = "微信支付模块相关接口", description = "WxPayController")
 public class WxPayController {
 
     @Autowired
@@ -96,12 +100,15 @@ public class WxPayController {
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     /**
      * 调用微信支付常见错误：
      * 1、验签错误
      * 解决方案：1) 更改商户密钥5~6次；2) 调整xml报文的顺序排列；3) 如openid这种属性要严格区分大小写
      */
-    @ApiOperation(value = "微信小程序发起微信支付")
+    @Operation(summary = "微信小程序发起微信支付")
     @PostMapping(value = "/toPay4Applet")
     public BasicResult toPay4Applet(@RequestBody @Validated WxPayDto wxPayDto, HttpServletRequest request) {
         BasicData basicResult = new BasicData();
@@ -445,58 +452,70 @@ public class WxPayController {
         String returnCode = (String) map.get("return_code");
         if ("SUCCESS".equals(returnCode)) {
             //验证签名是否正确
-            //支付回调这里不需要验证签名是否正确，目前回调的签名验证报签名错误
-
-            /*if (PayUtil.verify(PayUtil.createLinkString(map), (String) map.get("sign"), wxPayConfig.getMchKey(), "utf-8")) {
-
-            }else{
+            if (!PayUtil.verify(PayUtil.createLinkString(map), (String) map.get("sign"), wxPayConfig.getMchKey(), "utf-8")) {
                 log.info("\n微信支付回调-验签失败");
-            }*/
+                resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
+                        + "<return_msg><![CDATA[验签失败]]></return_msg>" + "</xml> ";
+                return;
+            }
 
             log.info("\n微信支付回调-支付成功");
             //out_trade_no_array暂不处理
             String outTradeNo = (String) map.get("out_trade_no");
 
-            MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
-            if(dbMemberTradeRecord == null){
-                log.error("该商户单号不存在，回调逻辑处理失败");
+            // Redis 分布式锁 - 幂等控制
+            String lockKey = "pay:callback:lock:" + outTradeNo;
+            Boolean isLocked = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "1", 3, TimeUnit.MINUTES);
+            if (Boolean.FALSE.equals(isLocked)) {
+                log.warn("订单 {} 正在处理或已处理，触发幂等拦截", outTradeNo);
+                resXml = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
                 return;
             }
-            //为防止微信重复回调，需要对用户交易记录的状态进行判断
-            if(dbMemberTradeRecord.getStatus() != Quantity.INT_1){
-                log.error("微信重复回调，商户单号为" + outTradeNo);
-                return;
+
+            try {
+                MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
+                if(dbMemberTradeRecord == null){
+                    log.error("该商户单号不存在，回调逻辑处理失败");
+                    return;
+                }
+                //为防止微信重复回调，需要对用户交易记录的状态进行判断
+                if(dbMemberTradeRecord.getStatus() != Quantity.INT_1){
+                    log.error("微信重复回调，商户单号为" + outTradeNo);
+                    return;
+                }
+
+                String transactionId = (String) map.get("transaction_id");
+                //补填交易单号(支付平台的订单号)，将交易状态改为支付成功
+                MemberTradeRecord updateMemberTradeRecord = new MemberTradeRecord();
+                updateMemberTradeRecord.setId(dbMemberTradeRecord.getId());
+                updateMemberTradeRecord.setTradeNo(transactionId);
+                updateMemberTradeRecord.setStatus(Quantity.INT_2);
+                updateMemberTradeRecord.setUpdateTime(new Date());
+                memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
+
+                if(dbMemberTradeRecord.getType() == Quantity.INT_1){
+                    //交易类型为订单付款
+                    orderService.paymentNotify(outTradeNo);
+
+                }else if(dbMemberTradeRecord.getType() == Quantity.INT_2){
+                    //交易类型为会员充值
+                    vipRechargeRecordFeignApi.updateByPayNotify(outTradeNo);
+
+                }else if(dbMemberTradeRecord.getType() == Quantity.INT_3){
+                    //交易类型为自取订单改为配送
+                    orderService.paymentNotifyOfChangeToDelivery(outTradeNo);
+
+                }else if(dbMemberTradeRecord.getType() == Quantity.INT_6){
+                    //交易类型为积分商城订单付款
+                    pointsMallOrderFeignApi.paymentNotify(outTradeNo);
+                }
+
+                //通知微信服务器已经支付成功
+                resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+                        + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+            } finally {
+                // 业务成功，锁保留到自然过期（3 分钟），防止微信短期并发重试
             }
-
-            String transactionId = (String) map.get("transaction_id");
-            //补填交易单号(支付平台的订单号)，将交易状态改为支付成功
-            MemberTradeRecord updateMemberTradeRecord = new MemberTradeRecord();
-            updateMemberTradeRecord.setId(dbMemberTradeRecord.getId());
-            updateMemberTradeRecord.setTradeNo(transactionId);
-            updateMemberTradeRecord.setStatus(Quantity.INT_2);
-            updateMemberTradeRecord.setUpdateTime(new Date());
-            memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
-
-            if(dbMemberTradeRecord.getType() == Quantity.INT_1){
-                //交易类型为订单付款
-                orderService.paymentNotify(outTradeNo);
-
-            }else if(dbMemberTradeRecord.getType() == Quantity.INT_2){
-                //交易类型为会员充值
-                vipRechargeRecordFeignApi.updateByPayNotify(outTradeNo);
-
-            }else if(dbMemberTradeRecord.getType() == Quantity.INT_3){
-                //交易类型为自取订单改为配送
-                orderService.paymentNotifyOfChangeToDelivery(outTradeNo);
-
-            }else if(dbMemberTradeRecord.getType() == Quantity.INT_6){
-                //交易类型为积分商城订单付款
-                pointsMallOrderFeignApi.paymentNotify(outTradeNo);
-            }
-
-            //通知微信服务器已经支付成功
-            resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
-                    + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
 
         } else {
             resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
@@ -534,13 +553,12 @@ public class WxPayController {
         String returnCode = (String) map.get("return_code");
         if ("SUCCESS".equals(returnCode)) {
             //验证签名是否正确
-            //支付回调这里不需要验证签名是否正确，目前回调的签名验证报签名错误
-
-            /*if (PayUtil.verify(PayUtil.createLinkString(map), (String) map.get("sign"), wxPayConfig.getMchKey(), "utf-8")) {
-
-            }else{
+            if (!PayUtil.verify(PayUtil.createLinkString(map), (String) map.get("sign"), wxPayConfig.getMchKey(), "utf-8")) {
                 log.info("\n微信退款回调-验签失败");
-            }*/
+                resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
+                        + "<return_msg><![CDATA[验签失败]]></return_msg>" + "</xml> ";
+                return;
+            }
             log.info("\n微信退款回调-支付成功");
 
             log.debug("\n返回报文：" + map);
@@ -555,36 +573,42 @@ public class WxPayController {
             //out_trade_no_array暂不处理
             String outTradeNo = (String) map.get("out_trade_no");
 
-            MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
-            if(dbMemberTradeRecord == null){
-                log.error("该商户单号不存在，回调逻辑处理失败");
+            // Redis 分布式锁 - 幂等控制
+            String lockKey = "pay:callback:lock:" + outTradeNo;
+            Boolean isLocked = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "1", 3, TimeUnit.MINUTES);
+            if (Boolean.FALSE.equals(isLocked)) {
+                log.warn("退款订单 {} 正在处理或已处理，触发幂等拦截", outTradeNo);
+                resXml = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
                 return;
             }
-            //为防止微信重复回调，需要对用户交易记录的状态进行判断
-            if(dbMemberTradeRecord.getStatus() != Quantity.INT_1){
-                log.error("微信重复回调，商户单号为" + outTradeNo);
-                return;
+
+            try {
+                MemberTradeRecord dbMemberTradeRecord = memberTradeRecordFeignApi.selectByOutTradeNo(outTradeNo).getData();
+                if(dbMemberTradeRecord == null){
+                    log.error("该商户单号不存在，退款回调逻辑处理失败");
+                    return;
+                }
+                //退款回调时交易记录应为已支付状态(INT_2)
+                if(dbMemberTradeRecord.getStatus() != Quantity.INT_2){
+                    log.error("退款回调-交易记录状态异常，当前状态={}，商户单号={}", dbMemberTradeRecord.getStatus(), outTradeNo);
+                    resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+                            + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+                    return;
+                }
+
+                //交易类型为订单付款/自取改配送，执行退款处理
+                if(dbMemberTradeRecord.getType() == Quantity.INT_1){
+                    orderService.refundMerchantBalance(outTradeNo);
+                }else if(dbMemberTradeRecord.getType() == Quantity.INT_3){
+                    orderService.refundMerchantBalance(outTradeNo);
+                }
+
+                //通知微信服务器已经退款成功
+                resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+                        + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+            } finally {
+                // 业务成功，锁保留到自然过期
             }
-
-            String transactionId = (String) map.get("transaction_id");
-            //补填交易单号(支付平台的订单号)，将交易状态改为支付成功
-            MemberTradeRecord updateMemberTradeRecord = new MemberTradeRecord();
-            updateMemberTradeRecord.setId(dbMemberTradeRecord.getId());
-            updateMemberTradeRecord.setTradeNo(transactionId);
-            updateMemberTradeRecord.setStatus(Quantity.INT_2);
-            updateMemberTradeRecord.setUpdateTime(new Date());
-            memberTradeRecordFeignApi.updateByPrimaryKeySelective(updateMemberTradeRecord);
-
-            //交易类型为订单付款
-            if(dbMemberTradeRecord.getType() == Quantity.INT_1){
-                orderService.paymentNotify(outTradeNo);
-            }else if(dbMemberTradeRecord.getType() == Quantity.INT_3){
-                orderService.paymentNotifyOfChangeToDelivery(outTradeNo);
-            }
-
-            //通知微信服务器已经退款成功
-            resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
-                    + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
 
         } else {
             resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"

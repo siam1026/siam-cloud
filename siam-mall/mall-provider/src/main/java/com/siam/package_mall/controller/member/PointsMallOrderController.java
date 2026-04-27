@@ -6,8 +6,9 @@ import com.siam.package_mall.model.param.PointsMallOrderParam;
 import com.siam.package_mall.model.vo.PointsMallOrderVo;
 import com.siam.package_mall.entity.PointsMallOrder;
 import com.siam.package_mall.service.PointsMallOrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -16,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/pointsMall/order")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "订单模块相关接口", description = "PointsMallOrderController")
+@Tag(name = "订单模块相关接口", description = "PointsMallOrderController")
 public class PointsMallOrderController {
 
     @Resource(name = "pointsMallOrderServiceImpl")
@@ -125,14 +126,14 @@ public class PointsMallOrderController {
         return BasicResult.success();
     }
 
-    @ApiOperation(value = "修改订单状态为已确认收货")
+    @Operation(summary = "修改订单状态为已确认收货")
     @PostMapping(value = "/confirmReceipt")
     public BasicResult confirmReceipt(@RequestBody @Validated(value = {}) PointsMallOrderParam param){
         orderService.confirmReceipt(param);
         return BasicResult.success();
     }
 
-    @ApiOperation(value = "删除订单")
+    @Operation(summary = "删除订单")
     @PostMapping(value = "/delete")
     public BasicResult deletePointsMallOrder(@RequestBody @Validated(value = {}) PointsMallOrderParam param){
         orderService.delete(param);

@@ -7,10 +7,11 @@ import com.siam.package_order.model.param.CommonParam;
 import com.siam.package_order.service.CommonService;
 import com.siam.package_user.entity.DeliveryAddress;
 import com.siam.package_user.feign.DeliveryAddressFeignApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping(value = "/rest/common")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "通用模块相关接口", description = "CommonController")
+@Tag(name = "通用模块相关接口", description = "CommonController")
 public class CommonController {
 
     @Autowired
@@ -41,10 +42,7 @@ public class CommonController {
 //    @Autowired
 //    private ShopFeignClient shopFeignApi;
 
-    @ApiOperation(value = "查询订单配送费")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "deliveryAddressId", value = "收货地址id", required = false, paramType = "query", dataType = "int")
-    })
+    @Operation(summary = "查询订单配送费")
     @PostMapping(value = "/selectDeliveryFee")
     public BasicResult selectDeliveryFee(@RequestBody @Validated(value = {}) CommonParam param) {
         BasicData basicResult = new BasicData();
@@ -61,11 +59,7 @@ public class CommonController {
         return BasicResult.success(deliveryFee);
     }
 
-    /*@ApiOperation(value = "查询是否有门店可以配送")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "deliveryAddressId", value = "收货地址id", required = false, paramType = "query", dataType = "int")
-    })
-    @PostMapping(value = "/selectHasShopDelivery")
+    /*@Operation(summary = "查询是否有门店可以配送")@PostMapping(value = "/selectHasShopDelivery")
     public BasicResult selectHasShopDelivery(@RequestParam(required = false) Integer deliveryAddressId){
         BasicData basicResult = new BasicData();
 
@@ -119,7 +113,7 @@ public class CommonController {
 //    @Autowired
 //    private WebSocket webSocket;
 //
-//    @ApiOperation(value = "websocket推送消息给前端")
+//    @Operation(summary = "websocket推送消息给前端")
 //    @GetMapping(value = "/websocketPush")
 //    public BasicResult websocketPush(String name, String mark){
 //        BasicResult basicResult = new BasicResult();

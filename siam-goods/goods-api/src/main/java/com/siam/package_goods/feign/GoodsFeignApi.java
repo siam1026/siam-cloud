@@ -41,4 +41,16 @@ public interface GoodsFeignApi {
 
     @PostMapping(value = "/api/goods/selectByExample")
     BasicResult<List<Goods>> selectByExample(@RequestBody GoodsParam param);
+
+    /**
+     * 减少商品库存（CAS原子操作）
+     */
+    @PostMapping(value = "/api/goods/decreaseStock")
+    BasicResult decreaseStock(@RequestParam("id") Integer id, @RequestParam("number") Integer number);
+
+    /**
+     * 增加商品库存（CAS原子操作）
+     */
+    @PostMapping(value = "/api/goods/increaseStock")
+    BasicResult increaseStock(@RequestParam("id") Integer id, @RequestParam("number") Integer number);
 }

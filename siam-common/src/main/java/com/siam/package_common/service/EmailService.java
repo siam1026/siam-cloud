@@ -9,8 +9,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;

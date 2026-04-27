@@ -3,8 +3,7 @@ package com.siam.package_goods.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,25 +11,25 @@ import java.util.Date;
 
 @Data
 @TableName("tb_goods_rawmaterial_relation")
-@ApiModel(value = "原料配比表/商品原料关联表")
+ @Schema(description= "原料配比表/商品原料关联表")
 public class GoodsRawmaterialRelation {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "商品id")
+    @Schema(description = "商品id")
     private Integer goodsId;
 
-    @ApiModelProperty(notes = "原料id")
+    @Schema(description = "原料id")
     private Integer rawmaterialId;
 
-    @ApiModelProperty(notes = "耗量")
+    @Schema(description = "耗量")
     private BigDecimal consumedQuantity;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     private String goodsName;

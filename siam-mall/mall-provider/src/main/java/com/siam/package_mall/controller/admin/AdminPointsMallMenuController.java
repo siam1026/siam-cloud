@@ -9,8 +9,9 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_mall.entity.PointsMallMenu;
 import com.siam.package_mall.model.example.PointsMallMenuGoodsRelationExample;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/admin/pointsMall/menu")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台菜单分类模块相关接口", description = "AdminPointsMallMenuController")
+@Tag(name = "后台菜单分类模块相关接口", description = "AdminPointsMallMenuController")
 public class AdminPointsMallMenuController {
 
     @Autowired
@@ -32,7 +33,7 @@ public class AdminPointsMallMenuController {
     @Autowired
     private PointsMallMenuGoodsRelationService menuPointsMallGoodsRelationService;
 
-    @ApiOperation(value = "菜单列表")
+    @Operation(summary = "菜单列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) PointsMallMenu menu){
         BasicData basicResult = new BasicData();
@@ -41,7 +42,7 @@ public class AdminPointsMallMenuController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "菜单创建")
+    @Operation(summary = "菜单创建")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) PointsMallMenu menu){
         BasicResult basicResult = new BasicResult();
@@ -57,7 +58,7 @@ public class AdminPointsMallMenuController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "菜单修改")
+    @Operation(summary = "菜单修改")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) PointsMallMenu menu){
         BasicResult basicResult = new BasicResult();
@@ -72,7 +73,7 @@ public class AdminPointsMallMenuController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "菜单删除")
+    @Operation(summary = "菜单删除")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) PointsMallMenu param){
         BasicResult basicResult = new BasicResult();
@@ -96,7 +97,7 @@ public class AdminPointsMallMenuController {
         return basicResult;
     }
 
-    @ApiOperation(value = "获取单个菜单分类详情信息")
+    @Operation(summary = "获取单个菜单分类详情信息")
     @PostMapping(value = "/getById")
     public BasicResult getById(@RequestBody @Validated(value = {}) PointsMallMenu param){
         BasicData basicResult = new BasicData();

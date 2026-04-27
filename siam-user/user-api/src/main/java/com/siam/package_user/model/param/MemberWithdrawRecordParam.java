@@ -6,7 +6,7 @@ import com.siam.package_user.entity.MemberWithdrawRecord;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 

@@ -6,7 +6,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_user.model.param.AdminParam;
 import com.siam.package_user.model.result.AdminResult;
 import com.siam.package_user.service.AdminService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/rest/admin")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台管理员模块相关接口", description = "AdminController")
+@Tag(name = "后台管理员模块相关接口", description = "AdminController")
 public class AdminController {
 
     @Autowired

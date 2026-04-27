@@ -10,7 +10,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Component
 @RocketMQMessageListener(consumerGroup = "orderConsumerGroup", topic = "TID_COMMON")

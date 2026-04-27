@@ -8,10 +8,10 @@ import com.siam.package_goods.model.example.GoodsRawmaterialRelationExample;
 import com.siam.package_goods.service.GoodsRawmaterialRelationService;
 import com.siam.package_goods.entity.Rawmaterial;
 import com.siam.package_goods.service.RawmaterialService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +22,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/merchant/rawmaterial")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端原料模块相关接口", description = "MerchantRawmaterialController")
+@Tag(name = "商家端原料模块相关接口", description = "MerchantRawmaterialController")
 public class MerchantRawmaterialController {
     @Autowired
     private RawmaterialService rawmaterialService;
@@ -30,20 +30,7 @@ public class MerchantRawmaterialController {
     @Autowired
     private GoodsRawmaterialRelationService goodsRawmaterialRelationService;
 
-    @ApiOperation(value = "原料列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "原料名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "原料主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "原料描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "unit", value = "采购单位", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "采购单价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockLowerLimit", value = "库存过低线/库存下限", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockUpperLimit", value = "库存超出线/库存上限", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
+    @Operation(summary = "原料列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Rawmaterial rawmaterial){
         BasicData basicResult = new BasicData();
@@ -52,17 +39,7 @@ public class MerchantRawmaterialController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增原料")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "原料名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "原料主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "原料描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "unit", value = "采购单位", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "采购单价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockLowerLimit", value = "库存过低线/库存下限", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockUpperLimit", value = "库存超出线/库存上限", required = true, paramType = "query", dataType = "BigDecimal"),
-    })
+    @Operation(summary = "新增原料")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Rawmaterial rawmaterial){
         BasicResult basicResult = new BasicResult();
@@ -78,18 +55,7 @@ public class MerchantRawmaterialController {
     }
 
 
-    @ApiOperation(value = "修改原料")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料主键id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "原料名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "原料主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "原料描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "unit", value = "采购单位", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "采购单价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockLowerLimit", value = "库存过低线/库存下限", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockUpperLimit", value = "库存超出线/库存上限", required = true, paramType = "query", dataType = "BigDecimal"),
-    })
+    @Operation(summary = "修改原料")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Rawmaterial rawmaterial){
         BasicResult basicResult = new BasicResult();
@@ -104,10 +70,7 @@ public class MerchantRawmaterialController {
     }
 
 
-    @ApiOperation(value = "删除原料")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料主键id", required = true, paramType = "query", dataType = "int")
-    })
+    @Operation(summary = "删除原料")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Rawmaterial param){
         BasicResult basicResult = new BasicResult();

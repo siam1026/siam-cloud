@@ -6,8 +6,9 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_promotion.entity.Advertisement;
 import com.siam.package_promotion.model.param.AdvertisementParam;
 import com.siam.package_promotion.service.AdvertisementService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/rest/advertisement")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "广告轮播图模块相关接口", description = "AdvertisementController")
+@Tag(name = "广告轮播图模块相关接口", description = "AdvertisementController")
 public class AdvertisementController {
     @Autowired
     private AdvertisementService advertisementService;
 
-    @ApiOperation(value = "广告轮播图列表")
+    @Operation(summary = "广告轮播图列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) AdvertisementParam advertisement){
         BasicData basicResult = new BasicData();

@@ -3,33 +3,32 @@ package com.siam.package_goods.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 @TableName("tb_goods_specification")
-@ApiModel(value = "商品规格表")
+ @Schema(description= "商品规格表")
 public class GoodsSpecification {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "商品id")
+    @Schema(description = "商品id")
     private Integer goodsId;
 
-    @ApiModelProperty(notes = "商品规格名称")
+    @Schema(description = "商品规格名称")
     private String name;
 
-    @ApiModelProperty(notes = "排序号")
+    @Schema(description = "排序号")
     private Integer sortNumber;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     //页码

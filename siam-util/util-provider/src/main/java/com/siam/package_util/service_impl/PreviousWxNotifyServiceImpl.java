@@ -10,8 +10,17 @@ import com.siam.package_common.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+@Configuration
+class RestTemplateConfig {
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+}
 
 @Slf4j
 @Service
@@ -22,11 +31,6 @@ public class PreviousWxNotifyServiceImpl {
 
     @Autowired
     private WxNotifyConfig wxNotifyConfig;
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 
     @Autowired
     private RestTemplate restTemplate;
@@ -70,12 +74,8 @@ public class PreviousWxNotifyServiceImpl {
      * appid和appsecret到小程序后台获取，当然也可以让小程序开发人员给你传过来
      * */
     public String getAccess_token() {
-        //获取access_token
         String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" +
                 "&appid=" + wxNotifyConfig.getAppId() + "&secret=" + wxNotifyConfig.getSecret();
-        if(restTemplate==null){
-            restTemplate = new RestTemplate();
-        }
         String json = restTemplate.getForObject(url, String.class);
         JSONObject myJson = JSONObject.parseObject(json);
         return myJson.get("access_token").toString();

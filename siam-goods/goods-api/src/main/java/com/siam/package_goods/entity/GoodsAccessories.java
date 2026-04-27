@@ -3,8 +3,7 @@ package com.siam.package_goods.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,31 +11,31 @@ import java.util.Date;
 
 @Data
 @TableName("tb_goods_accessories")
-@ApiModel(value = "商品辅料表")
+ @Schema(description= "商品辅料表")
 public class GoodsAccessories {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "辅料名称")
+    @Schema(description = "辅料名称")
     private String name;
 
-    @ApiModelProperty(notes = "辅料主图")
+    @Schema(description = "辅料主图")
     private String mainImage;
 
-    @ApiModelProperty(notes = "辅料描述")
+    @Schema(description = "辅料描述")
     private String description;
 
-    @ApiModelProperty(notes = "单价")
+    @Schema(description = "单价")
     private BigDecimal price;
 
-    @ApiModelProperty(notes = "库存 1=有货 2=无货")
+    @Schema(description = "库存 1=有货 2=无货")
     private Integer stock;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     //页码

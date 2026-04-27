@@ -3,30 +3,29 @@ package com.siam.package_goods.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 @TableName("tb_menu_goods_relation")
-@ApiModel(value = "菜单分类商品关系表(多对多)")
+ @Schema(description= "菜单分类商品关系表(多对多)")
 public class MenuGoodsRelation {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "菜单分类id")
+    @Schema(description = "菜单分类id")
     private Integer menuId;
 
-    @ApiModelProperty(notes = "商品id")
+    @Schema(description = "商品id")
     private Integer goodsId;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     //页码

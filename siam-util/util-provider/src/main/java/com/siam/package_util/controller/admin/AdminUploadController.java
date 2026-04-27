@@ -3,7 +3,8 @@ package com.siam.package_util.controller.admin;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_common.util.OSSUtils;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/admin")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台上传图片模块相关接口", description = "AdminUploadController")
+@Tag(name = "后台上传图片模块相关接口", description = "AdminUploadController")
 public class AdminUploadController {
 
     @Autowired

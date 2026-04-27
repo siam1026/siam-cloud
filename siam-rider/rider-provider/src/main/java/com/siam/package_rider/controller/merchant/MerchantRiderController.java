@@ -10,48 +10,33 @@ import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_merchant.util.TokenUtil;
 import com.siam.package_rider.entity.Rider;
 import com.siam.package_rider.service.RiderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/rest/merchant/rider")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端商家自配送骑手信息模块相关接口", description = "MerchantRiderController")
+@Tag(name = "商家端商家自配送骑手信息模块相关接口", description = "MerchantRiderController")
 public class MerchantRiderController {
 
     @Autowired
     private RiderService riderService;
 
-//    @Autowired
-//    private MerchantService merchantService;
-
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "骑手信息列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商家自配送骑手信息详情描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
+    @Operation(summary = "骑手信息列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Rider rider, HttpServletRequest request){
         BasicData basicResult = new BasicData();
 
-        //获取当前登录用户绑定的门店编号
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         rider.setShopId(loginMerchant.getShopId());
@@ -60,19 +45,11 @@ public class MerchantRiderController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "骑手信息创建")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "骑手信息主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "骑手信息名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商家自配送骑手信息详情描述", required = false, paramType = "query", dataType = "string")
-    })
+    @Operation(summary = "骑手信息创建")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Rider rider, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
-        //获取当前登录用户绑定的门店编号
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         rider.setShopId(loginMerchant.getShopId());
@@ -87,19 +64,11 @@ public class MerchantRiderController {
     }
 
 
-    @ApiOperation(value = "骑手信息修改")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "骑手信息主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "骑手信息名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商家自配送骑手信息详情描述", required = false, paramType = "query", dataType = "string")
-    })
+    @Operation(summary = "骑手信息修改")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Rider rider, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
-        //获取当前登录用户绑定的门店编号
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         Rider dbRider = riderService.selectByPrimaryKey(rider.getId());
@@ -119,15 +88,11 @@ public class MerchantRiderController {
     }
 
 
-    @ApiOperation(value = "骑手信息删除")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "骑手信息主键id集合(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "String")
-    })
+    @Operation(summary = "骑手信息删除")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Rider rider){
         BasicResult basicResult = new BasicResult();
 
-        //获取当前登录用户绑定的门店编号
         Merchant loginMerchant = merchantSessionManager.getSession(TokenUtil.getToken());
 
         for (Integer id : rider.getIds()) {

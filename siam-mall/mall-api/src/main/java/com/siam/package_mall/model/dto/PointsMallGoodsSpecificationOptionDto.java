@@ -1,18 +1,18 @@
 package com.siam.package_mall.model.dto;
 
 import com.siam.package_mall.entity.PointsMallGoodsSpecificationOption;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 
 public class PointsMallGoodsSpecificationOptionDto extends PointsMallGoodsSpecificationOption {
-    @ApiModelProperty(notes = "规格名称")
+    @Schema(description = "规格名称")
     private String specificationName;
 
-    @ApiModelProperty(notes = "商品名称")
+    @Schema(description = "商品名称")
     private String goodsName;
 
-    @ApiModelProperty(notes = "商品主图")
+    @Schema(description = "商品主图")
     private String goodsMainImage;
 
     public PointsMallGoodsSpecificationOptionDto() {

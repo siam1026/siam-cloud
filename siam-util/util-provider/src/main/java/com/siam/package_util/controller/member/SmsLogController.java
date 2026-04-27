@@ -9,10 +9,16 @@ import com.siam.package_common.util.CommonUtils;
 import com.siam.package_common.util.RedisUtils;
 import com.siam.package_util.entity.SmsLog;
 import com.siam.package_util.service.SmsLogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -26,7 +32,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/smsLog")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "短信验证码记录模块相关接口", description = "SmsLogController")
+@Tag(name = "短信验证码记录模块相关接口", description = "SmsLogController")
 public class SmsLogController {
 
     @Autowired
@@ -39,12 +45,7 @@ public class SmsLogController {
     private RedisUtils redisUtils;
 
     @PostMapping(value = "/sendMobileCode")
-    @ApiOperation(value = "发送手机验证码")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "string"),
-        @ApiImplicitParam(name = "type", value = "短信类型 注册=register;登录=login;验证手机号=verification;找回密码=findpwd", required = true, paramType = "query", dataType = "string")
-    })
-    public BasicResult sendMobileCode(@RequestBody @Validated(value = {}) SmsLog smsLog){
+    @Operation(summary = "发送手机验证码")public BasicResult sendMobileCode(@RequestBody @Validated(value = {}) SmsLog smsLog){
         BasicResult basicResult = new BasicResult();
         if(!CommonUtils.isMobile(smsLog.getMobile())){
             basicResult.setSuccess(false);

@@ -2,7 +2,7 @@ package com.siam.package_common.util;
 
 import com.google.gson.JsonParser;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

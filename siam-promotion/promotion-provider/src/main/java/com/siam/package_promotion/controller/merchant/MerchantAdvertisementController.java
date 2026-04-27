@@ -7,10 +7,16 @@ import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_promotion.entity.Advertisement;
 import com.siam.package_promotion.model.param.AdvertisementParam;
 import com.siam.package_promotion.service.AdvertisementService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -21,25 +27,13 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/merchant/advertisement")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端广告轮播图模块相关接口【暂无调用】", description = "MerchantAdvertisementController")
+@Tag(name = "商家端广告轮播图模块相关接口【暂无调用】", description = "MerchantAdvertisementController")
 public class MerchantAdvertisementController {
 
     @Autowired
     private AdvertisementService advertisementService;
 
-    @ApiOperation(value = "广告轮播图列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "广告轮播图表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageName", value = "轮播图名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "imagePath", value = "轮播图路径", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "说明", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "type", value = "轮播图类型 1=首页轮播图 2=菜单页轮播图", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageLinkUrl", value = "点击轮播图跳转的链接", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "广告轮播图列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) AdvertisementParam advertisement){
         BasicData basicResult = new BasicData();
         Page<Advertisement> page = advertisementService.getListByPage(advertisement);
@@ -47,16 +41,7 @@ public class MerchantAdvertisementController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增广告轮播图")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "imageName", value = "轮播图名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "imagePath", value = "轮播图路径", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "说明", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "type", value = "轮播图类型 1=首页轮播图 2=菜单页轮播图", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageLinkUrl", value = "点击轮播图跳转的链接", required = false, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "新增广告轮播图")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) AdvertisementParam advertisement){
         BasicResult basicResult = new BasicResult();
 
@@ -71,17 +56,7 @@ public class MerchantAdvertisementController {
     }
 
 
-    @ApiOperation(value = "修改广告轮播图")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "广告轮播图主键id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageName", value = "轮播图名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "imagePath", value = "轮播图路径", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "说明", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "type", value = "轮播图类型 1=首页轮播图 2=菜单页轮播图", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageLinkUrl", value = "点击轮播图跳转的链接", required = false, paramType = "query", dataType = "string"),
-    })
-    @PutMapping(value = "/update")
+    @Operation(summary = "修改广告轮播图")@PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) AdvertisementParam advertisement){
         BasicResult basicResult = new BasicResult();
 
@@ -99,11 +74,7 @@ public class MerchantAdvertisementController {
     }
 
 
-    @ApiOperation(value = "删除广告轮播图")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "广告轮播图主键id", required = true, paramType = "query", dataType = "int")
-    })
-    @DeleteMapping(value = "/delete")
+    @Operation(summary = "删除广告轮播图")@DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) AdvertisementParam param){
         BasicResult basicResult = new BasicResult();
 

@@ -2,31 +2,39 @@ package com.siam.package_order.controller.member;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.siam.package_common.entity.BasicResult;
+import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.model.vo.OrderVo;
 import com.siam.package_order.model.vo.OrderVo2;
 import com.siam.package_order.service.*;
 import com.siam.package_order.service.OrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.siam.package_user.auth.cache.MemberSessionManager;
+import com.siam.package_user.entity.Member;
+import com.siam.package_user.util.TokenUtil;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.remoting.exception.RemotingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/order")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "订单模块相关接口", description = "OrderController")
+@Tag(name = "订单模块相关接口", description = "OrderController")
 public class OrderController {
 
     @Resource(name = "orderServiceImpl")
@@ -34,6 +42,12 @@ public class OrderController {
 
     @Resource(name = "rewardServiceImpl")
     private RewardService rewardService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private MemberSessionManager memberSessionManager;
 
     /**
      * 订单列表
@@ -67,8 +81,19 @@ public class OrderController {
      */
     @PostMapping(value = "/insert")
     public BasicResult insertOrder(@RequestBody @Validated(value = {}) OrderParam param) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-        Order order = orderService.insert(param);
-        return BasicResult.success(order);
+        // Redis 分布式锁 - 防重复下单
+        Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
+        String lockKey = "order:create:lock:" + loginMember.getId();
+        Boolean isLocked = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "1", 5, TimeUnit.SECONDS);
+        if (Boolean.FALSE.equals(isLocked)) {
+            throw new StoneCustomerException("正在处理中，请勿重复点击");
+        }
+        try {
+            Order order = orderService.insert(param);
+            return BasicResult.success(order);
+        } finally {
+            // 订单创建是长流程（含分布式事务），此处不主动删锁，依赖 5 秒过期防止并发
+        }
     }
 
     /**
@@ -112,14 +137,14 @@ public class OrderController {
      * @param param
      * @return
      */
-    @ApiOperation(value = "修改订单状态为已确认收货")
+    @Operation(summary = "修改订单状态为已确认收货")
     @PostMapping(value = "/confirmReceipt")
     public BasicResult confirmReceipt(@RequestBody @Validated(value = {}) OrderParam param){
         orderService.confirmReceipt(param);
         return BasicResult.success();
     }
 
-    @ApiOperation(value = "删除订单")
+    @Operation(summary = "删除订单")
 
     @PostMapping(value = "/delete")
     public BasicResult deleteOrder(@RequestBody @Validated(value = {}) OrderParam param){

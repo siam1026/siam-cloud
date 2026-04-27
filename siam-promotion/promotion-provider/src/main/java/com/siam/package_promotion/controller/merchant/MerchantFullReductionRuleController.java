@@ -12,21 +12,27 @@ import com.siam.package_promotion.service.FullReductionRuleService;
 import com.siam.package_merchant.auth.cache.MerchantSessionManager;
 import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value = "/rest/merchant/fullReductionRule")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端满减规则模块相关接口", description = "MerchantFullReductionRuleController")
+@Tag(name = "商家端满减规则模块相关接口", description = "MerchantFullReductionRuleController")
 public class MerchantFullReductionRuleController {
 
     @Autowired
@@ -38,14 +44,7 @@ public class MerchantFullReductionRuleController {
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "新增满减规则")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "满减规则名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "status", value = "状态", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "limitedPrice", value = "分类名称", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "品牌id", required = true, paramType = "query", dataType = "BigDecimal")
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "新增满减规则")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) FullReductionRule fullReductionRule, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -62,15 +61,7 @@ public class MerchantFullReductionRuleController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "修改满减规则")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "name", value = "满减规则名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "status", value = "状态", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "limitedPrice", value = "分类名称", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "品牌id", required = true, paramType = "query", dataType = "BigDecimal")
-    })
-    @PutMapping(value = "/update")
+    @Operation(summary = "修改满减规则")@PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) FullReductionRule fullReductionRule, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -90,11 +81,7 @@ public class MerchantFullReductionRuleController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "删除满减规则")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-    })
-    @DeleteMapping(value = "/delete")
+    @Operation(summary = "删除满减规则")@DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) FullReductionRule param){
         BasicResult basicResult = new BasicResult();
 
@@ -118,17 +105,7 @@ public class MerchantFullReductionRuleController {
 
 
 
-    @ApiOperation(value = "满减规则列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "name", value = "满减规则名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "status", value = "状态", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "limitedPrice", value = "分类名称", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "品牌id", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "满减规则列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) FullReductionRule fullReductionRule, HttpServletRequest request) {
         BasicData basicResult = new BasicData();
 

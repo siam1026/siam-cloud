@@ -1,0 +1,108 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: gateway-siam
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false  # 不自动创建路由，使用手动配置
+      routes:
+        # 用户服务
+        - id: user-service
+          uri: lb://user-siam
+          predicates:
+            - Path=/api-user/**
+          filters:
+            - StripPrefix=1
+
+        # 商家服务
+        - id: merchant-service
+          uri: lb://merchant-siam
+          predicates:
+            - Path=/api-merchant/**
+          filters:
+            - StripPrefix=1
+
+        # 骑手服务
+        - id: rider-service
+          uri: lb://rider-siam
+          predicates:
+            - Path=/api-rider/**
+          filters:
+            - StripPrefix=1
+
+        # 商品服务
+        - id: goods-service
+          uri: lb://goods-siam
+          predicates:
+            - Path=/api-goods/**
+          filters:
+            - StripPrefix=1
+
+        # 订单服务
+        - id: order-service
+          uri: lb://order-siam
+          predicates:
+            - Path=/api-order/**
+          filters:
+            - StripPrefix=1
+
+        # 促销服务
+        - id: promotion-service
+          uri: lb://promotion-siam
+          predicates:
+            - Path=/api-promotion/**
+          filters:
+            - StripPrefix=1
+
+        # 商城服务
+        - id: mall-service
+          uri: lb://mall-siam
+          predicates:
+            - Path=/api-mall/**
+          filters:
+            - StripPrefix=1
+
+        # 工具服务
+        - id: util-service
+          uri: lb://util-siam
+          predicates:
+            - Path=/api-util/**
+          filters:
+            - StripPrefix=1
+
+      # 允许转发敏感头信息
+      default-filters: []
+
+      # 全局 CORS 配置（前后端联调）
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,gateway
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+logging:
+  level:
+    com.siam.package_gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @TableName("tb_shop")
-@ApiModel(value = "门店表")
+ @Schema(description= "门店表")
 public class Shop {
 
     /* ##################################### START 扩展字段 #################################### */

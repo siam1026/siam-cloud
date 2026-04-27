@@ -3,7 +3,7 @@ package com.siam.package_common.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

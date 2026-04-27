@@ -3,42 +3,41 @@ package com.siam.package_util.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 @TableName("tb_sms_log")
-@ApiModel(value = "短信验证码记录表")
+ @Schema(description= "短信验证码记录表")
 public class SmsLog {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "用户id")
+    @Schema(description = "用户id")
     private Integer memberId;
 
-    @ApiModelProperty(notes = "手机号")
+    @Schema(description = "手机号")
     private String mobile;
 
-    @ApiModelProperty(notes = "短信类型 注册=register;登录=login;验证手机号=verification;找回密码=findpwd")
+    @Schema(description = "短信类型 注册=register;登录=login;验证手机号=verification;找回密码=findpwd")
     private String type;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "请求ip")
+    @Schema(description = "请求ip")
     private String ip;
 
-    @ApiModelProperty(notes = "短信验证码")
+    @Schema(description = "短信验证码")
     private String verifyCode;
 
-    @ApiModelProperty(notes = "描述")
+    @Schema(description = "描述")
     private String description;
 
-    @ApiModelProperty(notes = "发送状态 1-发送成功，2-发送失败")
+    @Schema(description = "发送状态 1-发送成功，2-发送失败")
     private Boolean states;
 
     //页码

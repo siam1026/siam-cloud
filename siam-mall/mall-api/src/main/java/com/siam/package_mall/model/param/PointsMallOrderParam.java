@@ -5,26 +5,25 @@ import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_mall.entity.PointsMallOrder;
 import com.siam.package_mall.entity.PointsMallOrderDetail;
 import com.siam.package_mall.entity.PointsMallOrderRefund;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 @Data
-@ApiModel(value = "订单表")
+ @Schema(description= "订单表")
 public class PointsMallOrderParam extends PointsMallOrder {
 
     private List<String> ids;
 
-    @ApiModelProperty(notes = "下单开始时间")
+    @Schema(description = "下单开始时间")
     private Date startCreateTime;
 
-    @ApiModelProperty(notes = "下单结束时间")
+    @Schema(description = "下单结束时间")
     private Date endCreateTime;
 
     Date startTime;
@@ -62,7 +61,7 @@ public class PointsMallOrderParam extends PointsMallOrder {
     BigDecimal actualPrice;
 
     @NotNull(message = "主键id不能为空", groups = {ValidGroupOfId.class})
-    @ApiModelProperty(notes = "主键id")
+    @Schema(description = "主键id")
     private Long id;
 
     /**

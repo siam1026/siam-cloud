@@ -6,8 +6,9 @@ import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_mall.entity.PointsMallShoppingCart;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -16,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/rest/admin/pointsMall/shoppingCart")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台购物车模块相关接口", description = "AdminPointsMallShoppingCartController")
+@Tag(name = "后台购物车模块相关接口", description = "AdminPointsMallShoppingCartController")
 public class AdminPointsMallShoppingCartController {
     @Autowired
     private PointsMallShoppingCartService shoppingCartService;
 
-    @ApiOperation(value = "购物车列表")
+    @Operation(summary = "购物车列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) PointsMallShoppingCart shoppingCart){
         BasicData basicResult = new BasicData();
@@ -32,7 +33,7 @@ public class AdminPointsMallShoppingCartController {
     }
 
 
-    @ApiOperation(value = "新增购物车")
+    @Operation(summary = "新增购物车")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) PointsMallShoppingCart shoppingCart){
         BasicResult basicResult = new BasicResult();
@@ -45,7 +46,7 @@ public class AdminPointsMallShoppingCartController {
         return basicResult;
     }
 
-    @ApiOperation(value = "修改购物车")
+    @Operation(summary = "修改购物车")
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) PointsMallShoppingCart shoppingCart){
         BasicResult basicResult = new BasicResult();
@@ -58,7 +59,7 @@ public class AdminPointsMallShoppingCartController {
         return basicResult;
     }
 
-    @ApiOperation(value = "删除购物车(含批量操作)")
+    @Operation(summary = "删除购物车(含批量操作)")
     @PostMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) PointsMallShoppingCart param){
         BasicResult basicResult = new BasicResult();

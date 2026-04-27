@@ -4,7 +4,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_user.model.param.MemberParam;
 import com.siam.package_user.model.result.MemberResult;
 import com.siam.package_user.service.MemberService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -186,7 +187,7 @@ public class MemberController {
      * @author 暹罗
      */
     @RequestMapping(value =  "/verifyPaymentPassword",method = RequestMethod.POST)
-    @ApiOperation(value = "")
+    @Operation(summary = "")
     public BasicResult verifyPaymentPassword(@RequestBody @Validated(value = {}) MemberParam param) {
         memberService.verifyPaymentPassword(param);
         return BasicResult.success();

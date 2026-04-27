@@ -17,8 +17,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -26,33 +24,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.3.3.RELEASE</version>
         </dependency>
 
         <!-- 整合mysql（非springboot，需要手动指定5.x版本，否则下载的8.x版本，版本过高会包错） -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.21</version>
         </dependency>
 
-        <!-- 整合swagger2 -->
+        <!-- SpringDoc OpenAPI (replaces Springfox Swagger) -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.7.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.7.0</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
         <!-- 整合google guava -->
@@ -80,21 +63,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.3.3.RELEASE</version>
         </dependency>
 
         <!-- 整合lombok，便于打印日志 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>${lombok.version}</version>
         </dependency>
 
         <!-- 整合redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>2.3.3.RELEASE</version>
         </dependency>
 
         <!-- 整合redis(附加) -->
@@ -111,12 +92,6 @@
             <version>3.1.0</version>
         </dependency>
 
-        <!-- 整合fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.60</version>
-        </dependency>
 
         <!-- 整合阿里云OSS存储 -->
         <dependency>
@@ -129,7 +104,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-            <version>2.3.3.RELEASE</version>
         </dependency>
 
         <!-- 整合阿里云SDK -->
@@ -150,7 +124,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-            <version>2.1.4.RELEASE</version>
         </dependency>
 
         <!-- 整合apache poi -->
@@ -178,33 +151,25 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>2.3.3.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-server</artifactId>
-            <version>9.4.7.v20170914</version>
         </dependency>
 
         <!-- 整合mongodb(默认跟随springboot的版本) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>2.3.3.RELEASE</version>
         </dependency>
 
         <!-- 整合mybatis plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.3.0</version>
+            <version>${mybatis-plus.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
-            <version>3.3.0</version>
+            <version>${mybatis-plus.version}</version>
         </dependency>
 
         <!-- 整合RocketMQ -->
@@ -218,7 +183,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-            <version>2.3.3.RELEASE</version>
         </dependency>
 
         <!-- 整合redisson -->
@@ -232,14 +196,25 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.6.3</version>
+            <version>5.8.26</version>
+        </dependency>
+
+        <!-- 整合Seata分布式事务 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
         </dependency>
 
         <!-- 整合Feign客户端 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>2.2.2.RELEASE</version>
+        </dependency>
+
+        <!-- Spring Cloud LoadBalancer（替代 Ribbon，Feign 必需） -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
     </dependencies>
 </project>

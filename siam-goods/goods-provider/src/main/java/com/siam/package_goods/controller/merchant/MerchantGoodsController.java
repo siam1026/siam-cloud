@@ -24,10 +24,11 @@ import com.siam.package_util.entity.PictureUploadRecord;
 import com.siam.package_util.feign.PictureUploadRecordFeignApi;
 import com.siam.package_util.model.example.PictureUploadRecordExample;
 import com.siam.package_util.model.param.PictureUploadRecordParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/merchant/goods")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端商品模块相关接口", description = "MerchantGoodsController")
+@Tag(name = "商家端商品模块相关接口", description = "MerchantGoodsController")
 public class MerchantGoodsController {
     @Autowired
     private GoodsService goodsService;
@@ -83,35 +84,7 @@ public class MerchantGoodsController {
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "商品列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "categoryId", value = "分类id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "categoryName", value = "分类名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "brandId", value = "品牌id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "brandName", value = "品牌名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "商品主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subImages", value = "商品子图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specList", value = "商品规格", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detail", value = "商品详情", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detailImages", value = "详情图片", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "一口价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "salePrice", value = "折扣价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "monthlySales", value = "月销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalSales", value = "累计销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalComments", value = "累计评价", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "productTime", value = "制作时长(分钟)", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "exchangePoints", value = "兑换商品所需积分数量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isHot", value = "是否热门", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "isNew", value = "是否新品", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "menuId", value = "菜单id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "menuName", value = "菜单名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
+    @Operation(summary = "商品列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsMenuDto goodsMenuDto, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -126,31 +99,7 @@ public class MerchantGoodsController {
     }
 
 
-    @ApiOperation(value = "新增商品")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "商品名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "categoryId", value = "分类id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "categoryName", value = "分类名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "brandId", value = "品牌id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "brandName", value = "品牌名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "商品主图", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subImages", value = "商品子图(多图上传)", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specList", value = "商品规格", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detail", value = "商品详情", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detailImages", value = "详情图片(多图上传)", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "一口价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "salePrice", value = "折扣价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "monthlySales", value = "月销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalSales", value = "累计销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalComments", value = "累计评价", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "productTime", value = "制作时长(分钟)", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "exchangePoints", value = "兑换商品所需积分数量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isHot", value = "是否热门", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "isNew", value = "是否新品", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "menuId", value = "菜单id", required = false, paramType = "query", dataType = "int"),
-    })
+    @Operation(summary = "新增商品")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) GoodsParam param, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
@@ -216,31 +165,7 @@ public class MerchantGoodsController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "修改商品")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "categoryId", value = "分类id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "categoryName", value = "分类名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "brandId", value = "品牌id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "brandName", value = "品牌名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "商品主图", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subImages", value = "商品子图", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specList", value = "商品规格", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detail", value = "商品详情", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detailImages", value = "详情图片", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "一口价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "salePrice", value = "折扣价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "monthlySales", value = "月销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalSales", value = "累计销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalComments", value = "累计评价", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "productTime", value = "制作时长(分钟)", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "exchangePoints", value = "兑换商品所需积分数量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isHot", value = "是否热门", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "isNew", value = "是否新品", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
-    })
+    @Operation(summary = "修改商品")
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) GoodsParam param, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
@@ -318,10 +243,7 @@ public class MerchantGoodsController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "删除商品")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = true, paramType = "query", dataType = "int"),
-    })
+    @Operation(summary = "删除商品")
     @PostMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Goods param, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
@@ -364,7 +286,7 @@ public class MerchantGoodsController {
         return basicResult;
     }
 
-//    @ApiOperation(value = "导入商品Excel报表")
+//    @Operation(summary = "导入商品Excel报表")
 //    @PostMapping(value = "/import")
 //    public BasicResult importGoods(@RequestParam(value = "file", required = true) MultipartFile file){
 //        BasicResult basicResult = new BasicResult();
@@ -407,12 +329,8 @@ public class MerchantGoodsController {
 //        return basicResult;
 //    }
 //
-//    @ApiOperation(value = "导出商品Excel报表")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-//            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-//    })
-//    @GetMapping(value = "/export")
+//    @Operation(summary = "导出商品Excel报表")
+////    @GetMapping(value = "/export")
 //    public void exportGoods(int pageNo, int pageSize, Goods goods, HttpServletResponse response){
 //        try {
 //            // 生成Excel数据
@@ -442,12 +360,8 @@ public class MerchantGoodsController {
 //        }
 //    }
 
-//    @ApiOperation(value = "菜单状态修改（启用或禁用）")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "ids", value = "商品主键id集合(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "String"),
-//            @ApiImplicitParam(name = "status", value = "是否启用 0-上架、1-下架", required = true, paramType = "query", dataType = "int")
-//    })
-//    @DeleteMapping(value = "/update_status")
+//    @Operation(summary = "菜单状态修改（启用或禁用）")
+////    @DeleteMapping(value = "/update_status")
 //    public BasicResult updateStatus(List<Integer> ids,Integer status){
 //        BasicResult basicResult = new BasicResult();
 //
@@ -459,10 +373,7 @@ public class MerchantGoodsController {
 //    }
 
 
-    @ApiOperation(value = "获取单个商品详情信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = true, paramType = "query", dataType = "int"),
-    })
+    @Operation(summary = "获取单个商品详情信息")
     @PostMapping(value = "/getById")
     public BasicResult getById(@RequestBody @Validated(value = {}) Goods param, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -497,38 +408,7 @@ public class MerchantGoodsController {
     }
 
 
-    /*@ApiOperation(value = "商品规格信息列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "categoryId", value = "分类id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "categoryName", value = "分类名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "brandId", value = "品牌id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "brandName", value = "品牌名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "商品主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subImages", value = "商品子图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specList", value = "商品规格", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detail", value = "商品详情", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detailImages", value = "详情图片", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "一口价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "salePrice", value = "折扣价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "monthlySales", value = "月销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalSales", value = "累计销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalComments", value = "累计评价", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isHot", value = "是否热门", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "isNew", value = "是否新品", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "specificationId", value = "规格id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "specificationName", value = "规格名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specificationOptionId", value = "商品规格选项id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "specificationOptionName", value = "商品规格选项名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specificationOptionPrice", value = "商品规格选项单价/加价金额", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "specificationOptionStock", value = "商品规格选项库存 1代表有货，0代表无货", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
-    @PostMapping(value = "/listSpecification")
+    /*@Operation(summary = "商品规格信息列表")@PostMapping(value = "/listSpecification")
     public BasicResult listSpecification(int pageNo, int pageSize, GoodsSpecificationDto goodsSpecificationDto){
         BasicData basicResult = new BasicData();
 

@@ -373,7 +373,7 @@
 				editFormSecond: {
 					startDeliveryPrice:'',
 					memberMobile: '',
-				}				
+				}
 			}
 		},
 		methods: {
@@ -698,7 +698,7 @@
 									type: 'error'
 								});
 							}
-						)		
+						)
 					}
 				});
 			}

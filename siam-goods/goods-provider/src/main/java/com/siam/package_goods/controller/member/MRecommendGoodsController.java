@@ -7,7 +7,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_goods.entity.MerchantRecommendGoods;
 import com.siam.package_goods.service.MerchantRecommendGoodsService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/merchantRecommendGoods")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家推荐商品模块相关接口", description = "MRecommendGoodsController")
+@Tag(name = "商家推荐商品模块相关接口", description = "MRecommendGoodsController")
 public class MRecommendGoodsController {
 
     @Autowired

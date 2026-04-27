@@ -3,7 +3,8 @@ package com.siam.package_goods.controller.member;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_goods.entity.Menu;
 import com.siam.package_goods.service.MenuService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +15,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/rest/menu")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "菜单分类模块相关接口", description = "MenuController")
+@Tag(name = "菜单分类模块相关接口", description = "MenuController")
 public class MenuController{
 
     @Autowired

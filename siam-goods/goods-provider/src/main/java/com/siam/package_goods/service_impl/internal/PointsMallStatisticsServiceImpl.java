@@ -1,6 +1,7 @@
 package com.siam.package_goods.service_impl.internal;
 
 import com.siam.package_common.constant.Quantity;
+import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.util.DateUtilsExtend;
 import com.siam.package_goods.model.param.StatisticsParam;
 import com.siam.package_goods.service.internal.PointsMallStatisticsService;
@@ -85,10 +86,10 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         //今日支付订单、今日支付金额、待完成订单、待处理退款
         order.setStartTime(DateUtilsExtend.getDayBegin());
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        int dayCountPaid = orderFeignApi.selectCountCompleted(order).getData();
-        BigDecimal daySumActualPrice = orderFeignApi.selectSumActualPrice(order).getData();
-        int unCompletedNum = orderFeignApi.selectCountUnCompleted(order).getData();
-        int waitHandleRefundNum = orderFeignApi.selectCountWaitHandle(order).getData();
+        int dayCountPaid = safeInt(orderFeignApi.selectCountCompleted(order));
+        BigDecimal daySumActualPrice = safeBigDecimal(orderFeignApi.selectSumActualPrice(order));
+        int unCompletedNum = safeInt(orderFeignApi.selectCountUnCompleted(order));
+        int waitHandleRefundNum = safeInt(orderFeignApi.selectCountWaitHandle(order));
 
         //总帐余额 = 累计进账 - 累计出账
         //今日进账 = 所有微信支付入口汇总的金额；退款金额不做计算；余额支付、积分支付这种不算
@@ -96,38 +97,38 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         MemberTradeRecord memberTradeRecord = new MemberTradeRecord();
         memberTradeRecord.setStartTime(DateUtilsExtend.getDayBegin());
         memberTradeRecord.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal daySumIncome = memberTradeRecordFeignApi.selectSumIncome(memberTradeRecord).getData();
-        BigDecimal daySumExpense = memberTradeRecordFeignApi.selectSumExpense(memberTradeRecord).getData();
+        BigDecimal daySumIncome = safeBigDecimal(memberTradeRecordFeignApi.selectSumIncome(memberTradeRecord));
+        BigDecimal daySumExpense = safeBigDecimal(memberTradeRecordFeignApi.selectSumExpense(memberTradeRecord));
         //退款金额--微信/支付宝
         OrderRefund orderRefund = new OrderRefund();
         orderRefund.setStartTime(DateUtilsExtend.getDayBegin());
         orderRefund.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal daySumRefundAmount = orderRefundFeignApi.selectSumRefundAmount(orderRefund).getData();
+        BigDecimal daySumRefundAmount = safeBigDecimal(orderRefundFeignApi.selectSumRefundAmount(orderRefund));
         PointsMallOrderRefund pointsMallOrderRefund = new PointsMallOrderRefund();
         pointsMallOrderRefund.setStartTime(DateUtilsExtend.getDayBegin());
         pointsMallOrderRefund.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal daySumRefundAmount_mall = pointsMallOrderRefundFeignApi.selectSumRefundAmount(pointsMallOrderRefund).getData();
+        BigDecimal daySumRefundAmount_mall = safeBigDecimal(pointsMallOrderRefundFeignApi.selectSumRefundAmount(pointsMallOrderRefund));
         daySumExpense = daySumExpense.add(daySumRefundAmount).add(daySumRefundAmount_mall).setScale(2, BigDecimal.ROUND_HALF_UP);
         //退款金额--余额/积分
-        BigDecimal daySumRefundAmountByPlatformCoin = orderRefundFeignApi.selectSumRefundAmountByPlatformCoin(orderRefund).getData();
-        BigDecimal daySumRefundAmountByPlatformCoin_mall = pointsMallOrderRefundFeignApi.selectSumRefundAmountByPlatformCoin(pointsMallOrderRefund).getData();
+        BigDecimal daySumRefundAmountByPlatformCoin = safeBigDecimal(orderRefundFeignApi.selectSumRefundAmountByPlatformCoin(orderRefund));
+        BigDecimal daySumRefundAmountByPlatformCoin_mall = safeBigDecimal(pointsMallOrderRefundFeignApi.selectSumRefundAmountByPlatformCoin(pointsMallOrderRefund));
         daySumExpense = daySumExpense.subtract(daySumRefundAmountByPlatformCoin).subtract(daySumRefundAmountByPlatformCoin_mall).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         memberTradeRecord.setStartTime(new Date("1970/1/1 00:00:00"));
         memberTradeRecord.setEndTime(new Date("2100/1/1 00:00:00"));
-        BigDecimal totalSumIncome = memberTradeRecordFeignApi.selectSumIncome(memberTradeRecord).getData();
-        BigDecimal totalSumExpense = memberTradeRecordFeignApi.selectSumExpense(memberTradeRecord).getData();
+        BigDecimal totalSumIncome = safeBigDecimal(memberTradeRecordFeignApi.selectSumIncome(memberTradeRecord));
+        BigDecimal totalSumExpense = safeBigDecimal(memberTradeRecordFeignApi.selectSumExpense(memberTradeRecord));
         //退款金额--微信/支付宝
         orderRefund.setStartTime(new Date("1970/1/1 00:00:00"));
         orderRefund.setEndTime(new Date("2100/1/1 00:00:00"));
-        BigDecimal totalSumRefundAmount = orderRefundFeignApi.selectSumRefundAmount(orderRefund).getData();
+        BigDecimal totalSumRefundAmount = safeBigDecimal(orderRefundFeignApi.selectSumRefundAmount(orderRefund));
         pointsMallOrderRefund.setStartTime(new Date("1970/1/1 00:00:00"));
         pointsMallOrderRefund.setEndTime(new Date("2100/1/1 00:00:00"));
-        BigDecimal totalSumRefundAmount_mall = pointsMallOrderRefundFeignApi.selectSumRefundAmount(pointsMallOrderRefund).getData();
+        BigDecimal totalSumRefundAmount_mall = safeBigDecimal(pointsMallOrderRefundFeignApi.selectSumRefundAmount(pointsMallOrderRefund));
         totalSumExpense = totalSumExpense.add(totalSumRefundAmount).add(totalSumRefundAmount_mall);
         //退款金额--余额/积分
-        BigDecimal totalSumRefundAmountByPlatformCoin = orderRefundFeignApi.selectSumRefundAmountByPlatformCoin(orderRefund).getData();
-        BigDecimal totalSumRefundAmountByPlatformCoin_mall = pointsMallOrderRefundFeignApi.selectSumRefundAmountByPlatformCoin(pointsMallOrderRefund).getData();
+        BigDecimal totalSumRefundAmountByPlatformCoin = safeBigDecimal(orderRefundFeignApi.selectSumRefundAmountByPlatformCoin(orderRefund));
+        BigDecimal totalSumRefundAmountByPlatformCoin_mall = safeBigDecimal(pointsMallOrderRefundFeignApi.selectSumRefundAmountByPlatformCoin(pointsMallOrderRefund));
         totalSumExpense = totalSumExpense.subtract(totalSumRefundAmountByPlatformCoin).subtract(totalSumRefundAmountByPlatformCoin_mall).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         BigDecimal balance = totalSumIncome.subtract(totalSumExpense).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -135,48 +136,44 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         //商品支付金额、配送费金额、退款金额、配送费退款金额 -- 针对于所有店铺、现金/余额都算
         Map<String, Object> orderSumField = orderFeignApi.selectSumField(order).getData();
         Map<String, Object> orderRefundSumField = orderRefundFeignApi.selectSumField(new OrderRefund()).getData();
-        BigDecimal totalActualPrice = new BigDecimal((Double) orderSumField.get("totalActualPrice"));
-        BigDecimal totalDeliveryFee = new BigDecimal((Double) orderSumField.get("totalDeliveryFee"));
-        BigDecimal totalRefundAmount = new BigDecimal((Double) orderRefundSumField.get("totalRefundAmount"));
-        BigDecimal totalRefundDeliveryFee = new BigDecimal((Double) orderRefundSumField.get("totalRefundDeliveryFee"));
+        BigDecimal totalActualPrice = orderSumField != null && orderSumField.get("totalActualPrice") != null ? new BigDecimal((Double) orderSumField.get("totalActualPrice")) : BigDecimal.ZERO;
+        BigDecimal totalDeliveryFee = orderSumField != null && orderSumField.get("totalDeliveryFee") != null ? new BigDecimal((Double) orderSumField.get("totalDeliveryFee")) : BigDecimal.ZERO;
+        BigDecimal totalRefundAmount = orderRefundSumField != null && orderRefundSumField.get("totalRefundAmount") != null ? new BigDecimal((Double) orderRefundSumField.get("totalRefundAmount")) : BigDecimal.ZERO;
+        BigDecimal totalRefundDeliveryFee = orderRefundSumField != null && orderRefundSumField.get("totalRefundDeliveryFee") != null ? new BigDecimal((Double) orderRefundSumField.get("totalRefundDeliveryFee")) : BigDecimal.ZERO;
 
         //待处理开店申请、待处理提现申请、待处理变更资料申请、待处理退款申请
         ShopParam shopParam = new ShopParam();
         shopParam.setAuditStatus(Quantity.INT_1);
-        int handleShopCount = shopFeignApi.countByExample(shopParam).getData();
+        int handleShopCount = safeInt(shopFeignApi.countByExample(shopParam));
 
-        int handleMerchantWithdrawCount = merchantWithdrawRecordFeignApi.countByAuditStatus(Quantity.INT_1).getData();
+        int handleMerchantWithdrawCount = safeInt(merchantWithdrawRecordFeignApi.countByAuditStatus(Quantity.INT_1));
 
         ShopChangeRecordParam changeRecordParam = new ShopChangeRecordParam();
         changeRecordParam.setAuditStatus(Quantity.INT_1);
-        int handleShopChangeCount = shopChangeRecordFeignApi.countByExample(changeRecordParam).getData();
+        int handleShopChangeCount = safeInt(shopChangeRecordFeignApi.countByExample(changeRecordParam));
 
         OrderRefund orderRefundCount = new OrderRefund();
         orderRefundCount.setStatus(Quantity.INT_4);
-        int handleOrderRefundCount = orderRefundFeignApi.countByExample(orderRefundCount).getData();
+        int handleOrderRefundCount = safeInt(orderRefundFeignApi.countByExample(orderRefundCount));
 
         //商家总览：已下架、已上架、全部商家
         shopParam = new ShopParam();
         shopParam.setStatus(Quantity.INT_3);
-        int underShelfShopCount = shopFeignApi.countByExample(shopParam).getData();
+        int underShelfShopCount = safeInt(shopFeignApi.countByExample(shopParam));
 
         shopParam = new ShopParam();
         shopParam.setStatus(Quantity.INT_2);
-        int onShelfShopCount = shopFeignApi.countByExample(shopParam).getData();
+        int onShelfShopCount = safeInt(shopFeignApi.countByExample(shopParam));
 
-        /*List filterList = new ArrayList<>();
-        filterList.add(Quantity.INT_1);
-        filterList.add(Quantity.INT_2);
-        filterList.add(Quantity.INT_3);*/
         shopParam = new ShopParam();
         shopParam.setAuditStatus(Quantity.INT_2);
-        int allShopCount = shopFeignApi.countByExample(shopParam).getData();
+        int allShopCount = safeInt(shopFeignApi.countByExample(shopParam));
 
         //用户总览：今日新增、昨日新增、本月新增、会员总数
-        int dayMemberCount = memberFeignApi.selectCountRegister(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
-        int yesterdayMemberCount = memberFeignApi.selectCountRegister(DateUtilsExtend.getBeginDayOfYesterday(), DateUtilsExtend.getEndDayOfYesterDay()).getData();
-        int thisMonthMemberCount = memberFeignApi.selectCountRegister(DateUtilsExtend.getBeginDayOfMonth(), DateUtilsExtend.getEndDayOfMonth()).getData();
-        int allMemberCount = memberFeignApi.countByExample(new Member()).getData();
+        int dayMemberCount = safeInt(memberFeignApi.selectCountRegister(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()));
+        int yesterdayMemberCount = safeInt(memberFeignApi.selectCountRegister(DateUtilsExtend.getBeginDayOfYesterday(), DateUtilsExtend.getEndDayOfYesterDay()));
+        int thisMonthMemberCount = safeInt(memberFeignApi.selectCountRegister(DateUtilsExtend.getBeginDayOfMonth(), DateUtilsExtend.getEndDayOfMonth()));
+        int allMemberCount = safeInt(memberFeignApi.countByExample(new Member()));
 
         resultMap.put("dayCountPaid", dayCountPaid);
         resultMap.put("daySumActualPrice", daySumActualPrice);
@@ -269,45 +266,45 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         //今日支付订单、今日实际收入、今日进店人数、今日加购商品
         order.setStartTime(DateUtilsExtend.getDayBegin());
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        int dayCountPaid = pointsMallOrderFeignApi.selectCountCompleted(order).getData();
-        BigDecimal daySumMerchantIncome = pointsMallOrderFeignApi.selectSumActualPrice(order).getData();
-        int todayCountIntoShop = systemUsageRecordFeignApi.selectCountIntoPointsMall(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
-        int todayCountShoppingCartGoodsNumber = pointsMallShoppingCartFeignApi.selectCountGoodsNumber(null, DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()).getData();
+        int dayCountPaid = safeInt(pointsMallOrderFeignApi.selectCountCompleted(order));
+        BigDecimal daySumMerchantIncome = safeBigDecimal(pointsMallOrderFeignApi.selectSumActualPrice(order));
+        int todayCountIntoShop = safeInt(systemUsageRecordFeignApi.selectCountIntoPointsMall(DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()));
+        int todayCountShoppingCartGoodsNumber = safeInt(pointsMallShoppingCartFeignApi.selectCountGoodsNumber(null, DateUtilsExtend.getDayBegin(), DateUtilsExtend.getDayEnd()));
 
         //待配送订单(外卖)、已完成订单、待处理退款申请
         PointsMallOrderParam pointsMallOrderParam = new PointsMallOrderParam();
         pointsMallOrderParam.setStatus(Quantity.INT_4);
-        int waitDeliverOrderCount = pointsMallOrderFeignApi.countByExample(pointsMallOrderParam).getData();
+        int waitDeliverOrderCount = safeInt(pointsMallOrderFeignApi.countByExample(pointsMallOrderParam));
 
         pointsMallOrderParam.setStatus(Quantity.INT_6);
-        int completedOrderCount = pointsMallOrderFeignApi.countByExample(pointsMallOrderParam).getData();
+        int completedOrderCount = safeInt(pointsMallOrderFeignApi.countByExample(pointsMallOrderParam));
 
         pointsMallOrderParam.setStatus(Quantity.INT_7);
-        int handleOrderRefundCount = pointsMallOrderFeignApi.countByExample(pointsMallOrderParam).getData();
+        int handleOrderRefundCount = safeInt(pointsMallOrderFeignApi.countByExample(pointsMallOrderParam));
 
         //商品总览：已下架、已上架、库存售罄、全部商品
         PointsMallGoodsParam goodsExample = new PointsMallGoodsParam();
         goodsExample.setStatus(Quantity.INT_3);
-        int underShelfGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
+        int underShelfGoodsCount = safeInt(pointsMallGoodsFeignApi.countByExample(goodsExample));
 
         goodsExample = new PointsMallGoodsParam();
         goodsExample.setStatus(Quantity.INT_2);
-        int onShelfGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
+        int onShelfGoodsCount = safeInt(pointsMallGoodsFeignApi.countByExample(goodsExample));
 
         goodsExample = new PointsMallGoodsParam();
         goodsExample.setStatus(Quantity.INT_4);
-        int sellOutGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
+        int sellOutGoodsCount = safeInt(pointsMallGoodsFeignApi.countByExample(goodsExample));
 
         goodsExample = new PointsMallGoodsParam();
-        int allGoodsCount = pointsMallGoodsFeignApi.countByExample(goodsExample).getData();
+        int allGoodsCount = safeInt(pointsMallGoodsFeignApi.countByExample(goodsExample));
 
         //指数总览：客单价(成交金额/成交订单数)、下单转化率(下单人数/访问人数)、下单-支付转化率(支付人数/下单人数)、支付转化率(支付人数/访问人数)
         Date startDate = new Date("1970/1/1 00:00:00");
         BigDecimal perCustomerTransaction;
         order.setStartTime(startDate);
         order.setEndTime(DateUtilsExtend.getDayEnd());
-        BigDecimal sumActualPrice = pointsMallOrderFeignApi.selectSumActualPrice(order).getData();
-        int countPaid = pointsMallOrderFeignApi.selectCountCompleted(order).getData();
+        BigDecimal sumActualPrice = safeBigDecimal(pointsMallOrderFeignApi.selectSumActualPrice(order));
+        int countPaid = safeInt(pointsMallOrderFeignApi.selectCountCompleted(order));
         if(countPaid == 0){
             perCustomerTransaction = BigDecimal.valueOf(-1);
         }else{
@@ -315,8 +312,8 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         }
 
         BigDecimal orderConversionRate;
-        int countOrderPeoples = pointsMallOrderFeignApi.selectCountOrderPeoples(order).getData();
-        int countIntoShop = systemUsageRecordFeignApi.selectCountIntoShop(null, startDate, DateUtilsExtend.getDayEnd()).getData();
+        int countOrderPeoples = safeInt(pointsMallOrderFeignApi.selectCountOrderPeoples(order));
+        int countIntoShop = safeInt(systemUsageRecordFeignApi.selectCountIntoShop(null, startDate, DateUtilsExtend.getDayEnd()));
         if(countIntoShop == 0){
             orderConversionRate = BigDecimal.valueOf(-1);
         }else{
@@ -324,7 +321,7 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         }
 
         BigDecimal orderPaymentConversionRate;
-        int countPayers = pointsMallOrderFeignApi.selectCountPayers(order).getData();
+        int countPayers = safeInt(pointsMallOrderFeignApi.selectCountPayers(order));
         if(countOrderPeoples == 0){
             orderPaymentConversionRate = BigDecimal.valueOf(-1);
         }else{
@@ -372,5 +369,29 @@ public class PointsMallStatisticsServiceImpl implements PointsMallStatisticsServ
         resultMap.put("paymentConversionRate", paymentConversionRate);
 
         return resultMap;
+    }
+
+    private int safeInt(BasicResult<Integer> result) {
+        if (result == null || result.getData() == null) {
+            return 0;
+        }
+        return result.getData();
+    }
+
+    private BigDecimal safeBigDecimal(BasicResult<?> result) {
+        if (result == null || result.getData() == null) {
+            return BigDecimal.ZERO;
+        }
+        Object data = result.getData();
+        if (data instanceof BigDecimal) {
+            return (BigDecimal) data;
+        }
+        if (data instanceof Double) {
+            return BigDecimal.valueOf((Double) data);
+        }
+        if (data instanceof Number) {
+            return BigDecimal.valueOf(((Number) data).doubleValue());
+        }
+        return BigDecimal.ZERO;
     }
 }

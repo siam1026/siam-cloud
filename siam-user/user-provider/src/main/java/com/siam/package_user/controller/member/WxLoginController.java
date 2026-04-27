@@ -8,7 +8,8 @@ import com.siam.package_weixin_basic.config.WxCode;
 import com.siam.package_weixin_basic.config.WxEncrypted;
 import com.siam.package_weixin_basic.config.WxSession;
 import com.siam.package_weixin_basic.util.WxdecodeUtils;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpMethod;
@@ -90,7 +91,7 @@ public class WxLoginController {
         return null;
     }
 
-    @ApiOperation(value = "获取微信手机号")
+    @Operation(summary = "获取微信手机号")
     @PostMapping(value = "/getWxPhone")
     public BasicResult getWxPhone(@RequestBody WxCode wxCode) throws Exception {
         BasicData basicResult = new BasicData();

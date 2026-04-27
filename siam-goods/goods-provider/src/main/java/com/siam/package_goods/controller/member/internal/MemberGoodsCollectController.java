@@ -15,14 +15,15 @@ import com.siam.package_goods.model.dto.internal.MemberGoodsCollectDto;
 import com.siam.package_goods.model.example.internal.MemberGoodsCollectExample;
 import com.siam.package_goods.service.internal.MemberGoodsCollectService;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/member/goodsCollect")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "用户商品收藏相关接口", description = "MemberGoodsCollectController")
+@Tag(name = "用户商品收藏相关接口", description = "MemberGoodsCollectController")
 public class MemberGoodsCollectController {
 
     @Autowired

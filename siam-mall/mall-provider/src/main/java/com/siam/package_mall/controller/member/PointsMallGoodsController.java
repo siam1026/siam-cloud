@@ -14,8 +14,11 @@ import com.siam.package_mall.model.dto.PointsMallGoodsMenuDto;
 import com.siam.package_mall.service.PointsMallGoodsService;
 import com.siam.package_user.model.param.AdminParam;
 import com.siam.package_util.feign.SettingFeignApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/pointsMall/goods")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商品模块相关接口", description = "PointsMallGoodsController")
+@Tag(name = "商品模块相关接口", description = "PointsMallGoodsController")
 public class PointsMallGoodsController {
     @Autowired
     private PointsMallGoodsService goodsService;
@@ -46,34 +49,7 @@ public class PointsMallGoodsController {
     @Autowired
     private SettingFeignApi settingFeignApi;
 
-    /*@ApiOperation(value = "商品列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "categoryId", value = "分类id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "categoryName", value = "分类名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "brandId", value = "品牌id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "brandName", value = "品牌名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "商品主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "subImages", value = "商品子图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "specList", value = "商品规格", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detail", value = "商品详情", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "detailImages", value = "详情图片", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "一口价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "salePrice", value = "折扣价", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "monthlySales", value = "月销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalSales", value = "累计销量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "totalComments", value = "累计评价", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "productTime", value = "制作时长(分钟)", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "exchangePoints", value = "兑换商品所需积分数量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isHot", value = "是否热门", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "isNew", value = "是否新品", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "status", value = "状态 1=下架 0=上架", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
-    @PostMapping(value = "/list")
+    /*@Operation(summary = "商品列表")@PostMapping(value = "/list")
     public BasicResult list(int pageNo, int pageSize, PointsMallGoods goods){
         BasicData basicResult = new BasicData();
 
@@ -151,11 +127,7 @@ public class PointsMallGoodsController {
     }
 
 
-    /*@ApiOperation(value = "查询商品的规格组合信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = true, paramType = "query", dataType = "int"),
-    })
-    @PostMapping(value = "/selectSpecificationById")
+    /*@Operation(summary = "查询商品的规格组合信息")@PostMapping(value = "/selectSpecificationById")
     public BasicResult selectSpecificationById(PointsMallGoodsSpecificationDto goodsSpecificationDto){
         BasicData basicResult = new BasicData();
 
@@ -181,7 +153,7 @@ public class PointsMallGoodsController {
         return basicResult;
     }*/
 
-    /*@ApiOperation(value = "本月上新商品列表")
+    /*@Operation(summary = "本月上新商品列表")
     @PostMapping(value = "/weekNewGoodsList")
     public BasicResult weekNewPointsMallGoodsList(){
         BasicData basicResult = new BasicData();
@@ -196,7 +168,7 @@ public class PointsMallGoodsController {
         return basicResult;
     }*/
 
-    /*@ApiOperation(value = "好友推荐商品列表")
+    /*@Operation(summary = "好友推荐商品列表")
     @PostMapping(value = "/recommendGoodsList")
     public BasicResult recommendPointsMallGoodsList(){
         BasicData basicResult = new BasicData();
@@ -227,7 +199,7 @@ public class PointsMallGoodsController {
         return basicResult;
     }*/
 
-    @ApiOperation(value = "猜你喜欢商品列表")
+    @Operation(summary = "猜你喜欢商品列表")
     @PostMapping(value = "/guessLikeGoodsList")
     public BasicResult guessLikePointsMallGoodsList(@RequestBody @Validated(value = {}) AdminParam param){
         BasicData basicResult = new BasicData();
@@ -259,7 +231,7 @@ public class PointsMallGoodsController {
         return basicResult;
     }
 
-    /*@ApiOperation(value = "首页商品推荐列表")
+    /*@Operation(summary = "首页商品推荐列表")
     @PostMapping(value = "/homePage/recommendGoodsList")
     public BasicResult recommendPointsMallGoodsListOfHomePage(){
         BasicData basicResult = new BasicData();
@@ -292,7 +264,7 @@ public class PointsMallGoodsController {
         return basicResult;
     }*/
 
-    @ApiOperation(value = "推荐展示的商品列表")
+    @Operation(summary = "推荐展示的商品列表")
     @PostMapping(value = "/recommendGoodsList")
     public BasicResult recommendGoodsList(@RequestBody @Validated(value = {}) PointsMallGoods goods){
         BasicData basicResult = new BasicData();

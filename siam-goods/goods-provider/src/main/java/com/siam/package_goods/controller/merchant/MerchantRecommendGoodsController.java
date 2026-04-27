@@ -12,14 +12,15 @@ import com.siam.package_goods.entity.MerchantRecommendGoods;
 import com.siam.package_goods.model.example.MerchantRecommendGoodsExample;
 import com.siam.package_goods.service.MerchantRecommendGoodsService;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/merchant/merchantRecommendGoods")
 @Transactional(rollbackFor = Exception.class)
-    @Api(tags = "商家端商家推荐商品模块相关接口", description = "MerchantRecommendGoodsController")
+    @Tag(name = "商家端商家推荐商品模块相关接口", description = "MerchantRecommendGoodsController")
 public class MerchantRecommendGoodsController {
     @Autowired
     private MerchantRecommendGoodsService merchantRecommendGoodsService;
@@ -38,7 +39,7 @@ public class MerchantRecommendGoodsController {
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "商家推荐商品信息列表")
+    @Operation(summary = "商家推荐商品信息列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) MerchantRecommendGoods merchantRecommendGoods, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -51,7 +52,7 @@ public class MerchantRecommendGoodsController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增商家推荐商品信息")
+    @Operation(summary = "新增商家推荐商品信息")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) MerchantRecommendGoods param, HttpServletRequest request) {
         BasicResult basicResult = new BasicResult();

@@ -3,11 +3,11 @@ package com.siam.package_merchant.model.param;
 import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_merchant.entity.Shop;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 

@@ -8,8 +8,9 @@ import com.siam.package_goods.model.example.GoodsRawmaterialRelationExample;
 import com.siam.package_goods.service.GoodsRawmaterialRelationService;
 import com.siam.package_goods.entity.Rawmaterial;
 import com.siam.package_goods.service.RawmaterialService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/admin/rawmaterial")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台原料模块相关接口", description = "AdminRawmaterialController")
+@Tag(name = "后台原料模块相关接口", description = "AdminRawmaterialController")
 public class AdminRawmaterialController {
     @Autowired
     private RawmaterialService rawmaterialService;
@@ -28,7 +29,7 @@ public class AdminRawmaterialController {
     @Autowired
     private GoodsRawmaterialRelationService goodsRawmaterialRelationService;
 
-    @ApiOperation(value = "原料列表")
+    @Operation(summary = "原料列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Rawmaterial rawmaterial){
         BasicData basicResult = new BasicData();
@@ -37,7 +38,7 @@ public class AdminRawmaterialController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增原料")
+    @Operation(summary = "新增原料")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Rawmaterial rawmaterial){
         BasicResult basicResult = new BasicResult();
@@ -53,7 +54,7 @@ public class AdminRawmaterialController {
     }
 
 
-    @ApiOperation(value = "修改原料")
+    @Operation(summary = "修改原料")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Rawmaterial rawmaterial){
         BasicResult basicResult = new BasicResult();
@@ -68,7 +69,7 @@ public class AdminRawmaterialController {
     }
 
 
-    @ApiOperation(value = "删除原料")
+    @Operation(summary = "删除原料")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Rawmaterial param){
         BasicResult basicResult = new BasicResult();

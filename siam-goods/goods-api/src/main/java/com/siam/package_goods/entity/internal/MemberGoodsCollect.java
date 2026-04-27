@@ -2,8 +2,7 @@ package com.siam.package_goods.entity.internal;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Data
 @TableName("tb_member_goods_collect")
-@ApiModel(value = "用户收藏表")
+ @Schema(description= "用户收藏表")
 public class MemberGoodsCollect {
 
     List<Integer> goodsIdList;
@@ -19,25 +18,25 @@ public class MemberGoodsCollect {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "用户id")
+    @Schema(description = "用户id")
     private Integer memberId;
 
-    @ApiModelProperty(notes = "店铺id")
+    @Schema(description = "店铺id")
     private Integer shopId;
 
-    @ApiModelProperty(notes = "商品id")
+    @Schema(description = "商品id")
     private Integer goodsId;
 
-    @ApiModelProperty(notes = "商品是否有效 0=无效 1=有效")
+    @Schema(description = "商品是否有效 0=无效 1=有效")
     private Boolean isGoodsExists;
 
-    @ApiModelProperty(notes = "商品是否购买 0=未购买 1=已购买")
+    @Schema(description = "商品是否购买 0=未购买 1=已购买")
     private Boolean isBuy;
 
-    @ApiModelProperty(notes = "收藏类型 1=外卖自提 2=积分商城")
+    @Schema(description = "收藏类型 1=外卖自提 2=积分商城")
     private Integer type;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
     public Integer getId() {
