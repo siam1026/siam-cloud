@@ -5,9 +5,9 @@ server:
 spring:
   #mysql
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/siam_cloud?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/siam_cloud?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: 123456
 
   #thymeleaf
   thymeleaf:
@@ -61,6 +61,18 @@ spring:
   application:
     name: order-siam
 
+  # Nacos注册中心/配置中心
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+  config:
+    import:
+      - optional:nacos:${spring.application.name}-local.yaml
+
   #配置文件上传大小限制
   servlet:
     multipart:
@@ -91,15 +103,15 @@ spring:
       ds0:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:3306/siam_cloud_0?characterEncoding=utf-8&useUnicode=true&useSSL=true
+        url: jdbc:mysql://127.0.0.1:3306/siam_cloud_0?characterEncoding=utf-8&useUnicode=true&useSSL=true&allowPublicKeyRetrieval=true
         username: root
-        password: root
+        password: 123456
       ds1:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:3306/siam_cloud_1?characterEncoding=utf-8&useUnicode=true&useSSL=true
+        url: jdbc:mysql://127.0.0.1:3306/siam_cloud_1?characterEncoding=utf-8&useUnicode=true&useSSL=true&allowPublicKeyRetrieval=true
         username: root
-        password: root
+        password: 123456
     props:
       sql:
         show: true #是否显示sharding-jdbc的sql路由
@@ -179,17 +191,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-#eureka配置
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:9000/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    #配置使用ip地址来注册(默认是主机名称)
-    prefer-ip-address: true
-    #心跳检测暂时不配置
+# Nacos注册中心/配置中心
 
 feign:
   #feign内部服务调用超时配置-第二种
@@ -222,24 +224,31 @@ rocketmq:
 
 # Seata Config
 seata:
-  application-id: order-service
+  application-id: ${spring.application.name}
   tx-service-group: my_test_tx_group
   service:
     vgroup-mapping:
-      # 此处配置对应Server端配置registry.eureka.application的值
       my_test_tx_group: default
   registry:
-    type: eureka
-    eureka:
-      service-url: http://127.0.0.1:9000/eureka/
-      weight: 1
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: public
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: public
 
 #springboot admin相关配置
 management:
   endpoints:
     web:
       exposure:
-        include: "*" #'prometheus,health'
+        include: "health,prometheus,info"
         exclude: "shutdown"
       base-path: /actuator
   endpoint:
@@ -264,6 +273,8 @@ management:
       enabled: false
     elasticsearch:
       enabled: false
+    mail: # 加上这一行
+      enabled: false    # 加上这一行，关闭邮件自检
 
 #日志配置
 logging:

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatispl
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -50,10 +50,10 @@ public class Rider {
 
     /* ##################################### START 扩展字段 #################################### */
 
-    @ApiModelProperty(notes = "用户密码")
+    @Schema(description = "用户密码")
     private String password;
 
-    @ApiModelProperty(notes = "密码加盐")
+    @Schema(description = "密码加盐")
     private String passwordSalt;
 
     //门店名称

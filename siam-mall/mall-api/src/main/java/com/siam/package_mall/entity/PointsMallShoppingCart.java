@@ -3,8 +3,7 @@ package com.siam.package_mall.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @Data
 @TableName("tb_points_mall_shopping_cart")
-@ApiModel(value = "购物车表")
+ @Schema(description= "购物车表")
 public class PointsMallShoppingCart {
 
     private List<Integer> ids;
@@ -22,25 +21,25 @@ public class PointsMallShoppingCart {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "用户id")
+    @Schema(description = "用户id")
     private Integer memberId;
 
-    @ApiModelProperty(notes = "商品id")
+    @Schema(description = "商品id")
     private Integer goodsId;
 
-    @ApiModelProperty(notes = "商品规格 JSON格式")
+    @Schema(description = "商品规格 JSON格式")
     private String specList;
 
-    @ApiModelProperty(notes = "购买数量")
+    @Schema(description = "购买数量")
     private Integer number;
 
-    @ApiModelProperty(notes = "商品是否有效 0=无效 1=有效")
+    @Schema(description = "商品是否有效 0=无效 1=有效")
     private Boolean isGoodsExists;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     //页码

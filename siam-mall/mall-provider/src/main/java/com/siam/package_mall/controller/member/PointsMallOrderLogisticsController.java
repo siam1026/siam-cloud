@@ -11,7 +11,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_mall.entity.PointsMallOrder;
 import com.siam.package_mall.entity.PointsMallOrderLogistics;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/pointsMall/orderLogistics")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "订单物流跟踪信息模块相关接口", description = "PointsMallOrderLogisticsController")
+@Tag(name = "订单物流跟踪信息模块相关接口", description = "PointsMallOrderLogisticsController")
 public class PointsMallOrderLogisticsController {
 
     @Resource(name = "pointsMallOrderServiceImpl")

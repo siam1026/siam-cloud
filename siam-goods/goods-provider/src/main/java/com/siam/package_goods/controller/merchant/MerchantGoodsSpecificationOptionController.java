@@ -13,10 +13,16 @@ import com.siam.package_goods.entity.GoodsSpecificationOption;
 import com.siam.package_goods.model.example.GoodsSpecificationOptionExample;
 import com.siam.package_goods.model.dto.GoodsSpecificationOptionDto;
 import com.siam.package_goods.service.GoodsSpecificationOptionService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/merchant/goodsSpecificationOption")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端商品规格选项模块相关接口", description = "MerchantGoodsSpecificationOptionController")
+@Tag(name = "商家端商品规格选项模块相关接口", description = "MerchantGoodsSpecificationOptionController")
 public class MerchantGoodsSpecificationOptionController {
     @Autowired
     private GoodsSpecificationOptionService goodsSpecificationOptionService;
@@ -40,22 +46,7 @@ public class MerchantGoodsSpecificationOptionController {
     @Autowired
     private GoodsAccessoriesService goodsAccessoriesService;
 
-    @ApiOperation(value = "商品规格选项列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品规格选项表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "goodsId", value = "商品id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "specificationId", value = "规格id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品规格选项名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "单价/加价金额", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存 1代表有货，0代表无货", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "specificationName", value = "规格名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "goodsName", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "goodsMainImage", value = "商品主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "商品规格选项列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicData basicResult = new BasicData();
 
@@ -64,15 +55,7 @@ public class MerchantGoodsSpecificationOptionController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "添加商品规格选项")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "goodsId", value = "商品id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品规格选项名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "单价/加价金额", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存 1代表有货，0代表无货", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "specificationName", value = "规格名称", required = true, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "添加商品规格选项")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) GoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicData basicResult = new BasicData();
 
@@ -132,15 +115,7 @@ public class MerchantGoodsSpecificationOptionController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "修改商品规格选项")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品规格选项表主键id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品规格选项名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "单价/加价金额", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存 1代表有货，0代表无货", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = true, paramType = "query", dataType = "int"),
-    })
-    @PostMapping(value = "/update")
+    @Operation(summary = "修改商品规格选项")@PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) GoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicResult basicResult = new BasicResult();
 
@@ -204,11 +179,7 @@ public class MerchantGoodsSpecificationOptionController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "删除商品规格选项(含批量操作)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "商品规格选项表主键id(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/delete")
+    @Operation(summary = "删除商品规格选项(含批量操作)")@PostMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) GoodsSpecificationOption param){
         BasicResult basicResult = new BasicResult();
 
@@ -239,11 +210,7 @@ public class MerchantGoodsSpecificationOptionController {
         return basicResult;
     }
 
-    /*@ApiOperation(value = "生成商品公共口味")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "goodsId", value = "商品id", required = true, paramType = "query", dataType = "int")
-    })
-    @PostMapping(value = "/insertPublicSpecification")
+    /*@Operation(summary = "生成商品公共口味")@PostMapping(value = "/insertPublicSpecification")
     public BasicResult insertPublicSpecification(int goodsId){
         BasicResult basicResult = new BasicResult();
 

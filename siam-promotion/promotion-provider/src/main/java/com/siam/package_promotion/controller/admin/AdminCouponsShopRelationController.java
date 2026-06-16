@@ -5,8 +5,9 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.util.GsonUtils;
 import com.siam.package_promotion.entity.CouponsShopRelation;
 import com.siam.package_promotion.service.CouponsShopRelationService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,13 +21,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/admin/couponsShopRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台优惠卷接口", description = "AdminCouponsShopRelationController")
+@Tag(name = "后台优惠卷接口", description = "AdminCouponsShopRelationController")
 public class AdminCouponsShopRelationController {
 
     @Autowired
     private CouponsShopRelationService couponsShopRelationService;
 
-    @ApiOperation(value = "新增优惠卷店铺关系")
+    @Operation(summary = "新增优惠卷店铺关系")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) CouponsShopRelation param) {
         BasicResult basicResult = new BasicResult();
@@ -40,7 +41,7 @@ public class AdminCouponsShopRelationController {
         return basicResult;
     }
 
-    @ApiOperation(value = "优惠卷店铺关系列表查询")
+    @Operation(summary = "优惠卷店铺关系列表查询")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) CouponsShopRelation param) {
         BasicResult basicResult = new BasicResult();

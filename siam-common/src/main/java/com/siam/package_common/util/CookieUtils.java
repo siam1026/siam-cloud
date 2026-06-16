@@ -1,6 +1,6 @@
 package com.siam.package_common.util;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 /**
  * Cookie工具类

@@ -82,11 +82,6 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public BigDecimal selectDeliveryFee(String addressStr, Integer shopId) {
-        return null;
-    }
-
-    @Override
     public TravelingDistanceVo selectTravelingDistance(BigDecimal lngA, BigDecimal latA, BigDecimal lngB, BigDecimal latB) {
         TravelingDistanceVo travelingDistanceVo = new TravelingDistanceVo();
 

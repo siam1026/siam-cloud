@@ -3,8 +3,7 @@ package com.siam.package_goods.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,40 +11,40 @@ import java.util.Date;
 
 @Data
 @TableName("tb_rawmaterial")
-@ApiModel(value = "原料表")
+ @Schema(description= "原料表")
 public class Rawmaterial {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "原料名称")
+    @Schema(description = "原料名称")
     private String name;
 
-    @ApiModelProperty(notes = "原料主图")
+    @Schema(description = "原料主图")
     private String mainImage;
 
-    @ApiModelProperty(notes = "原料描述")
+    @Schema(description = "原料描述")
     private String description;
 
-    @ApiModelProperty(notes = "采购单位")
+    @Schema(description = "采购单位")
     private String unit;
 
-    @ApiModelProperty(notes = "采购单价")
+    @Schema(description = "采购单价")
     private BigDecimal price;
 
-    @ApiModelProperty(notes = "库存")
+    @Schema(description = "库存")
     private BigDecimal stock;
 
-    @ApiModelProperty(notes = "库存过低线/库存下限")
+    @Schema(description = "库存过低线/库存下限")
     private BigDecimal stockLowerLimit;
 
-    @ApiModelProperty(notes = "库存超出线/库存上限")
+    @Schema(description = "库存超出线/库存上限")
     private BigDecimal stockUpperLimit;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     //页码

@@ -3,42 +3,41 @@ package com.siam.package_promotion.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 @TableName("tb_advertisement")
-@ApiModel(value = "广告轮播图表")
+ @Schema(description= "广告轮播图表")
 public class Advertisement {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "轮播图名称")
+    @Schema(description = "轮播图名称")
     private String imageName;
 
-    @ApiModelProperty(notes = "轮播图路径")
+    @Schema(description = "轮播图路径")
     private String imagePath;
 
-    @ApiModelProperty(notes = "说明")
+    @Schema(description = "说明")
     private String description;
 
-    @ApiModelProperty(notes = "轮播图类型 1=首页轮播图 2=菜单页轮播图")
+    @Schema(description = "轮播图类型 1=首页轮播图 2=菜单页轮播图")
     private Integer type;
 
-    @ApiModelProperty(notes = "排序号")
+    @Schema(description = "排序号")
     private Integer sortNumber;
 
-    @ApiModelProperty(notes = "点击轮播图跳转的链接")
+    @Schema(description = "点击轮播图跳转的链接")
     private String imageLinkUrl;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     public Integer getId() {

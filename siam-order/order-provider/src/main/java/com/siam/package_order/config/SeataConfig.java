@@ -1,6 +1,8 @@
 //package com.siam.package_order.config;
 //
-//import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+//import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 //import com.siam.package_common.util.StringUtils;
 //import com.zaxxer.hikari.HikariDataSource;
 //import io.seata.rm.datasource.DataSourceProxy;

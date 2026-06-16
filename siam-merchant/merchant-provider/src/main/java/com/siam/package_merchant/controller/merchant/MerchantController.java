@@ -5,7 +5,8 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_merchant.model.param.MerchantParam;
 import com.siam.package_merchant.model.result.MerchantResult;
 import com.siam.package_merchant.service.MerchantService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/rest/merchant")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台商家账号模块相关接口", description = "MerchantController")
+@Tag(name = "后台商家账号模块相关接口", description = "MerchantController")
 public class MerchantController {
     
     @Autowired

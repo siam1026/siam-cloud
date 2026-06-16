@@ -4,8 +4,8 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**

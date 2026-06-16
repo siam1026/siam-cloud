@@ -7,8 +7,9 @@ import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_merchant.model.param.MerchantWithdrawRecordParam;
 import com.siam.package_merchant.service.MerchantWithdrawRecordService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -22,20 +23,20 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/admin/merchantWithdrawRecord")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台商家提现记录模块相关接口", description = "AdminMerchantWithdrawRecordController")
+@Tag(name = "后台商家提现记录模块相关接口", description = "AdminMerchantWithdrawRecordController")
 public class AdminMerchantWithdrawRecordController {
 
     @Autowired
     private MerchantWithdrawRecordService merchantWithdrawRecordService;
 
-    @ApiOperation(value = "商家提现记录列表")
+    @Operation(summary = "商家提现记录列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) MerchantWithdrawRecordParam param){
         Page<Map<String, Object>> page = merchantWithdrawRecordService.getListByPageJoinShop(param);
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "商家提现记录-统计金额")
+    @Operation(summary = "商家提现记录-统计金额")
     @PostMapping(value = "/statisticalAmount")
     public BasicResult statisticalAmount(@RequestBody @Validated(value = {}) MerchantWithdrawRecordParam param){
         Map<String, Object> map = merchantWithdrawRecordService.statisticalAmount(param);

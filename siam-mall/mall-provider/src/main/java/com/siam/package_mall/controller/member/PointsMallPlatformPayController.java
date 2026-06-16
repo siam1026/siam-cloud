@@ -19,8 +19,9 @@ import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_user.feign.MemberTradeRecordFeignApi;
 import com.siam.package_user.model.example.MemberTradeRecordExample;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +31,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/pointsMall/platformPay")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "平台支付模块相关接口", description = "PointsMallPlatformPayController")
+@Tag(name = "平台支付模块相关接口", description = "PointsMallPlatformPayController")
 public class PointsMallPlatformPayController {
 
     @Autowired
@@ -66,7 +67,7 @@ public class PointsMallPlatformPayController {
      * @return
      * @author 暹罗
      */
-    @ApiOperation(value = "使用平台积分支付")
+    @Operation(summary = "使用平台积分支付")
     @PostMapping(value = "/byPoints")
     public BasicResult byPoints(@RequestBody @Validated PlatformPayDto platformPayDto, HttpServletRequest request) {
         //TODO-PS：但是如果按照微信支付的步骤来，只要某个步骤失败，事务就会回滚--莫非这种就是不能在Controller上添加事务注解的原因？

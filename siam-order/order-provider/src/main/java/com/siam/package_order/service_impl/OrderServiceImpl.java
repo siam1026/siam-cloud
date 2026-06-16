@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.seata.spring.annotation.GlobalTransactional;
 import com.siam.package_common.constant.BusinessType;
 import com.siam.package_common.constant.Quantity;
 import com.siam.package_common.constant.RocketMQConst;
@@ -67,9 +68,10 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -166,6 +168,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Autowired
     private OrderRefundProcessService orderRefundProcessService;
 
+    @Lazy
     @Autowired
     private WxPayService wxPayService;
 
@@ -198,6 +201,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         orderMapper.updateById(updateOrder);
     }
 
+    @GlobalTransactional(name = "siam-order-create", rollbackFor = Exception.class)
     public Order insert(OrderParam param) {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
@@ -367,8 +371,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 }
             }
 
-            // 减少商品库存 (规格的库存该怎么去变化)
-            /*goodsService.decreaseStock(goodsId, number);*/
+            // 减少商品库存
+            goodsFeignApi.decreaseStock(goodsId, number);
         }
     }
 
@@ -417,7 +421,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             log.debug("\n获取订单编号...");
             LambdaQueryWrapper<Order> orderLambdaQueryWrapper = new LambdaQueryWrapper<>();
             orderLambdaQueryWrapper.eq(Order::getOrderNo, orderNo);
-            int result = orderMapper.selectCount(orderLambdaQueryWrapper);
+            long result = orderMapper.selectCount(orderLambdaQueryWrapper);
             if (result > 0) {
                 orderNo = GenerateNo.getOrderNo();
             } else {
@@ -756,11 +760,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     @Override
-    public Order insertByMQ(OrderParam param, String transId) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-        return null;
-    }
-
-    @Override
     public void cancelOrderByUnPaid(OrderParam param) {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
 
@@ -931,16 +930,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     private void refundRestoreStock(int orderId) {
-//        //查询订单对应的订单商品详情数据
-//        List<OrderDetail> orderDetailList = orderDetailService.selectByOrderId(orderId);
-//
-//        //恢复订单对应的商品库存 (对应规格的库存怎么修改)
-//        for(OrderDetail orderDetail : orderDetailList){
-//            int goodsId = orderDetail.getGoodsId();
-//            int number = orderDetail.getNumber();
-//            //增加商品库存
-//    //            goodsFeignApi.increaseStock(goodsId, number);
-//        }
+        //查询订单对应的订单商品详情数据
+        List<OrderDetail> orderDetailList = orderDetailService.selectByOrderId(orderId);
+
+        //恢复订单对应的商品库存
+        for(OrderDetail orderDetail : orderDetailList){
+            int goodsId = orderDetail.getGoodsId();
+            int number = orderDetail.getNumber();
+            //增加商品库存
+            goodsFeignApi.increaseStock(goodsId, number);
+        }
     }
 
 
@@ -1587,46 +1586,30 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return;
         }
 
-        Setting setting = settingFeignApi.selectCurrent().getData();
-
-        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
-
         List<OrderDetail> orderDetailList = orderDetailService.selectByOrderId(dbOrder.getId());
 
-        Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
-
-        Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
-
-        // 1、修改订单状态
+        // 1、修改订单状态（本地事务）
         handleOrderStatus(dbOrder, null);
 
-        // 6、处理商品信息
+        // 2、更新商品销量（跨服务调用）
         handleGoodsInfo(orderDetailList);
 
-        // TODO - 插入平台抽佣账单记录
-
-        // todo - 发送微信公众平台消息给用户
-
-        // 7、发送微信公众平台消息给商家
-        sendWxPublicPlatformMessageToMerchant(dbOrder, dbShop, orderDetailList);
-
-        // 8、给商家端进行语音提醒、订单打印
-        audioAndLocalPrint(dbShop, dbMerchant);
-
-        // 9、打印小票
-        basicPrintOrderReceipt(dbOrder, null, dbShop, orderDetailList);
-
-        /*//加入MQ延时队列，订单支付超过1个小时 且 订单未取消/未申请退款，则将订单修改为已完成
-        Message message01 = new Message("TID_COMMON", "AUTO_COMPLETED_ORDER", JSON.toJSONString(dbOrder).getBytes());
-        message01.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_1H);
-        RocketMQTemplate rocketMQTemplate = applicationContext.getBean("rocketMQTemplate", RocketMQTemplate.class);
-        rocketMQTemplate.getProducer().send(message01);*/
-
-        /*//加入MQ延时队列，订单支付超过10分钟，状态还是处于待处理、待配送，则给与商家中心PC端订单即将超时语音提醒
-        Message message02 = new Message("TID_COMMON", "REMIND_OVERTIME_ORDER", JSON.toJSONString(dbOrder).getBytes());
-        message02.setDelayTimeLevel(RocketMQConst.DELAY_TIME_LEVEL_10M);
-        RocketMQTemplate rocketMQTemplate = applicationContext.getBean("rocketMQTemplate", RocketMQTemplate.class);
-        rocketMQTemplate.getProducer().send(message02);*/
+        // 3、发送事务半消息，异步解耦下游通知链路
+        try {
+            OrderPaySuccessMessage message = new OrderPaySuccessMessage();
+            message.setOrderId(dbOrder.getId());
+            message.setOrderNo(dbOrder.getOrderNo());
+            message.setShopId(dbOrder.getShopId());
+            message.setMemberId(dbOrder.getMemberId());
+            message.setShoppingWay(dbOrder.getShoppingWay());
+            message.setActualPrice(dbOrder.getActualPrice());
+            TransactionProducer transactionProducer = applicationContext.getBean(TransactionProducer.class);
+            transactionProducer.send("ORDER_PAY_SUCCESS_TOPIC", JSON.toJSONString(message));
+            log.info("支付成功事务消息已发送，订单号={}", outTradeNo);
+        } catch (Exception e) {
+            log.error("发送支付成功事务消息失败，订单号={}", outTradeNo, e);
+            // 不影响主流程，本地订单状态已更新
+        }
     }
 
     private void handleCommission(Order dbOrder, Setting setting, Member dbMember) {
@@ -2425,7 +2408,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         wrapper.in(Order::getStatus, statusList);
         wrapper.eq(Order::getMemberId, loginMember.getId());
         wrapper.eq(Order::getIsDeleted, false);
-        int waitPaymentNumber = orderMapper.selectCount(wrapper);
+        long waitPaymentNumber = orderMapper.selectCount(wrapper);
 
         //待收货 4=待配送(已处理) 5=已配送
         statusList = new ArrayList<>();
@@ -2435,7 +2418,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         wrapper.in(Order::getStatus, statusList);
         wrapper.eq(Order::getMemberId, loginMember.getId());
         wrapper.eq(Order::getIsDeleted, false);
-        int waitReceivedNumber = orderMapper.selectCount(wrapper);
+        long waitReceivedNumber = orderMapper.selectCount(wrapper);
 
         //待自提 2=待处理 3=待自取(已处理)
         statusList = new ArrayList<>();
@@ -2445,7 +2428,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         wrapper.in(Order::getStatus, statusList);
         wrapper.eq(Order::getMemberId, loginMember.getId());
         wrapper.eq(Order::getIsDeleted, false);
-        int waitPickedUp = orderMapper.selectCount(wrapper);
+        int waitPickedUp = orderMapper.selectCount(wrapper).intValue();
 
         //退款/售后 状态处于7=售后处理中 8=已退款(废弃选项)
         statusList = new ArrayList<>();
@@ -2455,7 +2438,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         wrapper.in(Order::getStatus, statusList);
         wrapper.eq(Order::getMemberId, loginMember.getId());
         wrapper.eq(Order::getIsDeleted, false);
-        int afterSalesNumber = orderMapper.selectCount(wrapper);
+        int afterSalesNumber = orderMapper.selectCount(wrapper).intValue();
 
         Map map = new HashMap();
         map.put("waitPaymentNumber", waitPaymentNumber);
@@ -2484,28 +2467,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Order::getShoppingWay, Quantity.INT_1);
         wrapper.eq(Order::getStatus, Quantity.INT_2);
-        int waitHandleNum = orderMapper.selectCount(wrapper);
+        int waitHandleNum = orderMapper.selectCount(wrapper).intValue();
         dataMap.put("waitHandleNum", waitHandleNum);
 
         //自取订单-待自取订单
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Order::getShoppingWay, Quantity.INT_1);
         wrapper.eq(Order::getStatus, Quantity.INT_3);
-        int waitPickUpNum = orderMapper.selectCount(wrapper);
+        int waitPickUpNum = orderMapper.selectCount(wrapper).intValue();
         dataMap.put("waitPickUpNum", waitPickUpNum);
 
         //外卖订单-待配送订单
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Order::getShoppingWay, Quantity.INT_2);
         wrapper.eq(Order::getStatus, Quantity.INT_4);
-        int waitDeliveryNum = orderMapper.selectCount(wrapper);
+        int waitDeliveryNum = orderMapper.selectCount(wrapper).intValue();
         dataMap.put("waitDeliveryNum", waitDeliveryNum);
 
         //外卖订单-已配送订单
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Order::getShoppingWay, Quantity.INT_2);
         wrapper.eq(Order::getStatus, Quantity.INT_5);
-        int deliveredNum = orderMapper.selectCount(wrapper);
+        int deliveredNum = orderMapper.selectCount(wrapper).intValue();
         dataMap.put("deliveredNum", deliveredNum);
         return dataMap;
     }
@@ -3051,5 +3034,32 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         updateOrder.setIsPayToMerchantFrozen(true);
         updateOrder.setIsPayToRiderFrozen(true);
         orderMapper.updateById(updateOrder);
+    }
+
+    /**
+     * 支付成功后的下游通知链路（由 RocketMQ 事务消息的本地事务回调触发）
+     * 包含：商家公众号通知、语音提醒、小票打印
+     */
+    public void executePaymentNotify(Integer orderId) {
+        Order dbOrder = orderMapper.selectById(orderId);
+        if (dbOrder == null) {
+            log.error("支付通知-订单不存在，orderId={}", orderId);
+            return;
+        }
+
+        Setting setting = settingFeignApi.selectCurrent().getData();
+        Shop dbShop = shopFeignApi.selectByPrimaryKey(dbOrder.getShopId()).getData();
+        List<OrderDetail> orderDetailList = orderDetailService.selectByOrderId(dbOrder.getId());
+        Member dbMember = memberFeignApi.selectByPrimaryKey(dbOrder.getMemberId()).getData();
+        Merchant dbMerchant = merchantFeignApi.selectByPrimaryKey(dbShop.getMerchantId()).getData();
+
+        // 发送微信公众平台消息给商家
+        sendWxPublicPlatformMessageToMerchant(dbOrder, dbShop, orderDetailList);
+
+        // 给商家端进行语音提醒、订单打印
+        audioAndLocalPrint(dbShop, dbMerchant);
+
+        // 打印小票
+        basicPrintOrderReceipt(dbOrder, null, dbShop, orderDetailList);
     }
 }

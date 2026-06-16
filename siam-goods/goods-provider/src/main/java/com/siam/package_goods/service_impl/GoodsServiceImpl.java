@@ -84,25 +84,15 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Override
     public void increaseStock(int id, int number) {
-        Goods dbGoods = goodsMapper.selectById(id);
-        //增加库存数量
-        Goods updateGoods = new Goods();
-        updateGoods.setId(dbGoods.getId());
-        updateGoods.setStock(dbGoods.getStock() + number);
-        goodsMapper.updateById(updateGoods);
+        goodsMapper.increaseStockByCAS(id, number);
     }
 
     @Override
     public void decreaseStock(int id, int number) {
-        Goods dbGoods = goodsMapper.selectById(id);
-        if(dbGoods.getStock() - number < 0){
-            throw new StoneCustomerException(dbGoods.getName() + "库存不足，请减少该单品购买数量");
+        int rows = goodsMapper.decreaseStockByCAS(id, number);
+        if(rows == 0){
+            throw new StoneCustomerException("手慢了，商品库存不足");
         }
-        //减少库存数量
-        Goods updateGoods = new Goods();
-        updateGoods.setId(dbGoods.getId());
-        updateGoods.setStock(dbGoods.getStock() - number);
-        goodsMapper.updateById(updateGoods);
     }
 
     /**

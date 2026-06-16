@@ -11,8 +11,9 @@ import com.siam.package_promotion.service.CouponsMemberRelationService;
 import com.siam.package_promotion.service.CouponsService;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.feign.MemberFeignApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/admin/couponsMemberRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "管理端优惠卷用关系接口", description = "AdminCouponsMemberRelationController")
+@Tag(name = "管理端优惠卷用关系接口", description = "AdminCouponsMemberRelationController")
 public class AdminCouponsMemberRelationController {
 
     @Autowired
@@ -44,7 +45,7 @@ public class AdminCouponsMemberRelationController {
     private AliyunSms aliyunSms;
 
 
-    @ApiOperation(value = "赠送优惠卷")
+    @Operation(summary = "赠送优惠卷")
     @PostMapping(value = "/giveCoupons")
     public BasicResult giveCoupons(@RequestBody @Validated(value = {}) CouponsMemberRelation param) {
         BasicResult basicResult = new BasicResult();
@@ -97,7 +98,7 @@ public class AdminCouponsMemberRelationController {
         return BasicResult.success();
     }
 
-    @ApiOperation(value = "赠送优惠卷（单发）")
+    @Operation(summary = "赠送优惠卷（单发）")
     @PostMapping(value = "/giveSingleCoupons")
     public BasicResult giveSingleCoupons(@RequestBody @Validated(value = {}) CouponsMemberRelation param) {
         BasicResult basicResult = new BasicResult();

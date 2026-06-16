@@ -11,8 +11,11 @@ import com.siam.package_mall.model.dto.PointsMallGoodsSpecificationOptionDto;
 import com.siam.package_mall.entity.PointsMallGoodsSpecification;
 import com.siam.package_mall.entity.PointsMallGoodsSpecificationOption;
 import com.siam.package_mall.model.example.PointsMallGoodsSpecificationOptionExample;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/admin/pointsMall/goodsSpecificationOption")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台商品规格选项模块相关接口", description = "AdminPointsMallGoodsSpecificationOptionController")
+@Tag(name = "后台商品规格选项模块相关接口", description = "AdminPointsMallGoodsSpecificationOptionController")
 public class AdminPointsMallGoodsSpecificationOptionController {
     @Autowired
     private PointsMallGoodsSpecificationOptionService goodsSpecificationOptionService;
@@ -33,7 +36,7 @@ public class AdminPointsMallGoodsSpecificationOptionController {
     @Autowired
     private PointsMallGoodsSpecificationService goodsSpecificationService;
 
-    @ApiOperation(value = "商品规格选项列表")
+    @Operation(summary = "商品规格选项列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) PointsMallGoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicData basicResult = new BasicData();
@@ -43,7 +46,7 @@ public class AdminPointsMallGoodsSpecificationOptionController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "添加商品规格选项")
+    @Operation(summary = "添加商品规格选项")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) PointsMallGoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicData basicResult = new BasicData();
@@ -97,7 +100,7 @@ public class AdminPointsMallGoodsSpecificationOptionController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "修改商品规格选项")
+    @Operation(summary = "修改商品规格选项")
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) PointsMallGoodsSpecificationOptionDto goodsSpecificationOptionDto){
         BasicResult basicResult = new BasicResult();
@@ -162,7 +165,7 @@ public class AdminPointsMallGoodsSpecificationOptionController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "删除商品规格选项(含批量操作)")
+    @Operation(summary = "删除商品规格选项(含批量操作)")
     @PostMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) PointsMallGoodsSpecificationOption param){
         BasicResult basicResult = new BasicResult();
@@ -194,11 +197,7 @@ public class AdminPointsMallGoodsSpecificationOptionController {
         return basicResult;
     }
 
-    /*@ApiOperation(value = "生成商品公共口味")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "goodsId", value = "商品id", required = true, paramType = "query", dataType = "int")
-    })
-    @PostMapping(value = "/insertPublicSpecification")
+    /*@Operation(summary = "生成商品公共口味")@PostMapping(value = "/insertPublicSpecification")
     public BasicResult insertPublicSpecification(int goodsId){
         BasicResult basicResult = new BasicResult();
 

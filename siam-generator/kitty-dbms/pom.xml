@@ -6,15 +6,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.4.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.2.5</version>
+		<relativePath/>
 	</parent>
 
 	<groupId>com.louis</groupId>
 	<artifactId>kitty-dbms</artifactId>
 	<version>${project.version}</version>
 	<packaging>jar</packaging>
-	
+
 	<name>kitty-dbms</name>
 	<description>kitty-dbms</description>
 
@@ -22,9 +22,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>1.0.0</project.version>
-		<java.version>1.8</java.version>
-		<swagger.version>2.8.0</swagger.version>
-		<mybatis.spring.version>1.3.2</mybatis.spring.version>
+		<java.version>17</java.version>
+		<mybatis.spring.version>3.0.3</mybatis.spring.version>
 	</properties>
 
 	<dependencies>
@@ -35,16 +34,17 @@
 		</dependency>
 		<!-- mysql -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 		</dependency>
 		<!-- dom4j -->
 		<dependency>
-		    <groupId>dom4j</groupId>
+		    <groupId>org.dom4j</groupId>
 		    <artifactId>dom4j</artifactId>
+		    <version>2.1.4</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<resources>
 			<resource>

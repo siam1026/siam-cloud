@@ -13,22 +13,22 @@ import com.siam.package_goods.service.MenuService;
 import com.siam.package_merchant.auth.cache.MerchantSessionManager;
 import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/rest/merchant/menu")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端菜单分类模块相关接口", description = "MerchantMenuController")
+@Tag(name = "商家端菜单分类模块相关接口", description = "MerchantMenuController")
 public class MerchantMenuController {
 
     @Autowired
@@ -43,16 +43,7 @@ public class MerchantMenuController {
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "菜单列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "菜单分类详情描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
+    @Operation(summary = "菜单列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Menu menu, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -66,14 +57,7 @@ public class MerchantMenuController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "菜单创建")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "菜单主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "菜单名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "菜单分类详情描述", required = false, paramType = "query", dataType = "string")
-    })
+    @Operation(summary = "菜单创建")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Menu menu, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
@@ -93,14 +77,7 @@ public class MerchantMenuController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "菜单修改")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "菜单主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "菜单名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "菜单分类详情描述", required = false, paramType = "query", dataType = "string")
-    })
+    @Operation(summary = "菜单修改")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Menu menu, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
@@ -125,10 +102,7 @@ public class MerchantMenuController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "菜单删除")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "菜单主键id集合(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "String")
-    })
+    @Operation(summary = "菜单删除")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Menu param                   , HttpServletRequest request){
         BasicResult basicResult = new BasicResult();

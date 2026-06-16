@@ -89,14 +89,14 @@ public class RewardServiceImpl implements RewardService {
         wrapper.ne(Order::getId, orderId);
         wrapper.gt(Order::getCreateTime, vipRechargeRecord.getCreateTime());
         wrapper.notIn(Order::getStatus, excludeStatusList);
-        Integer count = orderMapper.selectCount(wrapper);
+        Long count = orderMapper.selectCount(wrapper);
 
         //查询积分商城的符合订单数
         PointsMallOrderParam pointsMallOrderExample = new PointsMallOrderParam();
         pointsMallOrderExample.setCreateTimeGreaterThan(vipRechargeRecord.getCreateTime());
         pointsMallOrderExample.setExcludeStatusList(excludeStatusList);
         int count_pointsMall = pointsMallOrderFeignApi.countByExample(pointsMallOrderExample).getData();
-        int total_count = count + count_pointsMall;
+        int total_count = count.intValue() + count_pointsMall;
         if(total_count > 0){
             //不是第一笔订单，进行近30天是否有消费的条件判断
             //近30天外卖系统支付成功的订单数
@@ -105,7 +105,7 @@ public class RewardServiceImpl implements RewardService {
             param.setExcludeOrderId(orderId);
             param.setStartTime(DateUtilsExtend.getFrontDay(DateUtilsExtend.getDayEnd(), 30));
             param.setEndTime(DateUtilsExtend.getDayEnd());
-            count = this.orderMapper.selectCountPaid(param);
+            count = Long.valueOf(this.orderMapper.selectCountPaid(param));
             count = count!=null ? count : 0;
 
             //近30天积分商城支付成功的订单数
@@ -115,7 +115,7 @@ public class RewardServiceImpl implements RewardService {
             pointsMallOrder.setEndTime(DateUtilsExtend.getDayEnd());
             count_pointsMall = this.pointsMallOrderFeignApi.selectCountPaid(pointsMallOrder).getData();
 
-            total_count = count + count_pointsMall;
+            total_count = count.intValue() + count_pointsMall;
             if(total_count == 0){
                 //TODO-可以建立一张表把这些信息存下来的
                 log.info("\n\nid为" + inviterId + "的邀请人在近30天内无消费，不给予佣金奖励");
@@ -218,13 +218,13 @@ public class RewardServiceImpl implements RewardService {
             LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
             wrapper.gt(Order::getCreateTime, vipRechargeRecord.getCreateTime());
             wrapper.notIn(Order::getStatus, excludeStatusList);
-            int count = orderMapper.selectCount(wrapper);
+            long count = orderMapper.selectCount(wrapper);
             //查询积分商城的符合订单数
             PointsMallOrderParam pointsMallOrderExample = new PointsMallOrderParam();
             pointsMallOrderExample.setCreateTimeGreaterThan(vipRechargeRecord.getCreateTime());
             pointsMallOrderExample.setExcludeStatusList(excludeStatusList);
             int count_pointsMall = pointsMallOrderFeignApi.countByExample(pointsMallOrderExample).getData();
-            int total_count = count + count_pointsMall;
+            int total_count = (int) count + count_pointsMall;
             if(total_count > 0){
                 //不是第一笔订单，进行近30天是否有消费的条件判断
                 //近30天外卖系统支付成功的订单数
@@ -240,7 +240,7 @@ public class RewardServiceImpl implements RewardService {
                 pointsMallOrder.setEndTime(DateUtilsExtend.getDayEnd());
                 count_pointsMall = this.pointsMallOrderFeignApi.selectCountPaid(pointsMallOrder).getData();
 
-                total_count = count + count_pointsMall;
+                total_count = (int) count + count_pointsMall;
                 if(total_count == 0){
                     //TODO-可以建立一张表把这些信息存下来的
                     /*text = "您在近30天内无消费，该笔订单完成后再次消费，您可得到"+ commissionAmount +"元返利";*/

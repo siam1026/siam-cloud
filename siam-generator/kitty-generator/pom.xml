@@ -6,15 +6,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.4.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.2.5</version>
+		<relativePath/>
 	</parent>
 
 	<groupId>com.louis</groupId>
 	<artifactId>kitty-generator</artifactId>
 	<version>${project.version}</version>
-	<packaging>war</packaging>
-	
+	<packaging>jar</packaging>
+
 	<name>kitty-generator</name>
 	<description>kitty-generator</description>
 
@@ -22,10 +22,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>1.0.0</project.version>
-		<java.version>1.8</java.version>
-		<swagger.version>2.8.0</swagger.version>
-		<mybatis.spring.version>1.3.2</mybatis.spring.version>
-		<fastjson.version>1.2.48</fastjson.version>
+		<java.version>17</java.version>
+		<springdoc.version>2.5.0</springdoc.version>
+		<mybatis.spring.version>3.0.3</mybatis.spring.version>
+		<fastjson.version>2.0.48</fastjson.version>
 		<beetl.version>1.1.68.RELEASE</beetl.version>
 	</properties>
 
@@ -35,16 +35,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!-- swagger -->
+		<!-- springdoc-openapi -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>io.springfox</groupId>
-		    <artifactId>springfox-swagger-ui</artifactId>
-		    <version>${swagger.version}</version>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
 		</dependency>
 		<!-- mybatis -->
 		<dependency>
@@ -54,10 +49,10 @@
 		</dependency>
 		<!-- mysql -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 		</dependency>
-		<!-- fastjson -->
+		<!-- fastjson2 -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -79,14 +74,8 @@
 			<artifactId>kitty-dbms</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<!--&lt;!&ndash;因配置外部TOMCAT而配置&ndash;&gt;-->
-		<!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
 	</dependencies>
-	
+
 	<build>
 		<resources>
 			<resource>

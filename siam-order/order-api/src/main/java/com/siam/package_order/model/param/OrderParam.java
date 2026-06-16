@@ -4,18 +4,17 @@ import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_order.entity.Order;
 import com.siam.package_order.entity.OrderRefund;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 @Data
-@ApiModel(value = "订单表")
+ @Schema(description= "订单表")
 public class OrderParam extends Order {
 
     private Date startTime;
@@ -55,7 +54,7 @@ public class OrderParam extends Order {
     private Integer excludeOrderId;
 
     @NotNull(message = "主键id不能为空", groups = {ValidGroupOfId.class})
-    @ApiModelProperty(notes = "主键id")
+    @Schema(description = "主键id")
     private Integer id;
 
     /**

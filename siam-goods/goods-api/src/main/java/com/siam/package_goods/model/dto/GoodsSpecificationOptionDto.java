@@ -1,19 +1,19 @@
 package com.siam.package_goods.model.dto;
 
 import com.siam.package_goods.entity.GoodsSpecificationOption;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public class GoodsSpecificationOptionDto extends GoodsSpecificationOption {
-    @ApiModelProperty(notes = "规格名称")
+    @Schema(description = "规格名称")
     private String specificationName;
 
-    @ApiModelProperty(notes = "商品名称")
+    @Schema(description = "商品名称")
     private String goodsName;
 
-    @ApiModelProperty(notes = "商品主图")
+    @Schema(description = "商品主图")
     private String goodsMainImage;
 
     List<Integer> ids;

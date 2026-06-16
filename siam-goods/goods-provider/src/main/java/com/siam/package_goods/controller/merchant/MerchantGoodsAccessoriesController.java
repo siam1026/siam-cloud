@@ -8,10 +8,16 @@ import com.siam.package_goods.entity.GoodsAccessories;
 import com.siam.package_goods.service.GoodsAccessoriesService;
 import com.siam.package_goods.model.example.GoodsSpecificationOptionExample;
 import com.siam.package_goods.service.GoodsSpecificationOptionService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +28,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/merchant/goodsAccessories")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端商品辅料模块相关接口", description = "MerchantGoodsAccessoriesController")
+@Tag(name = "商家端商品辅料模块相关接口", description = "MerchantGoodsAccessoriesController")
 public class MerchantGoodsAccessoriesController {
 
     @Autowired
@@ -31,17 +37,7 @@ public class MerchantGoodsAccessoriesController {
     @Autowired
     private GoodsSpecificationOptionService goodsSpecificationOptionService;
 
-    @ApiOperation(value = "商品辅料列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品辅料表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品辅料名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商品辅料详情描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "商品辅料列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsAccessories goodsAccessories){
         BasicData basicResult = new BasicData();
         Page<GoodsAccessories> page = goodsAccessoriesService.getListByPage(goodsAccessories.getPageNo(), goodsAccessories.getPageSize(), goodsAccessories);
@@ -49,15 +45,7 @@ public class MerchantGoodsAccessoriesController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增商品辅料")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品辅料主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品辅料名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商品辅料详情描述", required = false, paramType = "query", dataType = "string")
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "新增商品辅料")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) GoodsAccessories goodsAccessories){
         BasicResult basicResult = new BasicResult();
 
@@ -72,15 +60,7 @@ public class MerchantGoodsAccessoriesController {
     }
 
 
-    @ApiOperation(value = "修改商品辅料")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品辅料主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品辅料名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商品辅料详情描述", required = false, paramType = "query", dataType = "string")
-    })
-    @PutMapping(value = "/update")
+    @Operation(summary = "修改商品辅料")@PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) GoodsAccessories goodsAccessories){
         BasicResult basicResult = new BasicResult();
 
@@ -98,11 +78,7 @@ public class MerchantGoodsAccessoriesController {
     }
 
 
-    @ApiOperation(value = "删除商品辅料")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品辅料主键id", required = true, paramType = "query", dataType = "int")
-    })
-    @DeleteMapping(value = "/delete")
+    @Operation(summary = "删除商品辅料")@DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) GoodsAccessories param){
         BasicResult basicResult = new BasicResult();
 

@@ -5,9 +5,9 @@ server:
 spring:
   #mysql
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/siam_cloud?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/siam_cloud?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: 123456
 
 #  #mongodb(默认时没有账号密码的)
 #  #  application:
@@ -74,6 +74,18 @@ spring:
   #服务别名，注册到注册中心上的名字
   application:
     name: promotion-siam
+
+  # Nacos注册中心/配置中心
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+  config:
+    import:
+      - optional:nacos:${spring.application.name}-local.yaml
 
   #配置文件上传大小限制
   servlet:
@@ -142,17 +154,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-#eureka配置
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:9000/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    #配置使用ip地址来注册(默认是主机名称)
-    prefer-ip-address: true
-    #心跳检测暂时不配置
+# Nacos注册中心/配置中心
 
 #feign内部服务调用超时配置
 feign:
@@ -173,24 +175,31 @@ rocketmq:
 
 # Seata Config
 seata:
-  application-id: promotion-service
+  application-id: ${spring.application.name}
   tx-service-group: my_test_tx_group
   service:
     vgroup-mapping:
-      # 此处配置对应Server端配置registry.eureka.application的值
       my_test_tx_group: default
   registry:
-    type: eureka
-    eureka:
-      service-url: http://127.0.0.1:9000/eureka/
-      weight: 1
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: public
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: public
 
 #springboot admin相关配置
 management:
   endpoints:
     web:
       exposure:
-        include: "*" #'prometheus,health'
+        include: "health,prometheus,info"
         exclude: "shutdown"
       base-path: /actuator
   endpoint:
@@ -214,6 +223,8 @@ management:
     mongo:
       enabled: false
     elasticsearch:
+      enabled: false
+    mail:
       enabled: false
 
 #日志配置

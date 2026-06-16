@@ -1,30 +1,29 @@
 package com.siam.package_user.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Date;
 
 @TableName("tb_admin_token")
-@ApiModel(value = "管理员登录token令牌表")
+ @Schema(description= "管理员登录token令牌表")
 public class AdminToken {
-    @ApiModelProperty(notes = "主键id")
+    @Schema(description = "主键id")
     private Integer id;
 
-    @ApiModelProperty(notes = "管理员id")
+    @Schema(description = "管理员id")
     private Integer adminId;
 
-    @ApiModelProperty(notes = "管理员用户名")
+    @Schema(description = "管理员用户名")
     private String username;
 
-    @ApiModelProperty(notes = "登录令牌")
+    @Schema(description = "登录令牌")
     private String token;
 
-    @ApiModelProperty(notes = "登录方式 wap")
+    @Schema(description = "登录方式 wap")
     private String type;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
     public Integer getId() {

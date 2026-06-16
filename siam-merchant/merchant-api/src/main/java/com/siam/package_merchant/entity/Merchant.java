@@ -3,60 +3,59 @@ package com.siam.package_merchant.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @TableName("tb_merchant")
-@ApiModel(value = "商家表")
+ @Schema(description= "商家表")
 public class Merchant {
 
-    @ApiModelProperty(notes = "主键id")
+    @Schema(description = "主键id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "门店信息id")
+    @Schema(description = "门店信息id")
     private Integer shopId;
 
-    @ApiModelProperty(notes = "用户名称")
+    @Schema(description = "用户名称")
     private String username;
 
-    @ApiModelProperty(notes = "手机号码")
+    @Schema(description = "手机号码")
     private String mobile;
 
-    @ApiModelProperty(notes = "用户密码")
+    @Schema(description = "用户密码")
     private String password;
 
-    @ApiModelProperty(notes = "密码加盐")
+    @Schema(description = "密码加盐")
     private String passwordSalt;
 
-    @ApiModelProperty(notes = "昵称")
+    @Schema(description = "昵称")
     private String nickname;
 
-    @ApiModelProperty(notes = "权限")
+    @Schema(description = "权限")
     private String roles;
 
-    @ApiModelProperty(notes = "头像")
+    @Schema(description = "头像")
     private String headImg;
 
-    @ApiModelProperty(notes = "性别")
+    @Schema(description = "性别")
     private Integer sex;
 
-    @ApiModelProperty(notes = "邮箱")
+    @Schema(description = "邮箱")
     private String email;
 
-    @ApiModelProperty(notes = "证件类型")
+    @Schema(description = "证件类型")
     private String certificateType;
 
-    @ApiModelProperty(notes = "证件照片")
+    @Schema(description = "证件照片")
     private String certificateImg;
 
-    @ApiModelProperty(notes = "是否禁用 0=启用 1=禁用")
+    @Schema(description = "是否禁用 0=启用 1=禁用")
     private Boolean isDisabled;
 
-    @ApiModelProperty(notes = "是否删除 0=正常 1=删除")
+    @Schema(description = "是否删除 0=正常 1=删除")
     private Boolean isDeleted;
 
     private Integer auditStatus;

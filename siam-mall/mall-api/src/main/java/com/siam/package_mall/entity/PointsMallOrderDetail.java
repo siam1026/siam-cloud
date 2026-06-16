@@ -3,46 +3,45 @@ package com.siam.package_mall.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@ApiModel(value = "订单商品详情表")
+ @Schema(description= "订单商品详情表")
 @TableName("tb_points_mall_order_detail")
 public class PointsMallOrderDetail {
 
     List<String> ids;
 
-    @ApiModelProperty(notes = "主键id")
+    @Schema(description = "主键id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "订单id")
+    @Schema(description = "订单id")
     private Long orderId;
 
-    @ApiModelProperty(notes = "商品id")
+    @Schema(description = "商品id")
     private Integer goodsId;
 
-    @ApiModelProperty(notes = "商品名称")
+    @Schema(description = "商品名称")
     private String goodsName;
 
-    @ApiModelProperty(notes = "商品主图")
+    @Schema(description = "商品主图")
     private String mainImage;
 
-    @ApiModelProperty(notes = "商品规格 JSON格式")
+    @Schema(description = "商品规格 JSON格式")
     private String specList;
 
-    @ApiModelProperty(notes = "价格")
+    @Schema(description = "价格")
     private BigDecimal price;
 
-    @ApiModelProperty(notes = "购买数量")
+    @Schema(description = "购买数量")
     private Integer number;
 
-    @ApiModelProperty(notes = "小计")
+    @Schema(description = "小计")
     private BigDecimal subtotal;
 
     private BigDecimal packingCharges;

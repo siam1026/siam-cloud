@@ -3,34 +3,33 @@ package com.siam.package_util.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Date;
 
 @TableName("tb_scheduled_task_log")
-@ApiModel(value = "定时任务执行日志表")
+ @Schema(description= "定时任务执行日志表")
 public class ScheduledTaskLog {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "任务代码")
+    @Schema(description = "任务代码")
     private String scheduledTaskCode;
 
-    @ApiModelProperty(notes = "执行状态 1=执行成功 2=执行出错")
+    @Schema(description = "执行状态 1=执行成功 2=执行出错")
     private Integer state;
 
-    @ApiModelProperty(notes = "错误描述")
+    @Schema(description = "错误描述")
     private String error;
 
-    @ApiModelProperty(notes = "执行主机名称")
+    @Schema(description = "执行主机名称")
     private String hostName;
 
-    @ApiModelProperty(notes = "执行主机ip地址")
+    @Schema(description = "执行主机ip地址")
     private String hostIpAddress;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
     public Integer getId() {

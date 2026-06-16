@@ -9,33 +9,34 @@ import com.siam.package_order.entity.Order;
 
 import com.siam.package_order.model.param.OrderParam;
 import com.siam.package_order.service.OrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.text.ParseException;
 import java.util.*;
 
 @RestController
 @RequestMapping(value = "/rest/admin/order")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台订单模块相关接口", description = "AdminOrderController")
+@Tag(name = "后台订单模块相关接口", description = "AdminOrderController")
 public class AdminOrderController {
 
     @Resource(name = "orderServiceImpl")
     private OrderService orderService;
 
-    @ApiOperation(value = "订单列表")
+    @Operation(summary = "订单列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) OrderParam param){
         Page page = orderService.getListByPageWithAsc(param);
         return BasicResult.success(page);
     }
 
-    @ApiOperation("打印小票")
+    @Operation(summary = "打印小票")
     public BasicResult printRceceipts(@RequestBody @Validated(value = {}) OrderParam param){
         for(String id : param.getIds()){
             orderService.printRceceipts(Integer.valueOf(id));
@@ -43,7 +44,7 @@ public class AdminOrderController {
         return BasicResult.success();
     }
 
-    @ApiOperation(value = "查询单个订单信息")
+    @Operation(summary = "查询单个订单信息")
     @PostMapping(value = "/selectById")
     public BasicResult selectById(@RequestBody @Validated(value = {}) OrderParam param){
         Order dbOrder = orderService.selectByPrimaryKey(param.getId());
@@ -53,42 +54,42 @@ public class AdminOrderController {
         return BasicResult.success(dbOrder);
     }
 
-    @ApiOperation(value = "批量修改订单的是否已打印状态为已打印")
+    @Operation(summary = "批量修改订单的是否已打印状态为已打印")
     @PostMapping(value = "/batchUpdateIsPrintedTrue")
     public BasicResult batchUpdateIsPrintedTrue(@RequestBody @Validated(value = {}) OrderParam param){
         orderService.batchUpdateIsPrintedTrue(param);
         return BasicResult.success();
     }
 
-    @ApiOperation(value = "今日订单列表")
+    @Operation(summary = "今日订单列表")
     @PostMapping(value = "/todayOrderList")
     public BasicResult todayOrderList(@RequestBody @Validated(value = {}) OrderParam param){
         Page page = orderService.getListByTodayOrderWithAsc(param);
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "查询所有订单标签页的待处理数量")
+    @Operation(summary = "查询所有订单标签页的待处理数量")
     @PostMapping(value = "/selectAllTabWaitHandleNum")
     public BasicResult selectAllTabWaitHandleNum(@RequestBody @Validated(value = {}) OrderParam param){
         Map map = this.orderService.selectAllTabWaitHandleNum(param);
         return BasicResult.success(map);
     }
 
-    @ApiOperation(value = "查询所有已付款未打印的订单")
+    @Operation(summary = "查询所有已付款未打印的订单")
     @PostMapping(value = "/waitPrintOrderList")
     public BasicResult waitPrintOrderList(@RequestBody @Validated(value = {}) OrderParam param){
         List<Order> orders = orderService.waitPrintOrderList(param);
         return BasicResult.success(orders);
     }
 
-    @ApiOperation(value = "订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)")
+    @Operation(summary = "订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)")
     @PostMapping(value = "/countOrder")
     public BasicResult countOrder(@RequestBody @Validated(value = {}) OrderParam param){
         Map count=orderService.countOrder(param);
         return BasicResult.success(count);
     }
 
-    @ApiOperation(value = "售后处理订单列表")
+    @Operation(summary = "售后处理订单列表")
     @PostMapping(value = "/afterSalesList")
     public BasicResult afterSalesList(@RequestBody @Validated(value = {}) OrderParam param){
         Page page = orderService.getAfterSalesListByPageWithAsc(param);

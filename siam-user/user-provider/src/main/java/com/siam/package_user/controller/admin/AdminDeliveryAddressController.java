@@ -6,8 +6,9 @@ import com.siam.package_common.entity.BasicData;
 import com.siam.package_common.entity.BasicResult;
 import com.siam.package_user.entity.DeliveryAddress;
 import com.siam.package_user.service.DeliveryAddressService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -19,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/rest/admin/deliveryAddress")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台收货地址模块相关接口", description = "AdminDeliveryAddressController")
+@Tag(name = "后台收货地址模块相关接口", description = "AdminDeliveryAddressController")
 public class AdminDeliveryAddressController {
 
     @Autowired
     private DeliveryAddressService deliveryAddressService;
 
-    @ApiOperation(value = "收货地址列表")
+    @Operation(summary = "收货地址列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) DeliveryAddress param) {
         BasicData basicResult = new BasicData();
@@ -35,7 +36,7 @@ public class AdminDeliveryAddressController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增收货地址")
+    @Operation(summary = "新增收货地址")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) DeliveryAddress param) {
         BasicResult basicResult = new BasicResult();
@@ -48,7 +49,7 @@ public class AdminDeliveryAddressController {
         return basicResult;
     }
 
-    @ApiOperation(value = "修改收货地址")
+    @Operation(summary = "修改收货地址")
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) DeliveryAddress param) {
         BasicResult basicResult = new BasicResult();
@@ -61,7 +62,7 @@ public class AdminDeliveryAddressController {
         return basicResult;
     }
 
-    @ApiOperation(value = "删除收货地址")
+    @Operation(summary = "删除收货地址")
     @PostMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) DeliveryAddress param) {
         BasicResult basicResult = new BasicResult();

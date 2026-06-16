@@ -81,4 +81,15 @@ public class GoodsFeignProvider implements GoodsFeignApi {
 
         return BasicResult.success(goodsMapper.selectList(wrapper));
     }
+
+    @Override
+    public BasicResult decreaseStock(@RequestParam("id") Integer id, @RequestParam("number") Integer number) {
+        goodsService.decreaseStock(id, number);
+        return BasicResult.success();
+    }
+
+    @Override
+    public BasicResult increaseStock(@RequestParam("id") Integer id, @RequestParam("number") Integer number) {
+        goodsService.increaseStock(id, number);
+        return BasicResult.success();
 }

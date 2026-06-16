@@ -6,9 +6,9 @@ import com.siam.package_common.util.StringUtils;
 import com.siam.package_common.util.ToolUtil;
 import com.siam.package_merchant.entity.Merchant;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Token工具类

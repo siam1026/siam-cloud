@@ -11,8 +11,9 @@ import com.siam.package_mall.entity.PointsMallCoupons;
 import com.siam.package_mall.entity.PointsMallCouponsMemberRelation;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.feign.MemberFeignApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/admin/pointsMall/couponsMemberRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "管理端优惠卷用关系接口", description = "AdminPointsMallCouponsMemberRelationController")
+@Tag(name = "管理端优惠卷用关系接口", description = "AdminPointsMallCouponsMemberRelationController")
 public class AdminPointsMallCouponsMemberRelationController {
 
     @Autowired
@@ -41,7 +42,7 @@ public class AdminPointsMallCouponsMemberRelationController {
     private AliyunSms aliyunSms;
 
 
-    @ApiOperation(value = "赠送优惠卷")
+    @Operation(summary = "赠送优惠卷")
     @PostMapping(value = "/giveCoupons")
     public BasicResult giveCoupons(@RequestBody @Validated(value = {}) PointsMallCouponsMemberRelation param) {
         BasicResult basicResult = new BasicResult();
@@ -96,7 +97,7 @@ public class AdminPointsMallCouponsMemberRelationController {
         return basicResult;
     }
 
-    @ApiOperation(value = "赠送优惠卷（单发）")
+    @Operation(summary = "赠送优惠卷（单发）")
     @PostMapping(value = "/giveSingleCoupons")
     public BasicResult giveSingleCoupons(@RequestBody @Validated(value = {}) PointsMallCouponsMemberRelation param) {
         BasicResult basicResult = new BasicResult();

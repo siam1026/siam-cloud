@@ -132,6 +132,19 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     @Update("update tb_goods set total_sales=total_sales+#{num} where id=#{goodsId}")
     int updateTotalSales(@Param("goodsId") Integer goodsId,@Param("num") Integer num);
 
+    /**
+     * CAS 原子扣减库存：一条 SQL 完成 check-and-act，避免并发超卖
+     * @return 受影响行数，0 表示库存不足
+     */
+    @Update("update tb_goods set stock = stock - #{number} where id = #{id} and stock >= #{number}")
+    int decreaseStockByCAS(@Param("id") Integer id, @Param("number") Integer number);
+
+    /**
+     * CAS 原子增加库存：一条 SQL 完成 check-and-act，避免并发问题
+     */
+    @Update("update tb_goods set stock = stock + #{number} where id = #{id}")
+    int increaseStockByCAS(@Param("id") Integer id, @Param("number") Integer number);
+
     @Update("update tb_goods set monthly_sales=0 ")
     int monthlySalesReset();
 

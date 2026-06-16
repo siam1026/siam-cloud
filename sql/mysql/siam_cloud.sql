@@ -3,6 +3,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for tb_admin
 -- ----------------------------
+use siam_cloud;
 DROP TABLE IF EXISTS `tb_admin`;
 CREATE TABLE `tb_admin` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',

@@ -3,8 +3,7 @@ package com.siam.package_goods.entity;
 import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,28 +11,28 @@ import java.util.List;
 
 @Data
 @TableName("tb_menu")
-@ApiModel(value = "菜单分类表")
+ @Schema(description= "菜单分类表")
 public class Menu {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(notes = "店铺id")
+    @Schema(description = "店铺id")
     private Integer shopId;
 
-    @ApiModelProperty(notes = "菜单分类名称")
+    @Schema(description = "菜单分类名称")
     private String name;
 
-    @ApiModelProperty(notes = "菜单分类描述")
+    @Schema(description = "菜单分类描述")
     private String description;
 
-    @ApiModelProperty(notes = "排序号")
+    @Schema(description = "排序号")
     private Integer sortNumber;
 
-    @ApiModelProperty(notes = "创建时间")
+    @Schema(description = "创建时间")
     private Date createTime;
 
-    @ApiModelProperty(notes = "修改时间")
+    @Schema(description = "修改时间")
     private Date updateTime;
 
     //页码

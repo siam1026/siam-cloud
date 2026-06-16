@@ -13,10 +13,16 @@ import com.siam.package_promotion.service.AdvertisementService;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +32,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/member/advertisement")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "用户广告轮播图模块相关接口", description = "MemberAdvertisementController")
+@Tag(name = "用户广告轮播图模块相关接口", description = "MemberAdvertisementController")
 public class MemberAdvertisementController {
 
     @Autowired
@@ -48,19 +54,7 @@ public class MemberAdvertisementController {
     @Autowired
     private MemberSessionManager memberSessionManager;
 
-    @ApiOperation(value = "广告轮播图列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "广告轮播图表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageName", value = "轮播图名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "imagePath", value = "轮播图路径", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "说明", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "type", value = "轮播图类型 1=首页轮播图 2=菜单页轮播图", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "imageLinkUrl", value = "点击轮播图跳转的链接", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "广告轮播图列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) AdvertisementParam advertisement, HttpServletRequest request){
         BasicData basicResult = new BasicData();
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());

@@ -26,8 +26,9 @@ import com.siam.package_user.model.example.MemberTradeRecordExample;
 import com.siam.package_user.util.TokenUtil;
 import com.siam.package_weixin_basic.util.WxdecodeUtils;
 import com.siam.package_weixin_pay.config.WxPayConfig;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -40,8 +41,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -50,7 +51,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/member/platformPay")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "平台支付模块相关接口", description = "PlatformPayController")
+@Tag(name = "平台支付模块相关接口", description = "PlatformPayController")
 public class PlatformPayController {
 
     @Autowired
@@ -93,7 +94,7 @@ public class PlatformPayController {
      * @return
      * @author 暹罗
      */
-    @ApiOperation(value = "使用平台余额支付")
+    @Operation(summary = "使用平台余额支付")
     @PostMapping(value = "/byBalance")
     public BasicResult byBalance(@RequestBody @Validated PlatformPayDto platformPayDto, HttpServletRequest request) throws InterruptedException, RemotingException, MQClientException, MQBrokerException, IOException {
         //TODO-PS：但是如果按照微信支付的步骤来，只要某个步骤失败，事务就会回滚--莫非这种就是不能在Controller上添加事务注解的原因？

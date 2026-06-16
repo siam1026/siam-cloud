@@ -11,10 +11,16 @@ import com.siam.package_promotion.entity.CouponsMemberRelation;
 import com.siam.package_promotion.service.CouponsMemberRelationService;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.feign.MemberFeignApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/merchant/couponsMemberRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端优惠卷用关系接口", description = "MerchantCouponsMemberRelationController")
+@Tag(name = "商家端优惠卷用关系接口", description = "MerchantCouponsMemberRelationController")
 public class MerchantCouponsMemberRelationController {
 
     @Autowired
@@ -43,11 +49,7 @@ public class MerchantCouponsMemberRelationController {
     private AliyunSms aliyunSms;
 
 
-    @ApiOperation(value = "赠送优惠卷")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "couponsId", value = "优惠卷id", required = false, paramType = "query", dataType = "int")
-    })
-    @PostMapping(value = "/giveCoupons")
+    @Operation(summary = "赠送优惠卷")@PostMapping(value = "/giveCoupons")
     public BasicResult giveCoupons(@RequestBody @Validated(value = {}) CouponsMemberRelation param) {
         BasicResult basicResult = new BasicResult();
 
@@ -102,12 +104,7 @@ public class MerchantCouponsMemberRelationController {
         return basicResult;
     }
 
-    @ApiOperation(value = "赠送优惠卷（单发）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "couponsId", value = "优惠卷id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "memberId", value = "用户id", required = false, paramType = "query", dataType = "int")
-    })
-    @PostMapping(value = "/giveSingleCoupons")
+    @Operation(summary = "赠送优惠卷（单发）")@PostMapping(value = "/giveSingleCoupons")
     public BasicResult giveSingleCoupons(@RequestBody @Validated(value = {}) CouponsMemberRelation param) {
         BasicResult basicResult = new BasicResult();
 

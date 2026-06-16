@@ -10,9 +10,9 @@ import com.siam.package_common.util.ToolUtil;
 import com.siam.package_user.entity.Admin;
 import com.siam.package_user.entity.Member;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 /**

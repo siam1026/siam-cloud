@@ -39,6 +39,7 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -85,6 +86,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     @Autowired
     private MemberInviteRelationFeignApi memberInviteRelationFeignApi;
 
+    @Lazy
     @Autowired
     private PointsMallOrderLogisticsService orderLogisticsService;
 
@@ -100,6 +102,7 @@ public class PointsMallOrderServiceImpl implements PointsMallOrderService {
     @Autowired
     private PointsMallOrderRefundProcessService orderRefundProcessService;
 
+    @Lazy
     @Autowired
     private PointsMallWxPayService pointsMallWxPayService;
 

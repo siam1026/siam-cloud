@@ -8,8 +8,9 @@ import com.siam.package_common.service.AliyunSms;
 import com.siam.package_promotion.entity.PaperworkPush;
 import com.siam.package_promotion.service.PaperworkPushService;
 import com.siam.package_user.model.example.MemberExample;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/rest/admin/paperworkPush")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台文案推送模块相关接口", description = "AdminPaperworkPushController")
+@Tag(name = "后台文案推送模块相关接口", description = "AdminPaperworkPushController")
 public class AdminPaperworkPushController {
 
     @Autowired
@@ -32,7 +33,7 @@ public class AdminPaperworkPushController {
     @Autowired
     private AliyunSms aliyunSms;
 
-    @ApiOperation(value = "文案列表")
+    @Operation(summary = "文案列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) PaperworkPush paperworkPush){
         BasicData basicResult = new BasicData();
@@ -41,7 +42,7 @@ public class AdminPaperworkPushController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "文案创建")
+    @Operation(summary = "文案创建")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) PaperworkPush paperworkPush){
         BasicResult basicResult = new BasicResult();
@@ -57,7 +58,7 @@ public class AdminPaperworkPushController {
     }
 
 
-    @ApiOperation(value = "文案修改")
+    @Operation(summary = "文案修改")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) PaperworkPush paperworkPush){
         BasicResult basicResult = new BasicResult();
@@ -72,7 +73,7 @@ public class AdminPaperworkPushController {
     }
 
 
-    @ApiOperation(value = "文案删除")
+    @Operation(summary = "文案删除")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) PaperworkPush param){
         BasicResult basicResult = new BasicResult();
@@ -85,7 +86,7 @@ public class AdminPaperworkPushController {
         return basicResult;
     }
 
-    @ApiOperation(value = "推送")
+    @Operation(summary = "推送")
     @PutMapping(value = "/push")
     public BasicResult push(@RequestBody @Validated(value = {}) PaperworkPush paperworkPush){
         BasicResult basicResult = new BasicResult();

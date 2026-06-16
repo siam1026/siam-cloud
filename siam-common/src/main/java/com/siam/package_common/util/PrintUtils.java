@@ -3,7 +3,7 @@ package com.siam.package_common.util;
 import com.alipay.api.domain.StudentInfo;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.print.*;

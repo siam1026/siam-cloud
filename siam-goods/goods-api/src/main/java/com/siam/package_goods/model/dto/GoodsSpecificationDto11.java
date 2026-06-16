@@ -1,13 +1,13 @@
 package com.siam.package_goods.model.dto;
 
 import com.siam.package_goods.entity.GoodsSpecification;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class GoodsSpecificationDto11 extends GoodsSpecification {
-    @ApiModelProperty(notes = "商品名称")
+    @Schema(description = "商品名称")
     private String goodsName;
 
-    @ApiModelProperty(notes = "商品主图")
+    @Schema(description = "商品主图")
     private String goodsMainImage;
 
     public String getGoodsName() {

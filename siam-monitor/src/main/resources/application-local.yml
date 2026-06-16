@@ -7,6 +7,12 @@ spring:
   application:
     name: actuator-monitor
 
+  # Nacos注册中心
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
   security:
     user:
       name: admin
@@ -39,17 +45,7 @@ spring:
           socketFactory.class: javax.net.ssl.SSLSocketFactory
           socketFactory.port: 465
 
-#eureka配置
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:9000/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    #配置使用ip地址来注册(默认是主机名称)
-    prefer-ip-address: true
-    #心跳检测暂时不配置
+# Nacos注册中心
 
 #  boot:
 #    admin:

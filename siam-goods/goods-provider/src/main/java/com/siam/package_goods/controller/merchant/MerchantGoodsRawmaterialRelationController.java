@@ -13,10 +13,16 @@ import com.siam.package_goods.model.example.GoodsRawmaterialRelationExample;
 import com.siam.package_goods.service.GoodsRawmaterialRelationService;
 import com.siam.package_goods.entity.Rawmaterial;
 import com.siam.package_goods.service.RawmaterialService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/merchant/goodsRawmaterialRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端原料配比模块相关接口", description = "MerchantGoodsRawmaterialRelationController")
+@Tag(name = "商家端原料配比模块相关接口", description = "MerchantGoodsRawmaterialRelationController")
 public class MerchantGoodsRawmaterialRelationController {
 
     @Autowired
@@ -41,17 +47,7 @@ public class MerchantGoodsRawmaterialRelationController {
     @Autowired
     private GoodsService goodsService;
 
-    @ApiOperation(value = "原料配比列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料配比表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "原料配比名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "原料配比详情描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "原料配比列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation goodsRawmaterialRelation){
         BasicData basicResult = new BasicData();
         Page<GoodsRawmaterialRelation> page = goodsRawmaterialRelationService.getListByPage(goodsRawmaterialRelation.getPageNo(), goodsRawmaterialRelation.getPageSize(), goodsRawmaterialRelation);
@@ -59,12 +55,7 @@ public class MerchantGoodsRawmaterialRelationController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "设置原料配比")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "goodsListStr", value = "商品id", required = true, paramType = "query", dataType = "List"),
-            @ApiImplicitParam(name = "relationListStr", value = "原料", required = true, paramType = "query", dataType = "List"),
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "设置原料配比")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicResult basicResult = new BasicResult();
 
@@ -135,15 +126,7 @@ public class MerchantGoodsRawmaterialRelationController {
     }
 
 
-    @ApiOperation(value = "修改原料配比")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料配比主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "原料配比名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "原料配比详情描述", required = false, paramType = "query", dataType = "string")
-    })
-    @PutMapping(value = "/update")
+    @Operation(summary = "修改原料配比")@PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation goodsRawmaterialRelation){
         BasicResult basicResult = new BasicResult();
 
@@ -157,11 +140,7 @@ public class MerchantGoodsRawmaterialRelationController {
     }
 
 
-    @ApiOperation(value = "删除原料配比")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料配比主键id", required = true, paramType = "query", dataType = "int")
-    })
-    @DeleteMapping(value = "/delete")
+    @Operation(summary = "删除原料配比")@DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicResult basicResult = new BasicResult();
 
@@ -181,27 +160,14 @@ public class MerchantGoodsRawmaterialRelationController {
         basicResult.setMessage("删除成功");
         return basicResult;
     }
-    @ApiOperation(value = "查询原料配比信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "原料配比表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "goodsName", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/find/goodsRawmaterialRelation")
+    @Operation(summary = "查询原料配比信息")@PostMapping(value = "/find/goodsRawmaterialRelation")
     public BasicResult findGoodsRawmaterialRelation(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicData basicResult = new BasicData();
         Page<GoodsRawmaterialRelation> page = goodsRawmaterialRelationService.findGoodsRawmaterialRelation(param.getPageNo(), param.getPageSize(), param.getGoodsName());
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "通过商品查询原料配比信息详情")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "goodsId", value = "商品id", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/find/goodsRawmaterialRelationByGoodsId")
+    @Operation(summary = "通过商品查询原料配比信息详情")@PostMapping(value = "/find/goodsRawmaterialRelationByGoodsId")
     public BasicResult findGoodsRawmaterialRelationByGoodsId(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicData basicResult = new BasicData();
         Page<GoodsRawmaterialRelation> page = goodsRawmaterialRelationService.selectByGoodsId(param.getPageNo(), param.getPageSize(), param.getGoodsId());

@@ -9,16 +9,17 @@ import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_user.entity.internal.VipRechargeRecord;
 import com.siam.package_user.service.internal.VipRechargeRecordService;
 import com.siam.package_user.entity.Member;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/admin/vipRechargeRecord")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台会员充值记录模块相关接口", description = "AdminVipRechargeRecordController")
+@Tag(name = "后台会员充值记录模块相关接口", description = "AdminVipRechargeRecordController")
 public class AdminVipRechargeRecordController {
 
     @Autowired
@@ -35,7 +36,7 @@ public class AdminVipRechargeRecordController {
     @Autowired
     private MemberFeignApi memberFeignApi;
 
-    @ApiOperation(value = "会员充值记录列表")
+    @Operation(summary = "会员充值记录列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) VipRechargeRecord vipRechargeRecord){
         BasicData basicResult = new BasicData();
@@ -46,7 +47,7 @@ public class AdminVipRechargeRecordController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "会员充值记录-统计金额")
+    @Operation(summary = "会员充值记录-统计金额")
     @PostMapping(value = "/statisticalAmount")
     public BasicResult statisticalAmount(@RequestBody @Validated(value = {}) VipRechargeRecord vipRechargeRecord, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -60,7 +61,7 @@ public class AdminVipRechargeRecordController {
         return basicResult;
     }
 
-    @ApiOperation(value = "后台管理员充值会员")
+    @Operation(summary = "后台管理员充值会员")
     @PostMapping(value = "/updateVip")
     public BasicResult update(@RequestBody @Validated(value = {}) VipRechargeRecord vipRechargeRecord){
         log.info("请求参数 -> " + vipRechargeRecord);
@@ -113,7 +114,7 @@ public class AdminVipRechargeRecordController {
         return basicResult;
     }
 
-//    @ApiOperation(value = "会员充值记录创建")
+//    @Operation(summary = "会员充值记录创建")
 //    @PostMapping(value = "/insert")
 //    public BasicResult insert(VipRechargeRecord vipRechargeRecord){
 //        BasicResult basicResult = new BasicResult();

@@ -20,16 +20,22 @@ import com.siam.package_promotion.service.CouponsGoodsRelationService;
 import com.siam.package_promotion.service.CouponsService;
 import com.siam.package_promotion.service.CouponsShopRelationService;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +43,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/merchant/coupons")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端优惠卷接口", description = "MerchantCouponsController")
+@Tag(name = "商家端优惠卷接口", description = "MerchantCouponsController")
 public class MerchantCouponsController {
 
     @Autowired
@@ -58,21 +64,7 @@ public class MerchantCouponsController {
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "新增优惠卷")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "优惠卷名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "preferentialType", value = "优惠类型，1=折扣，2=满减", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "discountAmount", value = "折扣额度", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "limitedPrice", value = "满足价格（元，满足该价格才能使用）", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "减价额度(元)", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "description", value = "使用规则描述", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "validType", value = "时效:1绝对时效（领取后XXX-XXX时间段有效）  2相对时效（领取后N天有效）", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "validStartTime", value = "使用开始时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validEndTime", value = "使用结束时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validDays", value = "自领取之日起有效天数", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isDelete", value = "是否已删除", required = true, paramType = "query", dataType = "Boolean"),
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "新增优惠卷")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Coupons coupons, HttpServletRequest request) {
         BasicResult basicResult = new BasicResult();
 
@@ -110,22 +102,7 @@ public class MerchantCouponsController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "修改优惠卷-TODO")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "name", value = "优惠卷名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "preferentialType", value = "优惠类型，1=折扣，2=满减", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "discountAmount", value = "折扣额度", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "limitedPrice", value = "满足价格（元，满足该价格才能使用）", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "减价额度(元)", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "description", value = "使用规则描述", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "validType", value = "时效:1绝对时效（领取后XXX-XXX时间段有效）  2相对时效（领取后N天有效）", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "validStartTime", value = "使用开始时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validEndTime", value = "使用结束时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validDays", value = "自领取之日起有效天数", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isDelete", value = "是否已删除", required = true, paramType = "query", dataType = "Boolean"),
-    })
-    @PutMapping(value = "/update")
+    @Operation(summary = "修改优惠卷-TODO")@PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Coupons coupons, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -139,11 +116,7 @@ public class MerchantCouponsController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "删除优惠卷")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-    })
-    @DeleteMapping(value = "/delete")
+    @Operation(summary = "删除优惠卷")@DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Coupons param){
         BasicResult basicResult = new BasicResult();
 
@@ -155,11 +128,7 @@ public class MerchantCouponsController {
         return basicResult;
     }
 
-    @ApiOperation(value = "查看优惠卷详情（包含关联商品）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = true, paramType = "query", dataType = "Integer"),
-    })
-    @PostMapping(value = "/selectById")
+    @Operation(summary = "查看优惠卷详情（包含关联商品）")@PostMapping(value = "/selectById")
     public BasicResult selectById(@RequestBody @Validated(value = {}) Coupons param){
         BasicData basicResult = new BasicData();
 
@@ -172,24 +141,7 @@ public class MerchantCouponsController {
         return basicResult;
     }
 
-    @ApiOperation(value = "优惠卷列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "name", value = "优惠卷名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "preferentialType", value = "优惠类型，1=折扣，2=满减", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "discountAmount", value = "折扣额度", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "limitedPrice", value = "满足价格（元，满足该价格才能使用）", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "减价额度(元)", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "description", value = "使用规则描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "validType", value = "时效:1绝对时效（领取后XXX-XXX时间段有效）  2相对时效（领取后N天有效）", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "validStartTime", value = "使用开始时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validEndTime", value = "使用结束时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validDays", value = "自领取之日起有效天数", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isDelete", value = "是否已删除", required = true, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "优惠卷列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) CouponsDto couponsDto, HttpServletRequest request) {
         BasicData basicResult = new BasicData();
 
@@ -204,22 +156,7 @@ public class MerchantCouponsController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "优惠卷时间修改（延长）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键id", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "name", value = "优惠卷名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "preferentialType", value = "优惠类型，1=折扣，2=满减", required = false, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "discountAmount", value = "折扣额度", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "limitedPrice", value = "满足价格（元，满足该价格才能使用）", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "reducedPrice", value = "减价额度(元)", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "description", value = "使用规则描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "validType", value = "时效:1绝对时效（领取后XXX-XXX时间段有效）  2相对时效（领取后N天有效）", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "validStartTime", value = "使用开始时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validEndTime", value = "使用结束时间", required = true, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "validDays", value = "自领取之日起有效天数", required = true, paramType = "query", dataType = "Integer"),
-            @ApiImplicitParam(name = "isDelete", value = "是否已删除", required = true, paramType = "query", dataType = "Boolean"),
-    })
-    @PostMapping(value = "/updateEndTime")
+    @Operation(summary = "优惠卷时间修改（延长）")@PostMapping(value = "/updateEndTime")
     public BasicResult updateEndTime(@RequestBody @Validated(value = {}) Coupons coupons){
         BasicResult basicResult = new BasicResult();
 

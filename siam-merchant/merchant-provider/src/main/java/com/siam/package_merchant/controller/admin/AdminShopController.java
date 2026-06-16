@@ -20,8 +20,9 @@ import com.siam.package_merchant.service.ShopService;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.feign.MemberFeignApi;
 import com.siam.package_user.model.param.MemberParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/admin/shop")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台门店模块相关接口", description = "AdminShopController")
+@Tag(name = "后台门店模块相关接口", description = "AdminShopController")
 public class AdminShopController {
 
     @Autowired
@@ -48,7 +49,7 @@ public class AdminShopController {
     @Autowired
     private MemberFeignApi memberFeignApi;
 
-    @ApiOperation(value = "门店信息列表")
+    @Operation(summary = "门店信息列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Shop shop){
         BasicData basicResult = new BasicData();
@@ -56,7 +57,7 @@ public class AdminShopController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "新增门店信息")
+    @Operation(summary = "新增门店信息")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Shop shop){
         BasicResult basicResult = new BasicResult();
@@ -70,7 +71,7 @@ public class AdminShopController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "修改门店信息")
+    @Operation(summary = "修改门店信息")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Shop shop, String memberMobile) throws IOException {
         BasicResult basicResult = new BasicResult();
@@ -116,7 +117,7 @@ public class AdminShopController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "删除门店信息")
+    @Operation(summary = "删除门店信息")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Shop param){
         BasicResult basicResult = new BasicResult();
@@ -124,7 +125,7 @@ public class AdminShopController {
             //判断菜单下面有关联商品，则不能删除
             LambdaQueryWrapper<Shop> wrapper = new LambdaQueryWrapper();
             wrapper.eq(Shop::getId, id);
-            int result = shopService.count(wrapper);
+            long result = shopService.count(wrapper);
             if(result == 0){
                 basicResult.setSuccess(false);
                 basicResult.setCode(BasicResultCode.ERR);

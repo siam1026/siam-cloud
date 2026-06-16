@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatispl
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,7 +12,7 @@ import java.util.Date;
 
 @Data
 @TableName("tb_vip_recharge_record")
-@ApiModel(value = "会员充值记录表")
+ @Schema(description= "会员充值记录表")
 public class VipRechargeRecord {
 
     /* ##################################### START 扩展字段 #################################### */

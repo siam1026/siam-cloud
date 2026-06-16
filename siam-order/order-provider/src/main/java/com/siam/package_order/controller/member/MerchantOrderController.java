@@ -35,10 +35,10 @@ import com.siam.package_user.model.param.MemberBillingRecordParam;
 import com.siam.package_user.util.TokenUtil;
 import com.siam.package_weixin_basic.service.WxNotifyService;
 import com.siam.package_weixin_basic.service.WxPublicPlatformNotifyService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -47,8 +47,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
@@ -58,7 +58,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @RestController
 @RequestMapping(value = "/rest/merchant/order")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端订单模块相关接口", description = "MerchantOrderController")
+@Tag(name = "商家端订单模块相关接口", description = "MerchantOrderController")
 public class MerchantOrderController {
 
     @Resource(name = "orderServiceImpl")
@@ -102,38 +102,7 @@ public class MerchantOrderController {
 
     private Lock lock = new ReentrantLock();
 
-    @ApiOperation(value = "订单列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "订单表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "memberId", value = "用户id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "orderNo", value = "订单编号，供客户查询", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "goodsTotalQuantity", value = "商品总数量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "goodsTotalPrice", value = "商品总金额", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "packingCharges", value = "包装费", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "deliveryFee", value = "配送费", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "actualPrice", value = "实付款", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "shoppingWay", value = "购物方式 1=自取 2=配送", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "deliveryAddressId", value = "收货地址id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "contactRealname", value = "联系人姓名", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactPhone", value = "联系电话", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactProvince", value = "省份", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactCity", value = "城市", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactArea", value = "区/县", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactStreet", value = "详细地址(具体到街道门牌号)", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactSex", value = "联系人性别 0=无 1=先生 2=女士", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "订单描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "status", value = "订单状态 -1=售后处理状态 1=未付款 2=待处理 3=待自取(已处理) 4=待配送(已处理) 5=已配送 6=已完成 7=售后处理中 8=已退款 9=售后处理完成 10=已取消", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "tradeId", value = "用户交易id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "orderLogisticsId", value = "物流id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isInvoice", value = "是否开票", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "invoiceId", value = "发票id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDeleted", value = "是否删除 0=正常 1=已删除", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "shopId", value = "接单门店id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "shopName", value = "接单门店名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
+    @Operation(summary = "订单列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) OrderParam param, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -148,7 +117,7 @@ public class MerchantOrderController {
     }
 
 
-    @ApiOperation(value = "修改订单状态")
+    @Operation(summary = "修改订单状态")
     @PostMapping(value = "/updateStatus")
     public BasicResult updateStatus(@RequestBody @Validated(value = {}) OrderParam param){
         BasicResult basicResult = new BasicResult();
@@ -266,10 +235,7 @@ public class MerchantOrderController {
         return basicResult;
     }
 
-    @ApiOperation(value = "查询单个订单信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "订单表主键id", required = true, paramType = "query", dataType = "int"),
-    })
+    @Operation(summary = "查询单个订单信息")
     @PostMapping(value = "/selectById")
     public BasicResult selectById(@RequestBody @Validated(value = {}) OrderParam param){
         BasicData basicResult = new BasicData();
@@ -290,10 +256,7 @@ public class MerchantOrderController {
         return BasicResult.success(dbOrder);
     }
 
-    @ApiOperation(value = "批量修改订单的是否已打印状态为已打印")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "idListStr", value = "订单表主键id", required = true, paramType = "query", dataType = "string"),
-    })
+    @Operation(summary = "批量修改订单的是否已打印状态为已打印")
     @PostMapping(value = "/batchUpdateIsPrintedTrue")
     public BasicResult batchUpdateIsPrintedTrue(@RequestBody @Validated(value = {}) OrderParam param){
         BasicResult basicResult = new BasicResult();
@@ -316,40 +279,7 @@ public class MerchantOrderController {
         return basicResult;
     }
 
-    @ApiOperation(value = "今日订单列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "订单表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "memberId", value = "用户id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "orderNo", value = "订单编号，供客户查询", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "goodsTotalQuantity", value = "商品总数量", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "goodsTotalPrice", value = "商品总金额", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "packingCharges", value = "包装费", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "deliveryFee", value = "配送费", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "actualPrice", value = "实付款", required = false, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "shoppingWay", value = "购物方式 1=自取 2=配送", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "deliveryAddressId", value = "收货地址id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "contactRealname", value = "联系人姓名", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactPhone", value = "联系电话", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactProvince", value = "省份", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactCity", value = "城市", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactArea", value = "区/县", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactStreet", value = "详细地址(具体到街道门牌号)", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "contactSex", value = "联系人性别 0=无 1=先生 2=女士", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "remark", value = "备注", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "订单描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "status", value = "订单状态 -1=售后处理状态 1=未付款 2=待处理 3=待自取(已处理) 4=待配送(已处理) 5=已配送 6=已完成 7=售后处理中 8=已退款 9=售后处理完成 10=已取消", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "tradeId", value = "用户交易id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "orderLogisticsId", value = "物流id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isInvoice", value = "是否开票", required = false, paramType = "query", dataType = "Boolean"),
-            @ApiImplicitParam(name = "invoiceId", value = "发票id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDeleted", value = "是否删除 0=正常 1=已删除", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "shopId", value = "接单门店id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "shopName", value = "接单门店名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "startCreateTime", value = "下单开始时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "endCreateTime", value = "下单结束时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20"),
-    })
+    @Operation(summary = "今日订单列表")
     @PostMapping(value = "/todayOrderList")
     public BasicResult todayOrderList(@RequestBody @Validated(value = {}) OrderParam param, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -363,7 +293,7 @@ public class MerchantOrderController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "查询所有订单标签页的待处理数量")
+    @Operation(summary = "查询所有订单标签页的待处理数量")
     @PostMapping(value = "/selectAllTabWaitHandleNum")
     public BasicResult selectAllTabWaitHandleNum(@RequestBody @Validated(value = {}) OrderParam param){
         BasicData basicResult = new BasicData();
@@ -377,7 +307,7 @@ public class MerchantOrderController {
         orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
         orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_1);
         orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_2);
-        int waitHandleNum = orderService.count(orderLambdaQueryWrapper);
+        long waitHandleNum = orderService.count(orderLambdaQueryWrapper);
         dataMap.put("waitHandleNum", waitHandleNum);
 
         //自取订单-待自取订单
@@ -385,7 +315,7 @@ public class MerchantOrderController {
         orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
         orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_1);
         orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_3);
-        int waitPickUpNum = orderService.count(orderLambdaQueryWrapper);
+        long waitPickUpNum = orderService.count(orderLambdaQueryWrapper);
         dataMap.put("waitPickUpNum", waitPickUpNum);
 
         //外卖订单-待配送订单
@@ -393,7 +323,7 @@ public class MerchantOrderController {
         orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
         orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_2);
         orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_4);
-        int waitDeliveryNum = orderService.count(orderLambdaQueryWrapper);
+        int waitDeliveryNum = (int) orderService.count(orderLambdaQueryWrapper);
         dataMap.put("waitDeliveryNum", waitDeliveryNum);
 
         //外卖订单-已配送订单
@@ -401,13 +331,13 @@ public class MerchantOrderController {
         orderLambdaQueryWrapper.eq(Order::getShopId, loginMerchant.getShopId());
         orderLambdaQueryWrapper.eq(Order::getShoppingWay, Quantity.INT_2);
         orderLambdaQueryWrapper.eq(Order::getStatus, Quantity.INT_5);
-        int deliveredNum = orderService.count(orderLambdaQueryWrapper);
+        int deliveredNum = (int) orderService.count(orderLambdaQueryWrapper);
         dataMap.put("deliveredNum", deliveredNum);
 
         return BasicResult.success(dataMap);
     }
 
-    @ApiOperation(value = "查询所有已付款未打印的订单")
+    @Operation(summary = "查询所有已付款未打印的订单")
     @PostMapping(value = "/waitPrintOrderList")
     public BasicResult waitPrintOrderList(@RequestBody @Validated(value = {}) OrderParam param){
         BasicData basicResult = new BasicData();
@@ -455,11 +385,7 @@ public class MerchantOrderController {
         return BasicResult.success(orders);
     }
 
-    @ApiOperation(value = "订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "startCreateTime", value = "下单开始时间", required = false, paramType = "query", dataType = "Date"),
-            @ApiImplicitParam(name = "endCreateTime", value = "下单结束时间", required = false, paramType = "query", dataType = "Date"),
-    })
+    @Operation(summary = "订单统计(支付成功订单数量、取消订单数量、退款订单数量，按自取或者外卖分开)")
     @PostMapping(value = "/countOrder")
     public BasicResult countOrder(@RequestBody @Validated(value = {}) OrderParam order, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -473,7 +399,7 @@ public class MerchantOrderController {
         return BasicResult.success(count);
     }
 
-    @ApiOperation(value = "售后处理订单列表")
+    @Operation(summary = "售后处理订单列表")
     @PostMapping(value = "/afterSalesList")
     public BasicResult afterSalesList(@RequestBody @Validated(value = {}) OrderParam param, HttpServletRequest request){
         BasicData basicResult = new BasicData();

@@ -29,7 +29,8 @@ import com.siam.package_promotion.feign.FullReductionRuleFeignApi;
 import com.siam.package_promotion.model.vo.PromotionVo;
 import com.siam.package_util.entity.Setting;
 import com.siam.package_util.feign.SettingFeignApi;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/rest/shop")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "门店模块相关接口", description = "ShopController")
+@Tag(name = "门店模块相关接口", description = "ShopController")
 public class ShopController {
 
     @Autowired

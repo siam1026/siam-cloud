@@ -64,7 +64,7 @@ public class RabbitMqConfig {
          * 可针对每次请求的消息去确定’mandatory’的boolean值，
          * 只能在提供’return -callback’时使用，与mandatory互斥
          */
-        rabbitTemplate.setReturnCallback(msgSendReturnsCallback());
+        rabbitTemplate.setReturnsCallback(msgSendReturnsCallback());
         rabbitTemplate.setMandatory(true);
         return rabbitTemplate;
     }

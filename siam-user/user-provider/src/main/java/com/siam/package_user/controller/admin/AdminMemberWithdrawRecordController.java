@@ -6,8 +6,9 @@ import com.siam.package_common.model.valid_group.ValidGroupOfAudit;
 import com.siam.package_common.model.valid_group.ValidGroupOfId;
 import com.siam.package_user.model.param.MemberWithdrawRecordParam;
 import com.siam.package_user.service.MemberWithdrawRecordService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -21,20 +22,20 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/admin/memberWithdrawRecord")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台用户提现记录模块相关接口", description = "AdminMemberWithdrawRecordController")
+@Tag(name = "后台用户提现记录模块相关接口", description = "AdminMemberWithdrawRecordController")
 public class AdminMemberWithdrawRecordController {
 
     @Autowired
     private MemberWithdrawRecordService memberWithdrawRecordService;
 
-    @ApiOperation(value = "用户提现记录列表")
+    @Operation(summary = "用户提现记录列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) MemberWithdrawRecordParam param) {
         Page<Map<String, Object>> page = memberWithdrawRecordService.getListByPageJoinMember(param);
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "用户提现记录-统计金额")
+    @Operation(summary = "用户提现记录-统计金额")
     @PostMapping(value = "/statisticalAmount")
     public BasicResult statisticalAmount(@RequestBody @Validated(value = {}) MemberWithdrawRecordParam param) {
         Map<String, Object> map = memberWithdrawRecordService.statisticalAmount(param);

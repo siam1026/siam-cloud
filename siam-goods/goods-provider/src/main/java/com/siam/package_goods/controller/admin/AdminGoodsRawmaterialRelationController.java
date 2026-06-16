@@ -14,8 +14,9 @@ import com.siam.package_goods.service.GoodsRawmaterialRelationService;
 import com.siam.package_goods.entity.Rawmaterial;
 import com.siam.package_goods.service.RawmaterialService;
 import com.siam.package_user.model.param.AdminParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/admin/goodsRawmaterialRelation")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台原料配比模块相关接口", description = "AdminGoodsRawmaterialRelationController")
+@Tag(name = "后台原料配比模块相关接口", description = "AdminGoodsRawmaterialRelationController")
 public class AdminGoodsRawmaterialRelationController {
 
     @Autowired
@@ -40,7 +41,7 @@ public class AdminGoodsRawmaterialRelationController {
     @Autowired
     private GoodsService goodsService;
 
-    @ApiOperation(value = "原料配比列表")
+    @Operation(summary = "原料配比列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicData basicResult = new BasicData();
@@ -49,7 +50,7 @@ public class AdminGoodsRawmaterialRelationController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "设置原料配比")
+    @Operation(summary = "设置原料配比")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) AdminParam param){
         BasicResult basicResult = new BasicResult();
@@ -120,7 +121,7 @@ public class AdminGoodsRawmaterialRelationController {
     }
 
 
-    @ApiOperation(value = "修改原料配比")
+    @Operation(summary = "修改原料配比")
     @PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicResult basicResult = new BasicResult();
@@ -135,7 +136,7 @@ public class AdminGoodsRawmaterialRelationController {
     }
 
 
-    @ApiOperation(value = "删除原料配比")
+    @Operation(summary = "删除原料配比")
     @DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         BasicResult basicResult = new BasicResult();
@@ -157,14 +158,14 @@ public class AdminGoodsRawmaterialRelationController {
         return basicResult;
     }
 
-    @ApiOperation(value = "查询原料配比信息")
+    @Operation(summary = "查询原料配比信息")
     @PostMapping(value = "/find/goodsRawmaterialRelation")
     public BasicResult findGoodsRawmaterialRelation(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         Page<GoodsRawmaterialRelation> page = goodsRawmaterialRelationService.findGoodsRawmaterialRelation(param.getPageNo(), param.getPageSize(), param.getGoodsName());
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "通过商品查询原料配比信息详情")
+    @Operation(summary = "通过商品查询原料配比信息详情")
     @PostMapping(value = "/find/goodsRawmaterialRelationByGoodsId")
     public BasicResult findGoodsRawmaterialRelationByGoodsId(@RequestBody @Validated(value = {}) GoodsRawmaterialRelation param){
         Page<GoodsRawmaterialRelation> page = goodsRawmaterialRelationService.selectByGoodsId(param.getPageNo(), param.getPageSize(), param.getGoodsId());

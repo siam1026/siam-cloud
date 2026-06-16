@@ -8,8 +8,11 @@ import com.siam.package_common.entity.BasicResult;
 import com.siam.package_common.constant.BasicResultCode;
 import com.siam.package_mall.entity.PointsMallGoodsSpecification;
 import com.siam.package_mall.model.example.PointsMallGoodsSpecificationExample;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -21,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/rest/admin/pointsMall/goodsSpecification")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "后台商品规格模块相关接口", description = "AdminPointsMallGoodsSpecificationController")
+@Tag(name = "后台商品规格模块相关接口", description = "AdminPointsMallGoodsSpecificationController")
 public class AdminPointsMallGoodsSpecificationController {
     @Autowired
     private PointsMallGoodsSpecificationService goodsSpecificationService;
 
-    @ApiOperation(value = "商品规格列表")
+    @Operation(summary = "商品规格列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) PointsMallGoodsSpecification goodsSpecification){
         BasicData basicResult = new BasicData();
@@ -37,7 +40,7 @@ public class AdminPointsMallGoodsSpecificationController {
     }
 
     @AdminPermission
-    @ApiOperation(value = "修改商品规格")
+    @Operation(summary = "修改商品规格")
     @PostMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) PointsMallGoodsSpecification goodsSpecification){
         BasicResult basicResult = new BasicResult();
@@ -70,13 +73,7 @@ public class AdminPointsMallGoodsSpecificationController {
         return basicResult;
     }
 
-    /*@ApiOperation(value = "新增商品规格")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "规格名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序号", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "status", value = "状态 1=启用 0=禁用 -1=删除", required = false, paramType = "query", dataType = "int"),
-    })
-    @PostMapping(value = "/insert")
+    /*@Operation(summary = "新增商品规格")@PostMapping(value = "/insert")
     public BasicResult insert(Specification specification){
         BasicResult basicResult = new BasicResult();
 
@@ -88,11 +85,7 @@ public class AdminPointsMallGoodsSpecificationController {
         return basicResult;
     }*/
 
-    /*@ApiOperation(value = "删除商品规格(含批量操作)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "商品规格表主键id(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "string"),
-    })
-    @PostMapping(value = "/delete")
+    /*@Operation(summary = "删除商品规格(含批量操作)")@PostMapping(value = "/delete")
     public BasicResult delete(@RequestParam(value = "ids", required = true) List<String> ids){
         BasicResult basicResult = new BasicResult();
 

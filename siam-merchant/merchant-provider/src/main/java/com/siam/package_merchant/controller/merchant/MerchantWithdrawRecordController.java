@@ -6,8 +6,11 @@ import com.siam.package_merchant.entity.MerchantWithdrawRecord;
 import com.siam.package_merchant.model.param.MerchantWithdrawRecordParam;
 import com.siam.package_merchant.service.MerchantBillingRecordService;
 import com.siam.package_merchant.service.MerchantWithdrawRecordService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/merchant/merchantWithdrawRecord")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端商家提现记录模块相关接口", description = "MerchantWithdrawRecordController")
+@Tag(name = "商家端商家提现记录模块相关接口", description = "MerchantWithdrawRecordController")
 public class MerchantWithdrawRecordController {
 
     @Autowired
@@ -32,21 +35,21 @@ public class MerchantWithdrawRecordController {
     @Autowired
     private MerchantBillingRecordService merchantBillingRecordService;
 
-    @ApiOperation(value = "商家提现记录列表")
+    @Operation(summary = "商家提现记录列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) MerchantWithdrawRecordParam param) {
         Page<MerchantWithdrawRecord> page = merchantWithdrawRecordService.getListByPage(param);
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "商家提现记录-统计金额")
+    @Operation(summary = "商家提现记录-统计金额")
     @PostMapping(value = "/statisticalAmount")
     public BasicResult statisticalAmount(@RequestBody @Validated(value = {}) MerchantWithdrawRecordParam param) {
         Map<String, Object> map = merchantWithdrawRecordService.statisticalAmount(param);
         return BasicResult.success(map);
     }
 
-    @ApiOperation(value = "新增商家提现记录")
+    @Operation(summary = "新增商家提现记录")
     @PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) MerchantWithdrawRecordParam param) {
         merchantWithdrawRecordService.insert(param);
@@ -55,19 +58,7 @@ public class MerchantWithdrawRecordController {
 
 
 
-    /*@ApiOperation(value = "修改商家提现记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商家提现记录主键id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商家提现记录名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "商家提现记录主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "商家提现记录描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "unit", value = "采购单位", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "采购单价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockLowerLimit", value = "库存过低线/库存下限", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockUpperLimit", value = "库存超出线/库存上限", required = true, paramType = "query", dataType = "BigDecimal"),
-    })
-    @PutMapping(value = "/update")
+    /*@Operation(summary = "修改商家提现记录")@PutMapping(value = "/update")
     public BasicResult update(MerchantWithdrawRecord merchantWithdrawRecord, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -104,11 +95,7 @@ public class MerchantWithdrawRecordController {
     }*/
 
 
-    /*@ApiOperation(value = "删除商家提现记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商家提现记录主键id", required = true, paramType = "query", dataType = "int")
-    })
-    @DeleteMapping(value = "/delete")
+    /*@Operation(summary = "删除商家提现记录")@DeleteMapping(value = "/delete")
     public BasicResult delete(int id, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 

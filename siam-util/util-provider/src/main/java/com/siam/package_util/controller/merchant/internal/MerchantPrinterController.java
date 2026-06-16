@@ -11,22 +11,28 @@ import com.siam.package_common.exception.StoneCustomerException;
 import com.siam.package_util.entity.internal.Printer;
 import com.siam.package_merchant.entity.Merchant;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/rest/merchant/printer")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端商家打印机信息模块相关接口", description = "MerchantPrinterController")
+@Tag(name = "商家端商家打印机信息模块相关接口", description = "MerchantPrinterController")
 public class MerchantPrinterController {
 
     @Autowired
@@ -38,17 +44,7 @@ public class MerchantPrinterController {
 //    @Autowired
 //    private MerchantService merchantService;
 
-    @ApiOperation(value = "打印机信息列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商品表主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "商品名称", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商家打印机信息详情描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "pageNo", value = "页码(值为-1不分页)", required = true, paramType = "query", dataType = "int", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "页数", required = true, paramType = "query", dataType = "int", defaultValue = "20")
-    })
-    @PostMapping(value = "/list")
+    @Operation(summary = "打印机信息列表")@PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) Printer printer, HttpServletRequest request){
         BasicData basicResult = new BasicData();
 
@@ -61,15 +57,7 @@ public class MerchantPrinterController {
         return BasicResult.success(page);
     }
 
-    @ApiOperation(value = "打印机信息创建")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "打印机信息主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "打印机信息名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商家打印机信息详情描述", required = false, paramType = "query", dataType = "string")
-    })
-    @PostMapping(value = "/insert")
+    @Operation(summary = "打印机信息创建")@PostMapping(value = "/insert")
     public BasicResult insert(@RequestBody @Validated(value = {}) Printer printer, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -88,15 +76,7 @@ public class MerchantPrinterController {
     }
 
     @MerchantPermission
-    @ApiOperation(value = "打印机信息修改")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "打印机信息主键id", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "打印机信息名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "sortNumber", value = "排序", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "isDisabled", value = "是否启用 0-启用、1-禁用", required = false, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "detail", value = "商家打印机信息详情描述", required = false, paramType = "query", dataType = "string")
-    })
-    @PutMapping(value = "/update")
+    @Operation(summary = "打印机信息修改")@PutMapping(value = "/update")
     public BasicResult update(@RequestBody @Validated(value = {}) Printer printer, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -121,11 +101,7 @@ public class MerchantPrinterController {
 
 
     @MerchantPermission
-    @ApiOperation(value = "打印机信息删除")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "打印机信息主键id集合(批量删除时id以逗号分隔)", required = true, paramType = "query", dataType = "String")
-    })
-    @DeleteMapping(value = "/delete")
+    @Operation(summary = "打印机信息删除")@DeleteMapping(value = "/delete")
     public BasicResult delete(@RequestBody @Validated(value = {}) Printer param){
         BasicResult basicResult = new BasicResult();
         //获取当前登录用户绑定的门店编号

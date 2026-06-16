@@ -6,8 +6,9 @@ import com.siam.package_common.util.OSSUtils;
 import com.siam.package_user.auth.cache.MemberSessionManager;
 import com.siam.package_user.entity.Member;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/rest/member")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "用户上传图片模块相关接口", description = "AdminUploadController")
+@Tag(name = "用户上传图片模块相关接口", description = "AdminUploadController")
 public class UploadController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class UploadController {
     @Autowired
     private MemberSessionManager memberSessionManager;
 
-    @ApiOperation(value = "用户上传单张图片")
+    @Operation(summary = "用户上传单张图片")
     @PostMapping(value = "/uploadSingleImage")
     public BasicResult uploadSingleImage(@RequestParam("file") MultipartFile file) {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());
@@ -43,7 +44,7 @@ public class UploadController {
         return BasicResult.success(imageUrl);
     }
 
-    @ApiOperation(value = "用户上传多张图片")
+    @Operation(summary = "用户上传多张图片")
     @PostMapping(value = "/uploadMultipleImage")
     public BasicResult uploadMultipleImage(@RequestParam("fileList") List<MultipartFile> fileList) {
         Member loginMember = memberSessionManager.getSession(TokenUtil.getToken());

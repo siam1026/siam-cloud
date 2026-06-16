@@ -9,8 +9,11 @@ import com.siam.package_merchant.entity.ShopChangeRecord;
 import com.siam.package_merchant.service.ShopChangeRecordService;
 import com.siam.package_user.util.TokenUtil;
 import com.siam.package_util.feign.SettingFeignApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +23,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/merchant/shopChangeRecord")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "商家端门店重要信息变更记录模块相关接口", description = "ShopChangeRecordController")
+@Tag(name = "商家端门店重要信息变更记录模块相关接口", description = "ShopChangeRecordController")
 public class MerchantShopChangeRecordController {
     @Autowired
     private ShopChangeRecordService shopChangeRecordService;
@@ -40,7 +43,7 @@ public class MerchantShopChangeRecordController {
     @Autowired
     private MerchantSessionManager merchantSessionManager;
 
-    @ApiOperation(value = "门店重要信息变更记录列表")
+    @Operation(summary = "门店重要信息变更记录列表")
     @PostMapping(value = "/list")
     public BasicResult list(@RequestBody @Validated(value = {}) ShopChangeRecord shopChangeRecord, HttpServletRequest request){
         BasicData basicResult = new BasicData();
@@ -54,18 +57,7 @@ public class MerchantShopChangeRecordController {
         return BasicResult.success(page);
     }
 
-    /*@ApiOperation(value = "新增门店重要信息变更记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "门店重要信息变更记录名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "门店重要信息变更记录主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "门店重要信息变更记录描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "unit", value = "采购单位", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "采购单价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockLowerLimit", value = "库存过低线/库存下限", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockUpperLimit", value = "库存超出线/库存上限", required = true, paramType = "query", dataType = "BigDecimal"),
-    })
-    @PostMapping(value = "/insert")
+    /*@Operation(summary = "新增门店重要信息变更记录")@PostMapping(value = "/insert")
     public BasicResult insert(ShopChangeRecord shopChangeRecord, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -131,19 +123,7 @@ public class MerchantShopChangeRecordController {
     }*/
 
 
-    /*@ApiOperation(value = "修改门店重要信息变更记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "门店重要信息变更记录主键id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "name", value = "门店重要信息变更记录名称", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "mainImage", value = "门店重要信息变更记录主图", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "description", value = "门店重要信息变更记录描述", required = false, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "unit", value = "采购单位", required = true, paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "price", value = "采购单价", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stock", value = "库存", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockLowerLimit", value = "库存过低线/库存下限", required = true, paramType = "query", dataType = "BigDecimal"),
-            @ApiImplicitParam(name = "stockUpperLimit", value = "库存超出线/库存上限", required = true, paramType = "query", dataType = "BigDecimal"),
-    })
-    @PutMapping(value = "/update")
+    /*@Operation(summary = "修改门店重要信息变更记录")@PutMapping(value = "/update")
     public BasicResult update(ShopChangeRecord shopChangeRecord, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 
@@ -180,11 +160,7 @@ public class MerchantShopChangeRecordController {
     }*/
 
 
-    /*@ApiOperation(value = "删除门店重要信息变更记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "门店重要信息变更记录主键id", required = true, paramType = "query", dataType = "int")
-    })
-    @DeleteMapping(value = "/delete")
+    /*@Operation(summary = "删除门店重要信息变更记录")@DeleteMapping(value = "/delete")
     public BasicResult delete(int id, HttpServletRequest request){
         BasicResult basicResult = new BasicResult();
 

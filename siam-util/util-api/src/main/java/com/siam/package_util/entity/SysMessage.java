@@ -1,7 +1,6 @@
 package com.siam.package_util.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 
 import java.io.Serializable;

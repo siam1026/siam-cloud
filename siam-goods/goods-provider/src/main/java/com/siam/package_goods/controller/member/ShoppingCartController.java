@@ -14,7 +14,8 @@ import com.siam.package_goods.model.example.ShoppingCartExample;
 import com.siam.package_goods.service.ShoppingCartService;
 import com.siam.package_goods.service.GoodsSpecificationOptionService;
 import com.siam.package_user.util.TokenUtil;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/rest/member/shoppingCart")
 @Transactional(rollbackFor = Exception.class)
-@Api(tags = "购物车模块相关接口", description = "ShoppingCartController")
+@Tag(name = "购物车模块相关接口", description = "ShoppingCartController")
 public class ShoppingCartController {
 
     @Autowired
